@@ -36,7 +36,7 @@ const Login = () => {
       });
   };
 
-  return ( 
+  return (
     <>
       <LoginNavbar />
       <Flex
@@ -84,6 +84,9 @@ const Login = () => {
               <Button colorScheme="teal" size="lg" onClick={signIn}>
                 Login
               </Button>
+              <Link to="/Recipes">
+                <Button mt={4} colorScheme="red" size="lg"></Button>
+              </Link>
 
               <Spacer />
 
