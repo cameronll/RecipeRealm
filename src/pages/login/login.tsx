@@ -121,7 +121,7 @@ const Login = () => {
           <Text
             fontSize={'sm'}
             color={useColorModeValue('gray.400', 'gray.400')}>
-            Registered Sex Offender
+            Follower of Christ
           </Text>
         </Box>
       </Stack>
