@@ -19,20 +19,14 @@ import {
 } from '@chakra-ui/react';
 import {HamburgerIcon, CloseIcon} from '@chakra-ui/icons';
 
-interface NavLinkProps {
-  href: string; // Define href as a prop
+interface Props {
   children: React.ReactNode;
 }
 
-const Links = [
-  {text: 'Calendar', href: '/calendar'},
-  {text: 'Profile', href: '/profile'},
-  {text: 'My Recipes', href: '/recipes'},
-  {text: 'Explore', href: '/explore'},
-];
+const Links = ['Calendar', 'Profile', 'My Recipes', 'Explore'];
 
-const NavLink = (props: NavLinkProps) => {
-  const {children, href} = props;
+const NavLink = (props: Props) => {
+  const {children} = props;
 
   return (
     <Box
@@ -44,14 +38,13 @@ const NavLink = (props: NavLinkProps) => {
         textDecoration: 'none',
         bg: useColorModeValue('gray.200', 'gray.700'),
       }}
-      href={href} // Use the href prop
-    >
+      href={'/'}>
       {children}
     </Box>
   );
 };
 
-const Navbar: React.FC = () => {
+const LoginNavbar: React.FC = () => {
   const {isOpen, onOpen, onClose} = useDisclosure();
 
   return (
@@ -73,13 +66,9 @@ const Navbar: React.FC = () => {
               w={100}
               mb={15}
             />
-            <HStack as={'nav'} spacing={4} display={{base: 'none', md: 'flex'}}>
-              {Links.map(link => (
-                <NavLink key={link.text} href={link.href}>
-                  {link.text}
-                </NavLink>
-              ))}
-            </HStack>
+            <Text alignItems={'center'}>
+              Login below to start your experience!
+            </Text>
           </HStack>
           <Flex alignItems={'center'}>
             <Menu>
@@ -92,10 +81,9 @@ const Navbar: React.FC = () => {
                 <Avatar size={'sm'} src={'../../public/brodyexample.png'} />
               </MenuButton>
               <MenuList>
-                <MenuItem>Settings</MenuItem>
-                <MenuItem>Add Friends</MenuItem>
+                <MenuItem>Sign In</MenuItem>
                 <MenuDivider />
-                <MenuItem>Logout</MenuItem>
+                <MenuItem>Sign Up</MenuItem>
               </MenuList>
             </Menu>
           </Flex>
@@ -105,9 +93,7 @@ const Navbar: React.FC = () => {
           <Box pb={4} display={{md: 'none'}}>
             <Stack as={'nav'} spacing={4}>
               {Links.map(link => (
-                <NavLink key={link.text} href={link.href}>
-                  {link.text}
-                </NavLink>
+                <NavLink key={link}>{link}</NavLink>
               ))}
             </Stack>
           </Box>
@@ -117,4 +103,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default LoginNavbar;
