@@ -3,6 +3,8 @@ import {Flex, Input, Button, Stack, ButtonGroup, Box} from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
+import {db} from '../../firebaseConfig';
+import {collection, addDoc} from "firebase/firestore";
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link} from 'react-router-dom';
 import Footer from '../../components/Footer';
@@ -34,6 +36,13 @@ const SignUp = () => {
           values.email,
           values.password,
         );
+
+        const docRef = await addDoc(collection(db, "users"), {
+          email: values.email,
+          name: values.name,
+          username: values.username
+        });
+        console.log("Document written with ID: ", docRef.id);
 
         // Additional actions upon successful signup (if needed)
       } catch (e) {

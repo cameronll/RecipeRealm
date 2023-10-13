@@ -33,6 +33,7 @@ myHeaders.append("x-app-key", "135db1d7aaba12d363ad7b2225656590");
 myHeaders.append("nutrients", "");
 
 var raw = JSON.stringify({
+  // THIS WILL BECOME A STRING FROM THE ARRAY
   "query": "bologna 3 oz"
 });
 
