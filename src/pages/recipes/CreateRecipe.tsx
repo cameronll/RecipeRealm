@@ -24,6 +24,31 @@ import {
   NumberIncrementStepper,
 } from '@chakra-ui/react';
 
+// API CALL FOR NUTRITION INFORMATION
+/*
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+myHeaders.append("x-app-id", "3a83fb27");
+myHeaders.append("x-app-key", "135db1d7aaba12d363ad7b2225656590");
+myHeaders.append("nutrients", "");
+
+var raw = JSON.stringify({
+  "query": "bologna 3 oz"
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+*/
+
 import {useToast} from '@chakra-ui/react';
 
 const Form1 = () => {
