@@ -1,4 +1,8 @@
 import {useState} from 'react';
+import {db} from '../../firebaseConfig';
+import {collection, addDoc} from "firebase/firestore";
+import {useFormik} from 'formik';
+
 import {
   Progress,
   Box,
@@ -237,6 +241,7 @@ const Form2 = () => {
 };
 
 const Form3 = () => {
+
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal">
