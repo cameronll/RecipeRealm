@@ -227,7 +227,7 @@ const Form2 = () => {
           <FormLabel htmlFor="amount" fontWeight={'normal'}>
             Amount
           </FormLabel>
-          <NumberInput max={50} min={10}>
+          <NumberInput max={999} min={0}>
             <NumberInputField />
             <NumberInputStepper>
               <NumberIncrementStepper />
