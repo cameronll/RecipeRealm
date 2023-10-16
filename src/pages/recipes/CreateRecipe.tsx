@@ -28,33 +28,40 @@ import {
   NumberIncrementStepper,
 } from '@chakra-ui/react';
 
-// API CALL FOR NUTRITION INFORMATION
-/*
-var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-myHeaders.append("x-app-id", "3a83fb27");
-myHeaders.append("x-app-key", "135db1d7aaba12d363ad7b2225656590");
-myHeaders.append("nutrients", "");
-
-var raw = JSON.stringify({
-  // THIS WILL BECOME A STRING FROM THE ARRAY
-  "query": "bologna 3 oz"
-});
-
-var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: raw,
-  redirect: 'follow'
-};
-
-fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-*/
-
 import {useToast} from '@chakra-ui/react';
+
+async function fetchNutritionData(query: string): Promise<void> {
+  const myHeaders: Headers = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("x-app-id", "3a83fb27");
+  myHeaders.append("x-app-key", "135db1d7aaba12d363ad7b2225656590");
+  myHeaders.append("nutrients", "");
+
+  const raw: string = JSON.stringify({
+    query: query
+  });
+
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  try {
+    const response: Response = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions);
+    const result: string = await response.text();
+    console.log(result);
+  } catch (error) {
+    console.error('error', error);
+  }
+}
+ /*
+  example use of function:
+  const query: string = "bologna 3 oz";
+  fetchNutritionData(query);
+  */
+
 
 const Form1 = () => {
   const [show, setShow] = useState(false);
@@ -342,6 +349,8 @@ export default function Multistep() {
                     duration: 3000,
                     isClosable: true,
                   });
+                  const query: string = "bologna 3 oz";
+                  fetchNutritionData(query);
                 }}>
                 Submit
               </Button>
@@ -352,3 +361,4 @@ export default function Multistep() {
     </>
   );
 }
+
