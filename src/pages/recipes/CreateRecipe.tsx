@@ -30,7 +30,7 @@ import {
 
 import {useToast} from '@chakra-ui/react';
 
-async function fetchNutritionData(query: string): Promise<void> {
+async function fetchNutritionData(query: string): Promise<string> {
   const myHeaders: Headers = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("x-app-id", "3a83fb27");
@@ -51,15 +51,18 @@ async function fetchNutritionData(query: string): Promise<void> {
   try {
     const response: Response = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions);
     const result: string = await response.text();
-    console.log(result);
+    return result;
   } catch (error) {
     console.error('error', error);
   }
+  return "";
 }
- /*
-  example use of function:
+  //example use of function:
+  /*
   const query: string = "bologna 3 oz";
-  fetchNutritionData(query);
+  fetchNutritionData(query).then(data => {
+    console.log('resolved data', data);
+  });
   */
 
 
@@ -349,8 +352,6 @@ export default function Multistep() {
                     duration: 3000,
                     isClosable: true,
                   });
-                  const query: string = "bologna 3 oz";
-                  fetchNutritionData(query);
                 }}>
                 Submit
               </Button>
