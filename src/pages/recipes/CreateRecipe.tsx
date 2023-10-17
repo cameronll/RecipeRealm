@@ -30,41 +30,124 @@ import {
 
 import {useToast} from '@chakra-ui/react';
 
-async function fetchNutritionData(query: string): Promise<string> {
-  const myHeaders: Headers = new Headers();
+type nutrition = {
+  calories: number,
+  total_fat: number,
+  saturated_fat: number,
+  cholesterol: number,
+  sodium: number,
+  total_carbohydrate: number,
+  dietary_fiber: number,
+  sugars: number,
+  protein: number
+}
+
+async function fetchNutritionData(query: string): Promise<string>{
+  var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("x-app-id", "3a83fb27");
   myHeaders.append("x-app-key", "135db1d7aaba12d363ad7b2225656590");
-  myHeaders.append("nutrients", "");
+  myHeaders.append("search_nutrient", "\"protein\"");
 
-  const raw: string = JSON.stringify({
-    query: query
+  var raw = JSON.stringify({
+    "query": query
   });
 
-  const requestOptions: RequestInit = {
+  var requestOptions: any = {
     method: 'POST',
     headers: myHeaders,
     body: raw,
     redirect: 'follow'
   };
 
-  try {
-    const response: Response = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions);
-    const result: string = await response.text();
-    return result;
-  } catch (error) {
-    console.error('error', error);
-  }
-  return "";
+  const response = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions);
+  const result = response.text();
+  return result; 
 }
-  //example use of function:
-  /*
-  const query: string = "bologna 3 oz";
-  fetchNutritionData(query).then(data => {
-    console.log('resolved data', data);
-  });
-  */
 
+async function getIngredientNutrients(query: string): Promise<nutrition>{
+  try{
+    const data = await fetchNutritionData(query);
+    let obj = JSON.parse(data);
+    let nutrients: nutrition = {
+      calories: obj.foods[0].nf_calories,
+      total_fat: obj.foods[0].nf_total_fat,
+      saturated_fat: obj.foods[0].nf_saturated_fat,
+      cholesterol: obj.foods[0].nf_cholesterol,
+      sodium: obj.foods[0].nf_sodium,
+      total_carbohydrate: obj.foods[0].nf_total_carbohydrate,
+      dietary_fiber: obj.foods[0].nf_dietary_fiber,
+      sugars: obj.foods[0].nf_sugars,
+      protein: obj.foods[0].nf_protein,
+    }
+    return nutrients;
+    }
+  catch(error){
+    console.log(error);
+  }
+
+  let nullNutrition = {
+    calories:0,
+    total_fat:0,
+    saturated_fat:0,
+    cholesterol:0,
+    sodium:0,
+    total_carbohydrate:0,
+    dietary_fiber:0,
+    sugars:0,
+    protein:0
+  };
+
+  return nullNutrition;
+}
+
+async function getTotalNutrients(ingredients: string[]): Promise<nutrition>{
+  var totalNutrition = {
+    calories:0,
+    total_fat:0,
+    saturated_fat:0,
+    cholesterol:0,
+    sodium:0,
+    total_carbohydrate:0,
+    dietary_fiber:0,
+    sugars:0,
+    protein:0
+  };
+  await Promise.all(
+    ingredients.map(async (ingredient) => {
+      let tempNutrients: nutrition = await getIngredientNutrients(ingredient);
+      totalNutrition.calories = totalNutrition.calories + tempNutrients.calories;
+      totalNutrition.total_fat = totalNutrition.total_fat + tempNutrients.total_fat;
+      totalNutrition.saturated_fat = totalNutrition.saturated_fat + tempNutrients.saturated_fat;
+      totalNutrition.cholesterol = totalNutrition.cholesterol + tempNutrients.cholesterol;
+      totalNutrition.sodium = totalNutrition.sodium + tempNutrients.sodium;
+      totalNutrition.total_carbohydrate = totalNutrition.total_carbohydrate + tempNutrients.total_carbohydrate;
+      totalNutrition.dietary_fiber = totalNutrition.dietary_fiber + tempNutrients.dietary_fiber;
+      totalNutrition.sugars = totalNutrition.sugars + tempNutrients.sugars;
+      totalNutrition.protein = totalNutrition.protein + tempNutrients.protein;
+      console.log(totalNutrition.calories);
+    })
+  );
+  console.log(totalNutrition.calories);
+  return totalNutrition;
+}
+
+async function toDB(query: string[]){
+  const nutrients:nutrition = await getTotalNutrients(query);
+  console.log(nutrients.calories);
+  const docRef = await addDoc(collection(db, "users/VFUlJnWqy4ZeH10ktsHU/Recipes"), {
+    calories: nutrients.calories,
+    total_fat: nutrients.total_fat,
+    saturated_fat: nutrients.saturated_fat,
+    cholesterol: nutrients.cholesterol,
+    sodium: nutrients.sodium,
+    total_carbs: nutrients.total_carbohydrate,
+    dietary_fiber: nutrients.dietary_fiber,
+    sugar: nutrients.sugars,
+    protein: nutrients.protein
+  });
+  console.log("Document written with ID: ", docRef.id);
+}
 
 const Form1 = () => {
   const [show, setShow] = useState(false);
@@ -352,6 +435,8 @@ export default function Multistep() {
                     duration: 3000,
                     isClosable: true,
                   });
+                  let ingredients:string[] = ["cooked rice one cup", "chicken breast one pound", "broccoli half cup"];
+                  toDB(ingredients);
                 }}>
                 Submit
               </Button>
@@ -362,4 +447,3 @@ export default function Multistep() {
     </>
   );
 }
-
