@@ -108,7 +108,7 @@ const SignUp = () => {
                 <Button mt={4} colorScheme="teal" type="submit" size="lg">
                   Submit
                 </Button>
-                <Link to="/Login">
+                <Link to="/login">
                   <Button mt={4} colorScheme="red" size="lg">
                     Back
                   </Button>
