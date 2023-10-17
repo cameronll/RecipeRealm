@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {db} from '../../firebaseConfig';
 import {collection, addDoc} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore"; 
 import {useFormik} from 'formik';
 
 import {
@@ -132,10 +133,20 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition>{
   return totalNutrition;
 }
 
-async function toDB(query: string[]){
-  const nutrients:nutrition = await getTotalNutrients(query);
+async function toDB(recipe_name:string, servings:number, allergens:string, cooking_applications:string,
+                    cooking_time:string, cost_per_serving:string, difficulty:string, posted:boolean, ingredients: string[], ){
+  const nutrients:nutrition = await getTotalNutrients(ingredients);
   console.log(nutrients.calories);
-  const docRef = await addDoc(collection(db, "users/VFUlJnWqy4ZeH10ktsHU/Recipes"), {
+  const docRef = await setDoc(doc(db, "users/tester/Recipes", "Bodybuilder"), {
+    recipe_name: recipe_name,
+    servings: servings,
+    allergens: allergens,
+    cooking_applications: cooking_applications,
+    cooking_time: cooking_time,
+    cost_per_serving: cost_per_serving,
+    difficulty: difficulty,
+    posted: posted,
+    ingredients: ingredients,
     calories: nutrients.calories,
     total_fat: nutrients.total_fat,
     saturated_fat: nutrients.saturated_fat,
@@ -146,7 +157,7 @@ async function toDB(query: string[]){
     sugar: nutrients.sugars,
     protein: nutrients.protein
   });
-  console.log("Document written with ID: ", docRef.id);
+  console.log("Document written with ID: ", docRef);
 }
 
 const Form1 = () => {
@@ -436,7 +447,7 @@ export default function Multistep() {
                     isClosable: true,
                   });
                   let ingredients:string[] = ["cooked rice one cup", "chicken breast one pound", "broccoli half cup"];
-                  toDB(ingredients);
+                  toDB("Bodybuilder", 1, "None", "Pan", "30 minutes", "7 dollars", "easy", false, ingredients);
                 }}>
                 Submit
               </Button>

@@ -14,7 +14,7 @@ import {
 //import Calendar from '../calendar';
 //import Recipes from '../myrecipes';
 import Profile from '../profile';
-import {signInWithEmailAndPassword} from 'firebase/auth';
+import {EmailAuthCredential, signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../firebaseConfig';
 import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';

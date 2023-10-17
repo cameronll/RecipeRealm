@@ -4,7 +4,8 @@ import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
 import {db} from '../../firebaseConfig';
-import {collection, addDoc} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore"; 
+import {collection, addDoc, DocumentReference} from "firebase/firestore";
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link} from 'react-router-dom';
 import Footer from '../../components/Footer';
@@ -37,12 +38,12 @@ const SignUp = () => {
           values.password,
         );
 
-        const docRef = await addDoc(collection(db, "users"), {
+        const docRef = await setDoc(doc(db, "users", values.username), {
           email: values.email,
           name: values.name,
           username: values.username
         });
-        console.log("Document written with ID: ", docRef.id);
+        console.log("Document written with ID: ", docRef);
 
         // Additional actions upon successful signup (if needed)
       } catch (e) {
