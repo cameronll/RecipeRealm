@@ -3,6 +3,7 @@ import {Flex, Input, Button, Stack, ButtonGroup, Box} from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
+import { getAuth } from "firebase/auth";
 import {db} from '../../firebaseConfig';
 import { doc, setDoc } from "firebase/firestore"; 
 import {collection, addDoc, DocumentReference} from "firebase/firestore";
