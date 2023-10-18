@@ -39,7 +39,7 @@ const SignUp = () => {
           values.password,
         );
 
-        const docRef = await setDoc(doc(db, "users", values.username), {
+        const docRef = await setDoc(doc(db, "users", values.email), {
           email: values.email,
           name: values.name,
           username: values.username

@@ -32,6 +32,7 @@ import {
 
 import {useToast} from '@chakra-ui/react';
 
+// type that holds nutrition facts
 type nutrition = {
   calories: number,
   total_fat: number,
@@ -43,8 +44,14 @@ type nutrition = {
   sugars: number,
   protein: number
 }
-
+/* 
+  function to get nutrition data from Nutritionix API
+  calling with ingredient from ingredient list
+  string parameter will be formatted like: "white rice one cup"
+  returns a raw JSON string
+*/
 async function fetchNutritionData(query: string): Promise<string>{
+  // headers and body
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("x-app-id", "3a83fb27");
@@ -55,6 +62,7 @@ async function fetchNutritionData(query: string): Promise<string>{
     "query": query
   });
 
+  // variable to hold request data
   var requestOptions: any = {
     method: 'POST',
     headers: myHeaders,
@@ -62,16 +70,29 @@ async function fetchNutritionData(query: string): Promise<string>{
     redirect: 'follow'
   };
 
+  // call API with request data, store in variable response
   const response = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions);
+  // turn the result into a string
   const result = response.text();
+  // return the string
   return result; 
 }
 
+/*
+  function to get the nutrition information of a SINGLE ingredient
+  string parameter will be formatted like: "white rice one cup"
+  returns a type: nutrition
+*/
 async function getIngredientNutrients(query: string): Promise<nutrition>{
   try{
+    // get the raw data with the string
     const data = await fetchNutritionData(query);
+    // turn the raw data into a JSON object
     let obj = JSON.parse(data);
+    // store the info in a type: nutrition
     let nutrients: nutrition = {
+      // since this data is now in a JSON object, the values can be accessed
+      // with their keys like fields in a struct
       calories: obj.foods[0].nf_calories,
       total_fat: obj.foods[0].nf_total_fat,
       saturated_fat: obj.foods[0].nf_saturated_fat,
@@ -82,12 +103,14 @@ async function getIngredientNutrients(query: string): Promise<nutrition>{
       sugars: obj.foods[0].nf_sugars,
       protein: obj.foods[0].nf_protein,
     }
+    // return the nutrition information for this ONE ingredient
     return nutrients;
     }
   catch(error){
     console.log(error);
   }
 
+  // empty type: nutrition to return in case of failure
   let nullNutrition = {
     calories:0,
     total_fat:0,
@@ -99,12 +122,20 @@ async function getIngredientNutrients(query: string): Promise<nutrition>{
     sugars:0,
     protein:0
   };
-
   return nullNutrition;
 }
 
+/*
+  method to get the nutrition facts for the WHOLE recipe
+
+  calls the getIngredientNutrients method on each ingredient
+  and stores the sum of each nutrient in a type: nutrition
+
+  returns a type: nutrition that holds the nutrition facts for the entire recipe
+*/
 async function getTotalNutrients(ingredients: string[]): Promise<nutrition>{
-  var totalNutrition = {
+  // variable to store nutrition for whole recipe
+  var recipeNutrients = {
     calories:0,
     total_fat:0,
     saturated_fat:0,
@@ -115,34 +146,45 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition>{
     sugars:0,
     protein:0
   };
+  // for every element in ingredients, add the ingredients nutrients to the recipe nutrient total
   await Promise.all(
     ingredients.map(async (ingredient) => {
-      let tempNutrients: nutrition = await getIngredientNutrients(ingredient);
-      totalNutrition.calories = totalNutrition.calories + tempNutrients.calories;
-      totalNutrition.total_fat = totalNutrition.total_fat + tempNutrients.total_fat;
-      totalNutrition.saturated_fat = totalNutrition.saturated_fat + tempNutrients.saturated_fat;
-      totalNutrition.cholesterol = totalNutrition.cholesterol + tempNutrients.cholesterol;
-      totalNutrition.sodium = totalNutrition.sodium + tempNutrients.sodium;
-      totalNutrition.total_carbohydrate = totalNutrition.total_carbohydrate + tempNutrients.total_carbohydrate;
-      totalNutrition.dietary_fiber = totalNutrition.dietary_fiber + tempNutrients.dietary_fiber;
-      totalNutrition.sugars = totalNutrition.sugars + tempNutrients.sugars;
-      totalNutrition.protein = totalNutrition.protein + tempNutrients.protein;
-      console.log(totalNutrition.calories);
+      let ingredientNutrients: nutrition = await getIngredientNutrients(ingredient);
+      recipeNutrients.calories += ingredientNutrients.calories;
+      recipeNutrients.total_fat += ingredientNutrients.total_fat;
+      recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
+      recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
+      recipeNutrients.sodium += ingredientNutrients.sodium;
+      recipeNutrients.total_carbohydrate += ingredientNutrients.total_carbohydrate;
+      recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
+      recipeNutrients.sugars += ingredientNutrients.sugars;
+      recipeNutrients.protein += ingredientNutrients.protein;
     })
   );
-  console.log(totalNutrition.calories);
-  return totalNutrition;
+  // return the nutrition facts for the whole recipe
+  return recipeNutrients;
 }
 
+/*
+  function to send all data to the database
+  adds recipe information to the currently logged in user's recipe list
+  returns nothing
+*/
 async function toDB(recipe_name:string, servings:number, allergens:string, cooking_applications:string,
     cooking_time:string, cost_per_serving:string, difficulty:string, posted:boolean, ingredients: string[], ){
+  // get the current user
   const auth = getAuth();
   const user = auth.currentUser;
+  // if there is a user logged in...
   if (user !== null){
+    // store the currently logged in user's email in email
     const email = user.email;
+    // get the total nutrients, pass in the provided ingredients string array
     const nutrients:nutrition = await getTotalNutrients(ingredients);
-    console.log(nutrients.calories);
-    const docRef = await setDoc(doc(db, "users/" + email + "/Recipes", "Bodybuilder"), {
+    // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
+    // creates a document with name: <recipe_name>
+    await setDoc(doc(db, "users/" + email + "/Recipes", recipe_name), {
+      // name in database: variable
       recipe_name: recipe_name,
       servings: servings,
       allergens: allergens,
@@ -152,17 +194,9 @@ async function toDB(recipe_name:string, servings:number, allergens:string, cooki
       difficulty: difficulty,
       posted: posted,
       ingredients: ingredients,
-      calories: nutrients.calories,
-      total_fat: nutrients.total_fat,
-      saturated_fat: nutrients.saturated_fat,
-      cholesterol: nutrients.cholesterol,
-      sodium: nutrients.sodium,
-      total_carbs: nutrients.total_carbohydrate,
-      dietary_fiber: nutrients.dietary_fiber,
-      sugar: nutrients.sugars,
-      protein: nutrients.protein
+      nutrition: nutrients
     });
-    console.log("Document written with ID: ", docRef);
+    console.log("Document written successfully");
   }
 }
 
@@ -452,8 +486,13 @@ export default function Multistep() {
                     duration: 3000,
                     isClosable: true,
                   });
+                  // TODO
+                  // replace hardcoded data with user inputted data from the form
+                  // replace hardcoded ingredients list with user inputted data
+
+                  // call to the DB with hardcoded data (for now)
                   let ingredients:string[] = ["cooked rice one cup", "chicken breast one pound", "broccoli half cup"];
-                  toDB("Bodybuilder", 1, "None", "Pan", "30 minutes", "7 dollars", "easy", false, ingredients);
+                  toDB("Shredder", 1, "None", "Pan", "30 minutes", "7 dollars", "easy", false, ingredients);
                 }}>
                 Submit
               </Button>
