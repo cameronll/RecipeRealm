@@ -1,8 +1,7 @@
 import {useState} from 'react';
 import {db} from '../../firebaseConfig';
-import {collection, addDoc} from "firebase/firestore";
+import {collection, addDoc, doc, setDoc, getDoc, getDocs} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore"; 
 import {useFormik} from 'formik';
 
 import {

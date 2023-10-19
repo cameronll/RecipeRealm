@@ -30,7 +30,7 @@ const Login = () => {
     e.preventDefault(); // doesnt reload page
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
-        navigate('../CreateRecipe');
+        navigate('../recipes');
       })
       .catch(e => {
         console.log(e);
