@@ -50,6 +50,19 @@ type nutrition = {
   sugars: number;
   protein: number;
 };
+
+type recipe = {
+  recipe_name: string;
+  servings: number;
+  allergens: string;
+  cooking_applications: string;
+  cooking_time: string;
+  cost_per_serving: string;
+  difficulty: string;
+  posted: boolean;
+  ingredients: string[];
+  nutrients: nutrition;
+};
 /* 
   function to get nutrition data from Nutritionix API
   calling with ingredient from ingredient list
@@ -201,10 +214,7 @@ async function toDB(
     const email = user.email;
     // get the total nutrients, pass in the provided ingredients string array
     const nutrients: nutrition = await getTotalNutrients(ingredients);
-    // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
-    // creates a document with name: <recipe_name>
-    await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
-      // name in database: variable
+    const recipe: recipe = {
       recipe_name: recipe_name,
       servings: servings,
       allergens: allergens,
@@ -214,7 +224,13 @@ async function toDB(
       difficulty: difficulty,
       posted: posted,
       ingredients: ingredients,
-      nutrition: nutrients,
+      nutrients: nutrients,
+    };
+    // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
+    // creates a document with name: <recipe_name>
+    await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
+      // name in database: variable
+      data: recipe,
     });
     console.log('Document written successfully');
   }

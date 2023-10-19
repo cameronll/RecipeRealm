@@ -56,7 +56,7 @@ const Recipes: React.FC = () => {
   }, [email]);
 
   const recipesList = recipes.map(recipe => (
-    <li key="{recipe.data.recipe_name}">{recipe.recipe_name}</li>
+    <li key="{recipe.recipe_name}">{recipe.data.recipe_name}</li>
   ));
   return (
     <>
