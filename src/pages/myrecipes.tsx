@@ -56,7 +56,7 @@ const Recipes: React.FC = () => {
   }, [email]);
 
   const recipesList = recipes.map(recipe => (
-    <li key="{recipe.recipe_name}">{recipe.data.recipe_name}</li>
+    <li key="{recipe.data.recipe_name}">{["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}</li>
   ));
   return (
     <>
@@ -65,7 +65,6 @@ const Recipes: React.FC = () => {
         <Button
           onClick={() => {
             window.localStorage.clear();
-            console.log(recipes);
           }}>
           Create Recipe
         </Button>

@@ -53,7 +53,7 @@ type nutrition = {
 
 type recipe = {
   recipe_name: string;
-  servings: number;
+  servings: string;
   allergens: string;
   cooking_applications: string;
   cooking_time: string;
@@ -61,6 +61,7 @@ type recipe = {
   difficulty: string;
   posted: boolean;
   ingredients: string[];
+  instructions: string;
   nutrients: nutrition;
 };
 /* 
@@ -178,8 +179,7 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
       recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
       recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
       recipeNutrients.sodium += ingredientNutrients.sodium;
-      recipeNutrients.total_carbohydrate +=
-        ingredientNutrients.total_carbohydrate;
+      recipeNutrients.total_carbohydrate += ingredientNutrients.total_carbohydrate;
       recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
       recipeNutrients.sugars += ingredientNutrients.sugars;
       recipeNutrients.protein += ingredientNutrients.protein;
@@ -196,7 +196,7 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
 */
 async function toDB(
   recipe_name: string,
-  servings: number,
+  servings: string,
   allergens: string,
   cooking_applications: string,
   cooking_time: string,
@@ -204,7 +204,8 @@ async function toDB(
   difficulty: string,
   posted: boolean,
   ingredients: string[],
-) {
+  instructions: string
+  ) {
   // get the current user
   const auth = getAuth();
   const user = auth.currentUser;
@@ -224,6 +225,7 @@ async function toDB(
       difficulty: difficulty,
       posted: posted,
       ingredients: ingredients,
+      instructions: instructions,
       nutrients: nutrients,
     };
     // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
@@ -303,6 +305,57 @@ const Form1 = () => {
 };
 
 const Form2 = () => {
+  const [difficulty, setDifficulty] = useState('');
+  const [appliances, setAppliances] = useState('');
+  const [cost, setCost] = useState('');
+  const [allergens, setAllergens] = useState('');
+  const [servings, setServings] = useState('');
+
+  useEffect(() => {
+    const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
+    const appliances_time_storage: any = window.localStorage.getItem('APPLIANCES');
+    const cost_storage: any = window.localStorage.getItem('COST');
+    const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
+    const servings_storage: any = window.localStorage.getItem('SERVINGS');
+    if (difficulty_storage !== 'null') {
+      setDifficulty(JSON.parse(difficulty_storage));
+      setAppliances(JSON.parse(appliances_time_storage));
+      setCost(JSON.parse(cost_storage));
+      setAllergens(JSON.parse(allergens_storage));
+      setServings(JSON.parse(servings_storage));
+    }
+  }, []);
+
+  const handleDifficultyChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('DIFFICULTY', JSON.stringify(targ));
+    setDifficulty(targ);
+  };
+
+  const handleAppliancesChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('APPLIANCES', JSON.stringify(targ));
+    setAppliances(targ);
+  };
+
+  const handleCostChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('COST', JSON.stringify(targ));
+    setCost(targ);
+  };
+
+  const handleAllergensChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('ALLERGENS', JSON.stringify(targ));
+    setAllergens(targ);
+  };
+
+  const handleServingsChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('SERVINGS', JSON.stringify(targ));
+    setServings(targ);
+  };
+
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
@@ -328,7 +381,9 @@ const Form2 = () => {
           shadow="sm"
           size="sm"
           w="full"
-          rounded="md">
+          rounded="md"
+          value={difficulty}
+          onChange={handleDifficultyChange}>
           <option>Beginner</option>
           <option>Intermediate</option>
           <option>Seasoned Chef</option>
@@ -357,6 +412,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={cost}
+          onChange={handleCostChange}
         />
       </FormControl>
 
@@ -382,6 +439,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={appliances}
+          onChange={handleAppliancesChange}
         />
       </FormControl>
 
@@ -407,6 +466,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={allergens}
+          onChange={handleAllergensChange}
         />
       </FormControl>
 
@@ -431,6 +492,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={servings}
+          onChange={handleServingsChange}
         />
       </FormControl>
       <Flex>
@@ -459,6 +522,20 @@ const Form2 = () => {
 };
 
 const Form3 = () => {
+  const [instructions, setInstructions] = useState('');
+
+  useEffect(() => {
+    const instructions_storage: any = window.localStorage.getItem('INSTRUCTIONS');
+    if (instructions !== 'null') {
+      setInstructions(JSON.parse(instructions_storage));
+    }
+  }, []);
+
+  const handleInstructionsChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('INSTRUCTIONS', JSON.stringify(targ));
+    setInstructions(targ);
+  };
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal">
@@ -483,6 +560,8 @@ const Form3 = () => {
             fontSize={{
               sm: 'sm',
             }}
+            value={instructions}
+            onChange={handleInstructionsChange}
           />
           <FormHelperText>
             Instructions on how to make the recipe
@@ -497,7 +576,22 @@ export default function Multistep() {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
-  function handleSubmit() {}
+  const recipeFromStorage:any = window.localStorage.getItem('RECIPENAME');
+  const recipeName = JSON.parse(recipeFromStorage);
+  const cookingTimeStorage:any = window.localStorage.getItem('COOKINGTIME');
+  const cookingTime = JSON.parse(cookingTimeStorage);
+  const difficultyStorage:any = window.localStorage.getItem('DIFFICULTY');
+  const difficulty = JSON.parse(difficultyStorage);
+  const appliancesStorage:any = window.localStorage.getItem('APPLIANCES');
+  const appliances = JSON.parse(appliancesStorage);
+  const costStorage:any = window.localStorage.getItem('COST');
+  const cost = JSON.parse(costStorage);
+  const allergensStorage:any = window.localStorage.getItem('ALLERGENS');
+  const allergens = JSON.parse(allergensStorage);
+  const servingsStorage:any = window.localStorage.getItem('SERVINGS');
+  const servings = JSON.parse(servingsStorage);
+  const instructionsStorage:any = window.localStorage.getItem('INSTRUCTIONS');
+  const instructions = JSON.parse(instructionsStorage);
 
   return (
     <>
@@ -542,7 +636,6 @@ export default function Multistep() {
                     setProgress(progress + 33.33);
                   }
                   console.log(window.localStorage.getItem('RECIPENAME'));
-                  console.log(window.localStorage.getItem('COOKINGTIME'));
                 }}
                 colorScheme="teal"
                 variant="outline">
@@ -572,7 +665,8 @@ export default function Multistep() {
                     'chicken breast one pound',
                     'broccoli half cup',
                   ];
-                  // toDB();
+                  toDB(recipeName, servings, allergens, appliances, cookingTime, cost, difficulty, false, ingredients, instructions);
+                  localStorage.clear();
                 }}>
                 Submit
               </Button>
