@@ -1,7 +1,14 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {db} from '../../firebaseConfig';
-import {collection, addDoc, doc, setDoc, getDoc, getDocs} from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+} from 'firebase/firestore';
+import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import {useFormik} from 'formik';
 
 import {
@@ -33,32 +40,32 @@ import {useToast} from '@chakra-ui/react';
 
 // type that holds nutrition facts
 type nutrition = {
-  calories: number,
-  total_fat: number,
-  saturated_fat: number,
-  cholesterol: number,
-  sodium: number,
-  total_carbohydrate: number,
-  dietary_fiber: number,
-  sugars: number,
-  protein: number
-}
+  calories: number;
+  total_fat: number;
+  saturated_fat: number;
+  cholesterol: number;
+  sodium: number;
+  total_carbohydrate: number;
+  dietary_fiber: number;
+  sugars: number;
+  protein: number;
+};
 /* 
   function to get nutrition data from Nutritionix API
   calling with ingredient from ingredient list
   string parameter will be formatted like: "white rice one cup"
   returns a raw JSON string
 */
-async function fetchNutritionData(query: string): Promise<string>{
+async function fetchNutritionData(query: string): Promise<string> {
   // headers and body
   var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  myHeaders.append("x-app-id", "3a83fb27");
-  myHeaders.append("x-app-key", "135db1d7aaba12d363ad7b2225656590");
-  myHeaders.append("search_nutrient", "\"protein\"");
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('x-app-id', '3a83fb27');
+  myHeaders.append('x-app-key', '135db1d7aaba12d363ad7b2225656590');
+  myHeaders.append('search_nutrient', '"protein"');
 
   var raw = JSON.stringify({
-    "query": query
+    query: query,
   });
 
   // variable to hold request data
@@ -66,15 +73,18 @@ async function fetchNutritionData(query: string): Promise<string>{
     method: 'POST',
     headers: myHeaders,
     body: raw,
-    redirect: 'follow'
+    redirect: 'follow',
   };
 
   // call API with request data, store in variable response
-  const response = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients", requestOptions);
+  const response = await fetch(
+    'https://trackapi.nutritionix.com/v2/natural/nutrients',
+    requestOptions,
+  );
   // turn the result into a string
   const result = response.text();
   // return the string
-  return result; 
+  return result;
 }
 
 /*
@@ -82,8 +92,8 @@ async function fetchNutritionData(query: string): Promise<string>{
   string parameter will be formatted like: "white rice one cup"
   returns a type: nutrition
 */
-async function getIngredientNutrients(query: string): Promise<nutrition>{
-  try{
+async function getIngredientNutrients(query: string): Promise<nutrition> {
+  try {
     // get the raw data with the string
     const data = await fetchNutritionData(query);
     // turn the raw data into a JSON object
@@ -101,25 +111,24 @@ async function getIngredientNutrients(query: string): Promise<nutrition>{
       dietary_fiber: obj.foods[0].nf_dietary_fiber,
       sugars: obj.foods[0].nf_sugars,
       protein: obj.foods[0].nf_protein,
-    }
+    };
     // return the nutrition information for this ONE ingredient
     return nutrients;
-    }
-  catch(error){
+  } catch (error) {
     console.log(error);
   }
 
   // empty type: nutrition to return in case of failure
   let nullNutrition = {
-    calories:0,
-    total_fat:0,
-    saturated_fat:0,
-    cholesterol:0,
-    sodium:0,
-    total_carbohydrate:0,
-    dietary_fiber:0,
-    sugars:0,
-    protein:0
+    calories: 0,
+    total_fat: 0,
+    saturated_fat: 0,
+    cholesterol: 0,
+    sodium: 0,
+    total_carbohydrate: 0,
+    dietary_fiber: 0,
+    sugars: 0,
+    protein: 0,
   };
   return nullNutrition;
 }
@@ -132,33 +141,36 @@ async function getIngredientNutrients(query: string): Promise<nutrition>{
 
   returns a type: nutrition that holds the nutrition facts for the entire recipe
 */
-async function getTotalNutrients(ingredients: string[]): Promise<nutrition>{
+async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
   // variable to store nutrition for whole recipe
   var recipeNutrients = {
-    calories:0,
-    total_fat:0,
-    saturated_fat:0,
-    cholesterol:0,
-    sodium:0,
-    total_carbohydrate:0,
-    dietary_fiber:0,
-    sugars:0,
-    protein:0
+    calories: 0,
+    total_fat: 0,
+    saturated_fat: 0,
+    cholesterol: 0,
+    sodium: 0,
+    total_carbohydrate: 0,
+    dietary_fiber: 0,
+    sugars: 0,
+    protein: 0,
   };
   // for every element in ingredients, add the ingredients nutrients to the recipe nutrient total
   await Promise.all(
-    ingredients.map(async (ingredient) => {
-      let ingredientNutrients: nutrition = await getIngredientNutrients(ingredient);
+    ingredients.map(async ingredient => {
+      let ingredientNutrients: nutrition = await getIngredientNutrients(
+        ingredient,
+      );
       recipeNutrients.calories += ingredientNutrients.calories;
       recipeNutrients.total_fat += ingredientNutrients.total_fat;
       recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
       recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
       recipeNutrients.sodium += ingredientNutrients.sodium;
-      recipeNutrients.total_carbohydrate += ingredientNutrients.total_carbohydrate;
+      recipeNutrients.total_carbohydrate +=
+        ingredientNutrients.total_carbohydrate;
       recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
       recipeNutrients.sugars += ingredientNutrients.sugars;
       recipeNutrients.protein += ingredientNutrients.protein;
-    })
+    }),
   );
   // return the nutrition facts for the whole recipe
   return recipeNutrients;
@@ -169,20 +181,29 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition>{
   adds recipe information to the currently logged in user's recipe list
   returns nothing
 */
-async function toDB(recipe_name:string, servings:number, allergens:string, cooking_applications:string,
-    cooking_time:string, cost_per_serving:string, difficulty:string, posted:boolean, ingredients: string[], ){
+async function toDB(
+  recipe_name: string,
+  servings: number,
+  allergens: string,
+  cooking_applications: string,
+  cooking_time: string,
+  cost_per_serving: string,
+  difficulty: string,
+  posted: boolean,
+  ingredients: string[],
+) {
   // get the current user
   const auth = getAuth();
   const user = auth.currentUser;
   // if there is a user logged in...
-  if (user !== null){
+  if (user !== null) {
     // store the currently logged in user's email in email
     const email = user.email;
     // get the total nutrients, pass in the provided ingredients string array
-    const nutrients:nutrition = await getTotalNutrients(ingredients);
+    const nutrients: nutrition = await getTotalNutrients(ingredients);
     // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
     // creates a document with name: <recipe_name>
-    await setDoc(doc(db, "users/" + email + "/Recipes", recipe_name), {
+    await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
       // name in database: variable
       recipe_name: recipe_name,
       servings: servings,
@@ -193,15 +214,43 @@ async function toDB(recipe_name:string, servings:number, allergens:string, cooki
       difficulty: difficulty,
       posted: posted,
       ingredients: ingredients,
-      nutrition: nutrients
+      nutrition: nutrients,
     });
-    console.log("Document written successfully");
+    console.log('Document written successfully');
   }
 }
 
 const Form1 = () => {
   const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  const [recipeName, setRecipeName] = useState('');
+  const [cookingTime, setCookingTime] = useState('');
+
+  useEffect(() => {
+    const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
+    const cooking_time_storage: any =
+      window.localStorage.getItem('COOKINGTIME');
+    if (recipe_name_storage !== 'null') {
+      setRecipeName(JSON.parse(recipe_name_storage));
+      setCookingTime(JSON.parse(cooking_time_storage));
+    }
+  }, []);
+  // const handleSubmit = (e: {preventDefault: () => void}) => {
+  //   e.preventDefault();
+  //   console.log(JSON.stringify(form1));
+  // };
+
+  const handleNameChange = (e: any) => {
+    const name = e.target.value;
+    window.localStorage.setItem('RECIPENAME', JSON.stringify(name));
+    setRecipeName(name);
+  };
+
+  const handleTimeChange = (e: any) => {
+    const name = e.target.value;
+    window.localStorage.setItem('COOKINGTIME', JSON.stringify(name));
+    setCookingTime(name);
+  };
+
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
@@ -211,7 +260,12 @@ const Form1 = () => {
         <FormLabel htmlFor="recipeName" fontWeight={'normal'}>
           Recipe Name
         </FormLabel>
-        <Input id="recipeName" type="recipeName" />
+        <Input
+          id="recipeName"
+          type="text"
+          value={recipeName}
+          onChange={handleNameChange}
+        />
         <FormHelperText>max 20 char.</FormHelperText>
       </FormControl>
 
@@ -220,7 +274,12 @@ const Form1 = () => {
           Cooking Time
         </FormLabel>
         <InputGroup size="md">
-          <Input pr="4.5rem" placeholder="0 Hours 0 minutes" />
+          <Input
+            pr="4.5rem"
+            placeholder="0 Hours 0 minutes"
+            value={cookingTime}
+            onChange={handleTimeChange}
+          />
         </InputGroup>
       </FormControl>
     </>
@@ -384,7 +443,6 @@ const Form2 = () => {
 };
 
 const Form3 = () => {
-
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal">
@@ -423,6 +481,7 @@ export default function Multistep() {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
+  function handleSubmit() {}
 
   return (
     <>
@@ -466,6 +525,8 @@ export default function Multistep() {
                   } else {
                     setProgress(progress + 33.33);
                   }
+                  console.log(window.localStorage.getItem('RECIPENAME'));
+                  console.log(window.localStorage.getItem('COOKINGTIME'));
                 }}
                 colorScheme="teal"
                 variant="outline">
@@ -490,8 +551,12 @@ export default function Multistep() {
                   // replace hardcoded ingredients list with user inputted data
 
                   // call to the DB with hardcoded data (for now)
-                  let ingredients:string[] = ["cooked rice one cup", "chicken breast one pound", "broccoli half cup"];
-                  toDB("Add Tester", 1, "None", "Pan", "30 minutes", "7 dollars", "easy", false, ingredients);
+                  let ingredients: string[] = [
+                    'cooked rice one cup',
+                    'chicken breast one pound',
+                    'broccoli half cup',
+                  ];
+                  // toDB();
                 }}>
                 Submit
               </Button>

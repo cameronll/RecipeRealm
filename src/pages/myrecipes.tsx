@@ -1,7 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
-import {collection, addDoc, doc, setDoc, getDoc, getDocs} from "firebase/firestore";
-import { browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence } from "firebase/auth";
+import {
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+} from 'firebase/firestore';
+import {
+  browserLocalPersistence,
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+} from 'firebase/auth';
 import Navbar from '../components/Navbar';
 import {
   Box,
@@ -21,35 +33,40 @@ const Recipes: React.FC = () => {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const email_from_storage:any = window.localStorage.getItem('EMAIL')
-    if (email_from_storage !== 'null'){
+    const email_from_storage: any = window.localStorage.getItem('EMAIL');
+    if (email_from_storage !== 'null') {
       setEmail(JSON.parse(email_from_storage));
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if (user){
+    if (user) {
       setEmail(user.email);
     }
     window.localStorage.setItem('EMAIL', JSON.stringify(email));
 
     async function getRecipes() {
-      const querySnapshot = await getDocs(collection(db, "users/" + email + "/Recipes"));
-      const recipesData = querySnapshot.docs.map((doc) => doc.data());
+      const querySnapshot = await getDocs(
+        collection(db, 'users/' + email + '/Recipes'),
+      );
+      const recipesData = querySnapshot.docs.map(doc => doc.data());
       setRecipes(recipesData);
     }
     getRecipes();
   }, [email]);
 
-  const recipesList = recipes.map((recipe) => <li key="{recipe.recipe_name}">{recipe.recipe_name}</li>);
+  const recipesList = recipes.map(recipe => (
+    <li key="{recipe.data.recipe_name}">{recipe.recipe_name}</li>
+  ));
   return (
     <>
       <Navbar />
       <Link to="/CreateRecipe">
         <Button
-        onClick={() => {
-          console.log(recipes);
-        }}>
+          onClick={() => {
+            window.localStorage.clear();
+            console.log(recipes);
+          }}>
           Create Recipe
         </Button>
         <ul>{recipesList}</ul>
