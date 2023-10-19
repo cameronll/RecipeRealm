@@ -491,7 +491,7 @@ export default function Multistep() {
 
                   // call to the DB with hardcoded data (for now)
                   let ingredients:string[] = ["cooked rice one cup", "chicken breast one pound", "broccoli half cup"];
-                  toDB("Shredder", 1, "None", "Pan", "30 minutes", "7 dollars", "easy", false, ingredients);
+                  toDB("Add Tester", 1, "None", "Pan", "30 minutes", "7 dollars", "easy", false, ingredients);
                 }}>
                 Submit
               </Button>

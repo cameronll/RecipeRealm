@@ -31,8 +31,9 @@ const Recipes: React.FC = () => {
     if (user){
       setEmail(user.email);
     }
+    window.localStorage.setItem('EMAIL', JSON.stringify(email));
+
     async function getRecipes() {
-      window.localStorage.setItem('EMAIL', JSON.stringify(email));
       const querySnapshot = await getDocs(collection(db, "users/" + email + "/Recipes"));
       const recipesData = querySnapshot.docs.map((doc) => doc.data());
       setRecipes(recipesData);
@@ -40,6 +41,7 @@ const Recipes: React.FC = () => {
     getRecipes();
   }, [email]);
 
+  const recipesList = recipes.map((recipe) => <li key="{recipe.recipe_name}">{recipe.recipe_name}</li>);
   return (
     <>
       <Navbar />
@@ -50,15 +52,8 @@ const Recipes: React.FC = () => {
         }}>
           Create Recipe
         </Button>
+        <ul>{recipesList}</ul>
       </Link>
-        <Button
-        onClick={() => {
-          for (let i = 0; i < recipes.length; i++){
-            console.log(recipes[i]);
-          }
-        }}>
-          Test
-        </Button>
     </>
   );
 };
