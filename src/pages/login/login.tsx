@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Flex,
   Box,
@@ -30,6 +30,7 @@ const Login = () => {
     e.preventDefault(); // doesnt reload page
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
+        localStorage.clear();
         navigate('../recipes');
       })
       .catch(e => {

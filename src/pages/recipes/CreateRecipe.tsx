@@ -356,6 +356,7 @@ const Form2 = () => {
     setServings(targ);
   };
 
+
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
@@ -501,7 +502,7 @@ const Form2 = () => {
           <FormLabel htmlFor="ingredient" fontWeight={'normal'}>
             Indgredient Name
           </FormLabel>
-          <Input id="ingredient" placeholder="Ingredient..." />
+          <Input id="ingredient" placeholder="Ingredient..."/>
         </FormControl>
 
         <FormControl>
@@ -666,7 +667,7 @@ export default function Multistep() {
                     'broccoli half cup',
                   ];
                   toDB(recipeName, servings, allergens, appliances, cookingTime, cost, difficulty, false, ingredients, instructions);
-                  localStorage.clear();
+                  window.localStorage.clear();
                 }}>
                 Submit
               </Button>

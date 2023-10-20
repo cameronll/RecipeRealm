@@ -25,25 +25,33 @@ import {
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
-const auth = getAuth();
-const user = auth.currentUser;
-
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [email, setEmail] = useState<string | null>(null);
+  var auth:any;
+  var user:any;
 
   useEffect(() => {
+    auth = getAuth();
+  }, []);
+
+  useEffect(() => {
+    user = auth.currentUser;
+    console.log(user);
     const email_from_storage: any = window.localStorage.getItem('EMAIL');
-    if (email_from_storage !== 'null') {
+    if (email_from_storage !== null) {
       setEmail(JSON.parse(email_from_storage));
     }
-  }, []);
+    if (user){
+      setEmail(user.email);
+    }
+  }, [auth]);
 
   useEffect(() => {
     if (user) {
       setEmail(user.email);
+      window.localStorage.setItem('EMAIL', JSON.stringify(user.email));
     }
-    window.localStorage.setItem('EMAIL', JSON.stringify(email));
 
     async function getRecipes() {
       const querySnapshot = await getDocs(
