@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {db} from '../../firebaseConfig';
+import {IoIosAdd, IoIosRemove} from 'react-icons/io';
 import {
   collection,
   addDoc,
@@ -37,6 +38,7 @@ import {
 } from '@chakra-ui/react';
 
 import {useToast} from '@chakra-ui/react';
+import React from 'react';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -324,8 +326,29 @@ const Form2 = () => {
       setAllergens(JSON.parse(allergens_storage));
       setServings(JSON.parse(servings_storage));
     }
+
+      //const ingredientCount_store: any = Number(
+      //     window.localStorage.getItem('INGREDIENTCOUNT'),
+      //   );
+      //   const ingredientString_store: any =
+      //     window.localStorage.getItem('INGREDIENTSTRING');
+      //   const ingredientName_store: any =
+      //     window.localStorage.getItem('INGREDIENTNAME');
+      //   const ingredientAmount_store: any =
+      //     window.localStorage.getItem('INGREDIENTAMOUNT');
+      //   const ingredientMeasurement_store: any = window.localStorage.getItem(
+      //     'INGREDIENTMEASUREMENT',
+      //   );
+      //   if (ingredientCount_store !== 'null') {
+      //     setcount(JSON.parse(ingredientCount_store) + 1);
+      //     setIngredientString(JSON.parse(ingredientString_store));
+      //     setIngredientName(JSON.parse(ingredientName_store));
+      //     setIngredientAmount(JSON.parse(ingredientAmount_store));
+      //     setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
+      //   }
   }, []);
 
+  
   const handleDifficultyChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('DIFFICULTY', JSON.stringify(targ));
@@ -356,6 +379,88 @@ const Form2 = () => {
     setServings(targ);
   };
 
+
+  //buttonDisable
+  const disableAdd = (): boolean | undefined => {
+    if (
+      ingredientName === '' ||
+      ingredientAmount === 0 ||
+      ingredientMeasurement === ''
+    ) {
+      return true;
+    }
+    return false;
+  };
+  const disableRemove = (): boolean | undefined => {
+    if (ingredientCount == 1) {
+      return true;
+    }
+    return false;
+  };
+  const disabled = (index: number): boolean => {
+    if (ingredientCount - 1 !== index) {
+      return true;
+    }
+    return false;
+  };
+  const handleIName = (e: any) => {
+    const newName = e.target.value;
+    window.localStorage.setItem('INGREDIENTNAME', JSON.stringify(newName));
+    setIngredientName(newName);
+  };
+
+  const handleIAmount = (value: any) => {
+    const newAmount = value;
+    window.localStorage.setItem('INGREDIENTAMOUNT', JSON.stringify(newAmount));
+    setIngredientAmount(newAmount);
+  };
+
+  const handleIMeasurement = (e: any) => {
+    const newMeasurement = e.target.value;
+    window.localStorage.setItem(
+      'INGREDIENTMEASUREMENT',
+      JSON.stringify(newMeasurement),
+    );
+    setIngredientMeasurement(newMeasurement);
+  };
+
+  function incrementCount() {
+    //create new ingredient String
+    const newIngredient =
+      ingredientName + ' ' + ingredientAmount + ' ' + ingredientMeasurement;
+    //set previous names
+    // setprevIngredientName(ingredientName);
+    // setprevIngredientAmount(ingredientAmount);
+    // setprevIngredientMeasurement(ingredientMeasurement);
+    //append to back of ingredeitn string state
+    const helperString = ingredientString;
+    helperString.push(newIngredient);
+    setIngredientString(helperString);
+    //clear data
+    setIngredientAmount(0);
+    setIngredientMeasurement('');
+    setIngredientName('');
+
+    //testing
+    console.log(ingredientString);
+
+    setcount(prevCount => prevCount + 1);
+  }
+
+  function decrementCount() {
+    ingredientString.pop();
+    console.log(ingredientString);
+    setcount(prevCount => {
+      if (prevCount > 1) {
+        // setIngredientMeasurement(previngredientMeasurement);
+        // setIngredientAmount(previngredientAmount);
+        // setIngredientName(previngredientName);
+
+        return prevCount - 1;
+      }
+      return prevCount;
+    });
+  }
 
   return (
     <>
@@ -497,26 +602,90 @@ const Form2 = () => {
           onChange={handleServingsChange}
         />
       </FormControl>
-      <Flex>
-        <FormControl mr="5%">
-          <FormLabel htmlFor="ingredient" fontWeight={'normal'}>
-            Indgredient Name
-          </FormLabel>
-          <Input id="ingredient" placeholder="Ingredient..."/>
-        </FormControl>
+      {Array.from({length: ingredientCount}).map((_, index) => (
+        <Flex key={index}>
+          <React.Fragment>
+            <FormControl mr="5%">
+              <FormLabel htmlFor={`ingredient-${index}`} fontWeight={'normal'}>
+                Ingredient Name #{`${index}`}
+              </FormLabel>
+              <Input
+                id={`ingredient-${index}`}
+                placeholder="Ingredient..."
+                onChange={handleIName}
+                isDisabled={disabled(index)}
+                isRequired={true}
+              />
+            </FormControl>
 
-        <FormControl>
-          <FormLabel htmlFor="amount" fontWeight={'normal'}>
-            Amount
-          </FormLabel>
-          <NumberInput max={999} min={0}>
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </FormControl>
+            <FormControl mr="5%">
+              <FormLabel htmlFor={`amount-${index}`} fontWeight={'normal'}>
+                Amount
+              </FormLabel>
+              <NumberInput
+                max={999}
+                min={0}
+                onChange={handleIAmount}
+                isDisabled={disabled(index)}
+                isRequired={true}>
+                <NumberInputField id={`amount-${index}`} />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor={`unit-${index}`} fontWeight={'normal'}>
+                Unit of Measurement
+              </FormLabel>
+              <Select
+                id={`unit-${index}`}
+                placeholder=""
+                focusBorderColor="brand.400"
+                shadow="sm"
+                size="md"
+                w="full"
+                rounded="md"
+                onChange={handleIMeasurement}
+                isDisabled={disabled(index)}
+                isRequired={true}>
+                <option> </option>
+                <option>Ibs</option>
+                <option>oz</option>
+                <option>grams</option>
+                <option>milligrams</option>
+                <option>cups</option>
+                <option>tablespoon</option>
+                <option>teaspoon</option>
+              </Select>
+            </FormControl>
+          </React.Fragment>
+        </Flex>
+      ))}
+      <Flex>
+        <Button
+          onClick={incrementCount}
+          colorScheme="green"
+          variant="solid"
+          mt={8}
+          w="16rem"
+          mr="5%"
+          marginLeft="10%"
+          isDisabled={disableAdd()}>
+          Add Ingredient <IoIosAdd />
+        </Button>
+        <Button
+          onClick={decrementCount}
+          colorScheme="red"
+          variant="solid"
+          mt={8}
+          mr="5%"
+          w="16rem"
+          marginLeft="5%"
+          isDisabled={disableRemove()}>
+          Remove Ingredient <IoIosRemove />
+        </Button>
       </Flex>
     </>
   );
