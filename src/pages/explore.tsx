@@ -41,7 +41,7 @@ const Explore: React.FC = () => {
     }
     async function toStorage(){
       console.log(email);
-      const getUser = doc(db, "users", email);
+      const getUser = doc(db, "users", "btingle1@uncc.edu");
       const getUserData = await getDoc(getUser);
       const userFollowing = getUserData?.data()?.following;
       console.log(userFollowing);

@@ -181,7 +181,8 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
       recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
       recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
       recipeNutrients.sodium += ingredientNutrients.sodium;
-      recipeNutrients.total_carbohydrate += ingredientNutrients.total_carbohydrate;
+      recipeNutrients.total_carbohydrate +=
+        ingredientNutrients.total_carbohydrate;
       recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
       recipeNutrients.sugars += ingredientNutrients.sugars;
       recipeNutrients.protein += ingredientNutrients.protein;
@@ -206,8 +207,8 @@ async function toDB(
   difficulty: string,
   posted: boolean,
   ingredients: string[],
-  instructions: string
-  ) {
+  instructions: string,
+) {
   // get the current user
   const auth = getAuth();
   const user = auth.currentUser;
@@ -313,42 +314,56 @@ const Form2 = () => {
   const [allergens, setAllergens] = useState('');
   const [servings, setServings] = useState('');
 
+  const toast = useToast();
+  const [ingredientCount, setcount] = useState(1);
+  const [ingredientString, setIngredientString] = useState<string[]>([]);
+  //ingredientHandlerState
+  const [ingredientName, setIngredientName] = useState('');
+  const [ingredientAmount, setIngredientAmount] = useState(0);
+  const [ingredientMeasurement, setIngredientMeasurement] = useState(' ');
+
+  //TO DO
+  // FIX LOCAL STORAGE
+
+
   useEffect(() => {
     const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
-    const appliances_time_storage: any = window.localStorage.getItem('APPLIANCES');
+    const appliances_storage: any =
+      window.localStorage.getItem('APPLIANCES');
     const cost_storage: any = window.localStorage.getItem('COST');
     const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
     const servings_storage: any = window.localStorage.getItem('SERVINGS');
-    if (difficulty_storage !== 'null') {
+    if (difficulty_storage !== null && appliances_storage !== null && 
+        cost_storage !== null && allergens_storage !== null && servings_storage !== null) {
       setDifficulty(JSON.parse(difficulty_storage));
-      setAppliances(JSON.parse(appliances_time_storage));
+      setAppliances(JSON.parse(appliances_storage));
       setCost(JSON.parse(cost_storage));
       setAllergens(JSON.parse(allergens_storage));
       setServings(JSON.parse(servings_storage));
     }
 
-      //const ingredientCount_store: any = Number(
-      //     window.localStorage.getItem('INGREDIENTCOUNT'),
-      //   );
-      //   const ingredientString_store: any =
-      //     window.localStorage.getItem('INGREDIENTSTRING');
-      //   const ingredientName_store: any =
-      //     window.localStorage.getItem('INGREDIENTNAME');
-      //   const ingredientAmount_store: any =
-      //     window.localStorage.getItem('INGREDIENTAMOUNT');
-      //   const ingredientMeasurement_store: any = window.localStorage.getItem(
-      //     'INGREDIENTMEASUREMENT',
-      //   );
-      //   if (ingredientCount_store !== 'null') {
-      //     setcount(JSON.parse(ingredientCount_store) + 1);
-      //     setIngredientString(JSON.parse(ingredientString_store));
-      //     setIngredientName(JSON.parse(ingredientName_store));
-      //     setIngredientAmount(JSON.parse(ingredientAmount_store));
-      //     setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
-      //   }
+    const ingredientCount_store: any = Number(
+      window.localStorage.getItem('INGREDIENTCOUNT'),
+    );
+    const ingredientString_store: any =
+      window.localStorage.getItem('INGREDIENTSTRING');
+    const ingredientName_store: any =
+      window.localStorage.getItem('INGREDIENTNAME');
+    const ingredientAmount_store: any =
+      window.localStorage.getItem('INGREDIENTAMOUNT');
+    const ingredientMeasurement_store: any = window.localStorage.getItem(
+      'INGREDIENTMEASUREMENT',
+    );
+    if (ingredientString_store !== null && ingredientCount_store !== null && ingredientName_store !== null &&
+      ingredientAmount_store !== null && ingredientMeasurement_store !== null ) {
+      setcount(JSON.parse(ingredientCount_store) + 1);
+      setIngredientString(JSON.parse(ingredientString_store));
+      setIngredientName(JSON.parse(ingredientName_store));
+      setIngredientAmount(JSON.parse(ingredientAmount_store));
+      setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
+    }
   }, []);
 
-  
   const handleDifficultyChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('DIFFICULTY', JSON.stringify(targ));
@@ -378,7 +393,6 @@ const Form2 = () => {
     window.localStorage.setItem('SERVINGS', JSON.stringify(targ));
     setServings(targ);
   };
-
 
   //buttonDisable
   const disableAdd = (): boolean | undefined => {
@@ -428,14 +442,20 @@ const Form2 = () => {
     //create new ingredient String
     const newIngredient =
       ingredientName + ' ' + ingredientAmount + ' ' + ingredientMeasurement;
-    //set previous names
-    // setprevIngredientName(ingredientName);
-    // setprevIngredientAmount(ingredientAmount);
-    // setprevIngredientMeasurement(ingredientMeasurement);
-    //append to back of ingredeitn string state
-    const helperString = ingredientString;
-    helperString.push(newIngredient);
-    setIngredientString(helperString);
+
+    if (localStorage.getItem('INGREDIENTSTRING') === null){
+      const helperString:string[] = [];
+      helperString.push(newIngredient);
+      localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
+    }
+    else{
+      let retString = localStorage.getItem("INGREDIENTSTRING")
+      let helperString:any = JSON.parse(retString as string);
+      helperString.push(newIngredient);
+      localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
+    }
+
+    //setIngredientString(helperString);
     //clear data
     setIngredientAmount(0);
     setIngredientMeasurement('');
@@ -448,18 +468,10 @@ const Form2 = () => {
   }
 
   function decrementCount() {
-    ingredientString.pop();
-    console.log(ingredientString);
-    setcount(prevCount => {
-      if (prevCount > 1) {
-        // setIngredientMeasurement(previngredientMeasurement);
-        // setIngredientAmount(previngredientAmount);
-        // setIngredientName(previngredientName);
-
-        return prevCount - 1;
-      }
-      return prevCount;
-    });
+    let retString = localStorage.getItem("INGREDIENTSTRING")
+    let helperString:any = JSON.parse(retString as string);
+    helperString.pop();
+    localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
   }
 
   return (
@@ -612,6 +624,7 @@ const Form2 = () => {
               <Input
                 id={`ingredient-${index}`}
                 placeholder="Ingredient..."
+                value={ingredientName}
                 onChange={handleIName}
                 isDisabled={disabled(index)}
                 isRequired={true}
@@ -625,6 +638,7 @@ const Form2 = () => {
               <NumberInput
                 max={999}
                 min={0}
+                value = {ingredientAmount}
                 onChange={handleIAmount}
                 isDisabled={disabled(index)}
                 isRequired={true}>
@@ -647,6 +661,7 @@ const Form2 = () => {
                 size="md"
                 w="full"
                 rounded="md"
+                value = {ingredientMeasurement}
                 onChange={handleIMeasurement}
                 isDisabled={disabled(index)}
                 isRequired={true}>
@@ -695,7 +710,8 @@ const Form3 = () => {
   const [instructions, setInstructions] = useState('');
 
   useEffect(() => {
-    const instructions_storage: any = window.localStorage.getItem('INSTRUCTIONS');
+    const instructions_storage: any =
+      window.localStorage.getItem('INSTRUCTIONS');
     if (instructions !== 'null') {
       setInstructions(JSON.parse(instructions_storage));
     }
@@ -746,22 +762,24 @@ export default function Multistep() {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
-  const recipeFromStorage:any = window.localStorage.getItem('RECIPENAME');
+  const recipeFromStorage: any = window.localStorage.getItem('RECIPENAME');
   const recipeName = JSON.parse(recipeFromStorage);
-  const cookingTimeStorage:any = window.localStorage.getItem('COOKINGTIME');
+  const cookingTimeStorage: any = window.localStorage.getItem('COOKINGTIME');
   const cookingTime = JSON.parse(cookingTimeStorage);
-  const difficultyStorage:any = window.localStorage.getItem('DIFFICULTY');
+  const difficultyStorage: any = window.localStorage.getItem('DIFFICULTY');
   const difficulty = JSON.parse(difficultyStorage);
-  const appliancesStorage:any = window.localStorage.getItem('APPLIANCES');
+  const appliancesStorage: any = window.localStorage.getItem('APPLIANCES');
   const appliances = JSON.parse(appliancesStorage);
-  const costStorage:any = window.localStorage.getItem('COST');
+  const costStorage: any = window.localStorage.getItem('COST');
   const cost = JSON.parse(costStorage);
-  const allergensStorage:any = window.localStorage.getItem('ALLERGENS');
+  const allergensStorage: any = window.localStorage.getItem('ALLERGENS');
   const allergens = JSON.parse(allergensStorage);
-  const servingsStorage:any = window.localStorage.getItem('SERVINGS');
+  const servingsStorage: any = window.localStorage.getItem('SERVINGS');
   const servings = JSON.parse(servingsStorage);
-  const instructionsStorage:any = window.localStorage.getItem('INSTRUCTIONS');
+  const instructionsStorage: any = window.localStorage.getItem('INSTRUCTIONS');
   const instructions = JSON.parse(instructionsStorage);
+  const ingredientsStorage: any = window.localStorage.getItem('INGREDIENTSTRING');
+  const ingredients = JSON.parse(ingredientsStorage);
 
   return (
     <>
@@ -830,13 +848,19 @@ export default function Multistep() {
                   // replace hardcoded ingredients list with user inputted data
 
                   // call to the DB with hardcoded data (for now)
-                  let ingredients: string[] = [
-                    'cooked rice one cup',
-                    'chicken breast one pound',
-                    'broccoli half cup',
-                  ];
-                  toDB(recipeName, servings, allergens, appliances, cookingTime, cost, difficulty, false, ingredients, instructions);
-                  window.localStorage.clear();
+                  toDB(
+                    recipeName,
+                    servings,
+                    allergens,
+                    appliances,
+                    cookingTime,
+                    cost,
+                    difficulty,
+                    false,
+                    ingredients,
+                    instructions,
+                  );
+                  localStorage.clear();
                 }}>
                 Submit
               </Button>
