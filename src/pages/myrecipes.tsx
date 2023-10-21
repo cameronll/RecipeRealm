@@ -32,27 +32,10 @@ const Recipes: React.FC = () => {
   var user:any;
 
   useEffect(() => {
-    auth = getAuth();
+    setEmail(JSON.parse(localStorage.getItem('EMAIL') as string));
   }, []);
 
   useEffect(() => {
-    user = auth.currentUser;
-    console.log(user);
-    const email_from_storage: any = window.localStorage.getItem('EMAIL');
-    if (email_from_storage !== null) {
-      setEmail(JSON.parse(email_from_storage));
-    }
-    if (user){
-      setEmail(user.email);
-    }
-  }, [auth]);
-
-  useEffect(() => {
-    if (user) {
-      setEmail(user.email);
-      window.localStorage.setItem('EMAIL', JSON.stringify(user.email));
-    }
-
     async function getRecipes() {
       const querySnapshot = await getDocs(
         collection(db, 'users/' + email + '/Recipes'),

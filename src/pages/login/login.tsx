@@ -31,6 +31,7 @@ const Login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         localStorage.clear();
+        localStorage.setItem('EMAIL', JSON.stringify(email));
         navigate('../recipes');
       })
       .catch(e => {
