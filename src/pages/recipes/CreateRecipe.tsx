@@ -209,37 +209,33 @@ async function toDB(
   ingredients: string[],
   instructions: string,
 ) {
-  // get the current user
-  const auth = getAuth();
-  const user = auth.currentUser;
-  // if there is a user logged in...
-  if (user !== null) {
-    // store the currently logged in user's email in email
-    const email = user.email;
-    // get the total nutrients, pass in the provided ingredients string array
-    const nutrients: nutrition = await getTotalNutrients(ingredients);
-    const recipe: recipe = {
-      recipe_name: recipe_name,
-      servings: servings,
-      allergens: allergens,
-      cooking_applications: cooking_applications,
-      cooking_time: cooking_time,
-      cost_per_serving: cost_per_serving,
-      difficulty: difficulty,
-      posted: posted,
-      ingredients: ingredients,
-      instructions: instructions,
-      nutrients: nutrients,
-    };
-    // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
-    // creates a document with name: <recipe_name>
-    await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
-      // name in database: variable
-      data: recipe,
-    });
-    console.log('Document written successfully');
+
+// if there is a user logged in...
+  // store the currently logged in user's email in email
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  // get the total nutrients, pass in the provided ingredients string array
+  const nutrients: nutrition = await getTotalNutrients(ingredients);
+  const recipe: recipe = {
+    recipe_name: recipe_name,
+    servings: servings,
+    allergens: allergens,
+    cooking_applications: cooking_applications,
+    cooking_time: cooking_time,
+    cost_per_serving: cost_per_serving,
+    difficulty: difficulty,
+    posted: posted,
+    ingredients: ingredients,
+    instructions: instructions,
+    nutrients: nutrients,
   }
-}
+  // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
+  // creates a document with name: <recipe_name>
+  await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
+    // name in database: variable
+    data: recipe,
+  });
+  console.log('Document written successfully');
+  }
 
 const Form1 = () => {
   const [show, setShow] = useState(false);
