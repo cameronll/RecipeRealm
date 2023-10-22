@@ -11,15 +11,14 @@ import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 const Explore: React.FC = () => {
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
-  const [email, setEmail] = useState('');
+  //const [email, setEmail] = useState('');
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string)
 
   useEffect(() => {
-    setEmail(JSON.parse(localStorage.getItem('EMAIL') as string));
     async function toStorage(){
-      setEmail(JSON.parse(localStorage.getItem('EMAIL') as string));
       if (localStorage.getItem('FOLLOWING') === null){
         console.log(email);
-        const getUser = doc(db, "users/", JSON.parse(localStorage.getItem('EMAIL') as string));
+        const getUser = doc(db, "users/", email);
         const getUserData = await getDoc(getUser);
         const userFollowing = getUserData?.data()?.following;
         console.log(userFollowing);

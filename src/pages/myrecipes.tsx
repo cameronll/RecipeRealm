@@ -27,11 +27,8 @@ import {Link} from 'react-router-dom';
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [email, setEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    setEmail(JSON.parse(localStorage.getItem('EMAIL') as string));
-  }, []);
+  //const [email, setEmail] = useState<string | null>(null);
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
     async function getRecipes() {
@@ -42,7 +39,7 @@ const Recipes: React.FC = () => {
       setRecipes(recipesData);
     }
     getRecipes();
-  }, [email]);
+  }, []);
 
   const recipesList = recipes.map(recipe => (
     <li key="{recipe.data.recipe_name}">{["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}</li>
