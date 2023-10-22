@@ -55,7 +55,15 @@ const Recipes: React.FC = () => {
       <Link to="/CreateRecipe">
         <Button
           onClick={() => {
-            window.localStorage.clear();
+            window.localStorage.removeItem('RECIPENAME');
+            window.localStorage.removeItem('COOKINGTIME');
+            window.localStorage.removeItem('DIFFICULTY');
+            window.localStorage.removeItem('APPLIANCES');
+            window.localStorage.removeItem('COST');
+            window.localStorage.removeItem('ALLERGENS');
+            window.localStorage.removeItem('SERVINGS');
+            window.localStorage.removeItem('INSTRUCTIONS');
+            window.localStorage.removeItem('INGREDIENTSTRING');
           }}>
           Create Recipe
         </Button>
