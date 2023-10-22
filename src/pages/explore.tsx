@@ -12,7 +12,6 @@ const Explore: React.FC = () => {
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [email, setEmail] = useState('');
-  let move = false;
 
   useEffect(() => {
     setEmail(JSON.parse(localStorage.getItem('EMAIL') as string));
@@ -46,7 +45,7 @@ const Explore: React.FC = () => {
       setFriendsPosts(friendsPostsData);
       }
     getData();
-  }, [move]);
+  }, [email]);
 
 
   return (
