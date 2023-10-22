@@ -28,8 +28,6 @@ import {Link} from 'react-router-dom';
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [email, setEmail] = useState<string | null>(null);
-  var auth:any;
-  var user:any;
 
   useEffect(() => {
     setEmail(JSON.parse(localStorage.getItem('EMAIL') as string));
