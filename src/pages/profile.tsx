@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from '../components/Navbar';
+import {db} from '../firebaseConfig';
+import {collection, addDoc, doc, setDoc, getDoc, getDocs, where, query, orderBy, updateDoc} from "firebase/firestore";
+import { getAuth, onAuthStateChanged, updateEmail, updatePassword } from "firebase/auth";
 import {
   Button,
   Flex,
@@ -17,7 +20,58 @@ import {
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
 
+async function toDB(newBiography:string, newUsername:string, newPassword: string){
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const docRef = doc(db, "users/", email)
+
+  if (user){
+    updatePassword(user, newPassword);
+    await updateDoc(docRef, {
+      username: newUsername,
+      biography: newBiography
+    })
+    console.log("Document Written");
+  }
+  else{
+    console.log("No user!");
+  }
+}
+
 const Profile: React.FC = () => {
+  const [newUsername, setNewUsername] = useState('');
+  const [newBiography, setNewBiography] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+
+  useEffect(() => {
+    const username_from_storage:any = window.localStorage.getItem('NEWUSERNAME');
+    const email_from_storage:any = window.localStorage.getItem('NEWBIOGRAPHY');
+    const password_from_storage:any = window.localStorage.getItem('NEWPASSWORD');
+    
+    setNewUsername(JSON.parse(username_from_storage));
+    setNewBiography(JSON.parse(email_from_storage));
+    setNewPassword(JSON.parse(password_from_storage));
+  }, []);
+
+  const handleUsernameChange = (e: any) => {
+    const name = e.target.value;
+    window.localStorage.setItem('NEWUSERNAME', JSON.stringify(name));
+    setNewUsername(name);
+  };
+
+  const handleBiographyChange = (e: any) => {
+    const name = e.target.value;
+    window.localStorage.setItem('NEWBIOGRAPHY', JSON.stringify(name));
+    setNewBiography(name);
+  };
+
+  const handlePasswordChange = (e: any) => {
+    const name = e.target.value;
+    window.localStorage.setItem('NEWPASSWORD', JSON.stringify(name));
+    setNewPassword(name);
+  };
+
   return (
     <>
       <Navbar />
@@ -65,14 +119,8 @@ const Profile: React.FC = () => {
             placeholder="UserName"
             _placeholder={{ color: 'gray.500' }}
             type="text"
-          />
-        </FormControl>
-        <FormControl id="email" isRequired>
-          <FormLabel>Email address</FormLabel>
-          <Input
-            placeholder="your-email@example.com"
-            _placeholder={{ color: 'gray.500' }}
-            type="email"
+            value={newUsername}
+            onChange={handleUsernameChange}
           />
         </FormControl>
         <FormControl id="password" isRequired>
@@ -81,6 +129,18 @@ const Profile: React.FC = () => {
             placeholder="password"
             _placeholder={{ color: 'gray.500' }}
             type="password"
+            value={newPassword}
+            onChange={handlePasswordChange}
+          />
+        </FormControl>
+        <FormControl id="biography" isRequired>
+          <FormLabel>Biography</FormLabel>
+          <Input
+            placeholder="tell us about yourself"
+            _placeholder={{ color: 'gray.500' }}
+            type="biography"
+            value={newBiography}
+            onChange={handleBiographyChange}
           />
         </FormControl>
         <Stack spacing={6} direction={['column', 'row']}>
@@ -99,6 +159,10 @@ const Profile: React.FC = () => {
             w="full"
             _hover={{
               bg: 'blue.500',
+            }}
+            onClick={() => {
+              console.log(newBiography);
+              toDB(newBiography, newUsername, newPassword);
             }}>
             Submit
           </Button>

@@ -244,12 +244,10 @@ const Form1 = () => {
 
   useEffect(() => {
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
-    const cooking_time_storage: any =
-      window.localStorage.getItem('COOKINGTIME');
-    if (recipe_name_storage !== 'null') {
-      setRecipeName(JSON.parse(recipe_name_storage));
-      setCookingTime(JSON.parse(cooking_time_storage));
-    }
+    const cooking_time_storage: any = window.localStorage.getItem('COOKINGTIME');
+
+    setRecipeName(JSON.parse(recipe_name_storage));
+    setCookingTime(JSON.parse(cooking_time_storage));
   }, []);
   // const handleSubmit = (e: {preventDefault: () => void}) => {
   //   e.preventDefault();
@@ -772,8 +770,6 @@ export default function Multistep() {
   const allergens = JSON.parse(allergensStorage);
   const servingsStorage: any = window.localStorage.getItem('SERVINGS');
   const servings = JSON.parse(servingsStorage);
-  const instructionsStorage: any = window.localStorage.getItem('INSTRUCTIONS');
-  const instructions = JSON.parse(instructionsStorage);
   const ingredientsStorage: any = window.localStorage.getItem('INGREDIENTSTRING');
   const ingredients = JSON.parse(ingredientsStorage);
 
@@ -832,6 +828,8 @@ export default function Multistep() {
                 colorScheme="red"
                 variant="solid"
                 onClick={() => {
+                  const instructionsStorage: any = window.localStorage.getItem('INSTRUCTIONS');
+                  const instructions = JSON.parse(instructionsStorage);
                   toast({
                     title: 'Recipe created.',
                     description: "We've created your recipe for you.",
@@ -854,7 +852,7 @@ export default function Multistep() {
                     difficulty,
                     false,
                     ingredients,
-                    instructions,
+                    instructions
                   );
                   window.localStorage.removeItem('RECIPENAME');
                   window.localStorage.removeItem('COOKINGTIME');
@@ -865,6 +863,9 @@ export default function Multistep() {
                   window.localStorage.removeItem('SERVINGS');
                   window.localStorage.removeItem('INSTRUCTIONS');
                   window.localStorage.removeItem('INGREDIENTSTRING');
+                  window.localStorage.removeItem('INGREDIENTAMOUNT');
+                  window.localStorage.removeItem('INGREDIENTMEASUREMENT');
+                  window.localStorage.removeItem('INGREDIENTNAME');
                 }}>
                 Submit
               </Button>

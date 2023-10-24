@@ -27,7 +27,6 @@ import {Link} from 'react-router-dom';
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
-  //const [email, setEmail] = useState<string | null>(null);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
@@ -59,6 +58,9 @@ const Recipes: React.FC = () => {
             window.localStorage.removeItem('SERVINGS');
             window.localStorage.removeItem('INSTRUCTIONS');
             window.localStorage.removeItem('INGREDIENTSTRING');
+            window.localStorage.removeItem('INGREDIENTAMOUNT');
+            window.localStorage.removeItem('INGREDIENTMEASUREMENT');
+            window.localStorage.removeItem('INGREDIENTNAME');
           }}>
           Create Recipe
         </Button>
