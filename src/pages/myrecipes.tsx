@@ -41,7 +41,7 @@ const Recipes: React.FC = () => {
   }, []);
 
   const recipesList = recipes.map(recipe => (
-    <li key="{recipe.data.recipe_name}">{["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}</li>
+    <li key={recipe.data.recipe_name}>{["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}</li>
   ));
   return (
     <>

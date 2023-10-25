@@ -15,14 +15,12 @@ const Explore: React.FC = () => {
 
   useEffect(() => {
     async function getData(){
-      if (localStorage.getItem('FOLLOWING') === null){
-        console.log(email);
-        const getUser = doc(db, "users/", email);
-        const getUserData = await getDoc(getUser);
-        const userFollowing = getUserData?.data()?.following;
-        console.log(userFollowing);
-        localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
-      }
+      console.log(email);
+      const getUser = doc(db, "users/", email);
+      const getUserData = await getDoc(getUser);
+      const userFollowing = getUserData?.data()?.following;
+      console.log(userFollowing);
+      localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
 
       const allPostsQuery = query(collection(db, "posts"), orderBy("date_time", "desc"));
       const allPostsDocs = await getDocs(allPostsQuery);
@@ -39,10 +37,10 @@ const Explore: React.FC = () => {
   }, []);
 
   const allPostsList = allPosts.map(post => (
-    <li key="{post.title}">{["Title: ", post?.title, "          Posted: ", post?.date_time.toDate().toString()]}</li>
+    <li key={post?.title}>{["Username: ", post?.username, " ||| Title: ", post?.title, " ||| Posted: ", post?.date_time.toDate().toString()]}</li>
   ));
   const friendsPostsList = friendsPosts.map(post => (
-    <li key="{post.title}">{["Title: ", post?.title, "          Posted: ", post?.date_time.toDate().toString()]}</li>
+    <li key={post?.title}>{["Username: ", post?.username, " ||| Title: ", post?.title, " ||| Posted: ", post?.date_time.toDate().toString()]}</li>
   ));
   return (
     <Box>
