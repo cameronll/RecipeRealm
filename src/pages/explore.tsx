@@ -14,7 +14,7 @@ const Explore: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string)
 
   useEffect(() => {
-    async function toStorage(){
+    async function getData(){
       if (localStorage.getItem('FOLLOWING') === null){
         console.log(email);
         const getUser = doc(db, "users/", email);
@@ -23,59 +23,46 @@ const Explore: React.FC = () => {
         console.log(userFollowing);
         localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
       }
-    }
-    toStorage();
-  }, []);
 
-  useEffect(() => {
-    
-    async function getData(){
-      const allPostsQuery = query(collection(db, "posts"), orderBy("date_time"));
+      const allPostsQuery = query(collection(db, "posts"), orderBy("date_time", "desc"));
       const allPostsDocs = await getDocs(allPostsQuery);
       const allPostsData = allPostsDocs.docs.map((doc) => doc.data());
       setAllPosts(allPostsData);
     
       const following:string[] = JSON.parse(localStorage.getItem('FOLLOWING') as string);
-      const friendsPostsQuery = query(collection(db, "posts"), where("email", "in", following), orderBy("date_time"));
+      const friendsPostsQuery = query(collection(db, "posts"), where("email", "in", following), orderBy("date_time", "desc"));
       const friendsPostsDocs = await getDocs(friendsPostsQuery);
       const friendsPostsData = friendsPostsDocs.docs.map((doc) => doc.data());
-      console.log(friendsPostsData);
       setFriendsPosts(friendsPostsData);
       }
     getData();
-  }, [email]);
+  }, []);
 
-
+  const allPostsList = allPosts.map(post => (
+    <li key="{post.title}">{["Title: ", post?.title, "          Posted: ", post?.date_time.toDate().toString()]}</li>
+  ));
+  const friendsPostsList = friendsPosts.map(post => (
+    <li key="{post.title}">{["Title: ", post?.title, "          Posted: ", post?.date_time.toDate().toString()]}</li>
+  ));
   return (
     <Box>
       <Navbar />
       <Tabs isFitted variant="enclosed">
         <TabList mb="1em">
           <Tab>Explore</Tab>
-          <Tab>My Recipes</Tab>
+          <Tab>Friends</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <p>Explore stuff</p>
+            <p>Explore</p>
+            {allPostsList}
           </TabPanel>
           <TabPanel>
-            <p>My recipes</p>
+            <p>Friends</p>
+            {friendsPostsList}
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <Button
-        onClick={() => {
-          console.log("All Posts");
-          for (let i = 0; i < allPosts.length; i++){
-            console.log(allPosts[i]?.title);
-          }
-          console.log("Friends");
-          for (let i = 0; i < friendsPosts.length; i++){
-            console.log(friendsPosts[i]?.title);
-          }
-        }}>
-          Test
-        </Button>
     </Box>
   );
 };
