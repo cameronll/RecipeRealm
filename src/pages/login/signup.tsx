@@ -23,6 +23,7 @@ function validateName(value: any) {
 }
 
 const SignUp = () => {
+  const following:string[] = [];
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -42,7 +43,8 @@ const SignUp = () => {
         const docRef = await setDoc(doc(db, "users", values.email), {
           email: values.email,
           name: values.name,
-          username: values.username
+          username: values.username,
+          following: following
         });
         console.log("Document written with ID: ", docRef);
 

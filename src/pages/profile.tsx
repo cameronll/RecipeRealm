@@ -47,11 +47,9 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const username_from_storage:any = window.localStorage.getItem('NEWUSERNAME');
     const email_from_storage:any = window.localStorage.getItem('NEWBIOGRAPHY');
-    const password_from_storage:any = window.localStorage.getItem('NEWPASSWORD');
     
     setNewUsername(JSON.parse(username_from_storage));
     setNewBiography(JSON.parse(email_from_storage));
-    setNewPassword(JSON.parse(password_from_storage));
   }, []);
 
   const handleUsernameChange = (e: any) => {
@@ -68,7 +66,6 @@ const Profile: React.FC = () => {
 
   const handlePasswordChange = (e: any) => {
     const name = e.target.value;
-    window.localStorage.setItem('NEWPASSWORD', JSON.stringify(name));
     setNewPassword(name);
   };
 
