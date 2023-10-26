@@ -39,6 +39,7 @@ import {
   ListItem,
   ListIcon,
 } from '@chakra-ui/react';
+import {Link} from 'react-router-dom';
 
 import {useToast} from '@chakra-ui/react';
 import React from 'react';
@@ -122,15 +123,17 @@ async function getIngredientNutrients(query: string): Promise<nutrition> {
     let nutrients: nutrition = {
       // since this data is now in a JSON object, the values can be accessed
       // with their keys like fields in a struct
-      calories: obj.foods[0].nf_calories,
-      total_fat: obj.foods[0].nf_total_fat,
-      saturated_fat: obj.foods[0].nf_saturated_fat,
-      cholesterol: obj.foods[0].nf_cholesterol,
-      sodium: obj.foods[0].nf_sodium,
-      total_carbohydrate: obj.foods[0].nf_total_carbohydrate,
-      dietary_fiber: obj.foods[0].nf_dietary_fiber,
-      sugars: obj.foods[0].nf_sugars,
-      protein: obj.foods[0].nf_protein,
+      calories: parseFloat(obj.foods[0].nf_calories.toFixed(2)),
+      total_fat: parseFloat(obj.foods[0].nf_total_fat.toFixed(2)),
+      saturated_fat: parseFloat(obj.foods[0].nf_saturated_fat.toFixed(2)),
+      cholesterol: parseFloat(obj.foods[0].nf_cholesterol.toFixed(2)),
+      sodium: parseFloat(obj.foods[0].nf_sodium.toFixed(2)),
+      total_carbohydrate: parseFloat(
+        obj.foods[0].nf_total_carbohydrate.toFixed(2),
+      ),
+      dietary_fiber: parseFloat(obj.foods[0].nf_dietary_fiber.toFixed(2)),
+      sugars: parseFloat(obj.foods[0].nf_sugars.toFixed(2)),
+      protein: parseFloat(obj.foods[0].nf_protein.toFixed(2)),
     };
     // return the nutrition information for this ONE ingredient
     return nutrients;
@@ -196,8 +199,7 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
     );
     // return the nutrition facts for the whole recipe
     return recipeNutrients;
-  }
-  catch (e) {
+  } catch (e) {
     return nullNutrients;
   }
 }
@@ -239,13 +241,13 @@ async function toDB(
   };
   // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
   // creates a document with name: <recipe_name>
-  if (recipe_name === null){
-    recipe_name = "null";
+  if (recipe_name === null) {
+    recipe_name = 'null';
   }
-    await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
-      // name in database: variable
-      data: recipe,
-    });
+  await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
+    // name in database: variable
+    data: recipe,
+  });
   console.log('Document written successfully');
 }
 
@@ -257,7 +259,7 @@ const Form1 = () => {
   useEffect(() => {
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
     const cooking_time_storage: any =
-    window.localStorage.getItem('COOKINGTIME');
+      window.localStorage.getItem('COOKINGTIME');
 
     setRecipeName(JSON.parse(recipe_name_storage));
     setCookingTime(JSON.parse(cooking_time_storage));
@@ -311,11 +313,11 @@ const Form1 = () => {
 };
 
 const Form2 = () => {
-  const [difficulty, setDifficulty] = useState('');
-  const [appliances, setAppliances] = useState('');
-  const [cost, setCost] = useState('');
-  const [allergens, setAllergens] = useState('');
-  const [servings, setServings] = useState('');
+  const [difficulty, setDifficulty] = useState(' ');
+  const [appliances, setAppliances] = useState(' ');
+  const [cost, setCost] = useState(' ');
+  const [allergens, setAllergens] = useState(' ');
+  const [servings, setServings] = useState(' ');
 
   const toast = useToast();
   const [ingredientCount, setcount] = useState(1);
@@ -329,34 +331,37 @@ const Form2 = () => {
   // FIX LOCAL STORAGE
 
   useEffect(() => {
-    const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
-    const appliances_storage: any = window.localStorage.getItem('APPLIANCES');
-    const cost_storage: any = window.localStorage.getItem('COST');
-    const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
-    const servings_storage: any = window.localStorage.getItem('SERVINGS');
-    setDifficulty(JSON.parse(difficulty_storage));
-    setAppliances(JSON.parse(appliances_storage));
-    setCost(JSON.parse(cost_storage));
-    setAllergens(JSON.parse(allergens_storage));
-    setServings(JSON.parse(servings_storage));
-
-    const ingredientCount_store: any = Number(
-      window.localStorage.getItem('INGREDIENTCOUNT'),
-    );
-    const ingredientString_store: any =
-      window.localStorage.getItem('INGREDIENTSTRING');
-    const ingredientName_store: any =
-      window.localStorage.getItem('INGREDIENTNAME');
-    const ingredientAmount_store: any =
-      window.localStorage.getItem('INGREDIENTAMOUNT');
-    const ingredientMeasurement_store: any = window.localStorage.getItem(
-      'INGREDIENTMEASUREMENT',
-    );
-    setcount(JSON.parse(ingredientCount_store));
-    setIngredientString(JSON.parse(ingredientString_store));
-    setIngredientName(JSON.parse(ingredientName_store));
-    setIngredientAmount(JSON.parse(ingredientAmount_store));
-    setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
+    if (window.localStorage.getItem('DIFFICULTY') !== null) {
+      const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
+      setDifficulty(JSON.parse(difficulty_storage));
+    }
+    if (window.localStorage.getItem('APPLIANCES') !== null) {
+      const appliances_storage: any = window.localStorage.getItem('APPLIANCES');
+      setAppliances(JSON.parse(appliances_storage));
+    }
+    if (window.localStorage.getItem('COST')) {
+      const cost_storage: any = window.localStorage.getItem('COST');
+      setCost(JSON.parse(cost_storage));
+    }
+    if (window.localStorage.getItem('ALLERGENS')) {
+      const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
+      setAllergens(JSON.parse(allergens_storage));
+    }
+    if (window.localStorage.getItem('SERVINGS')) {
+      const servings_storage: any = window.localStorage.getItem('SERVINGS');
+      setServings(JSON.parse(servings_storage));
+    }
+    if (window.localStorage.getItem('INGREDIENTCOUNT')) {
+      const ingredientCount_store: any = Number(
+        window.localStorage.getItem('INGREDIENTCOUNT'),
+      );
+      setcount(JSON.parse(ingredientCount_store));
+    }
+    if (window.localStorage.getItem('INGREDIENTSTRING')) {
+      const ingredientString_store: any =
+        window.localStorage.getItem('INGREDIENTSTRING');
+      setIngredientString(JSON.parse(ingredientString_store));
+    }
   }, []);
 
   const handleDifficultyChange = (e: any) => {
@@ -832,53 +837,53 @@ export default function Multistep() {
               </Button>
             </Flex>
             {step === 3 ? (
-              <Button
-                w="7rem"
-                colorScheme="red"
-                variant="solid"
-                onClick={() => {
-                  const instructionsStorage: any =
-                    window.localStorage.getItem('INSTRUCTIONS');
-                  const instructions = JSON.parse(instructionsStorage);
-                  toast({
-                    title: 'Recipe created.',
-                    description: "We've created your recipe for you.",
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                  // TODO
-                  // replace hardcoded data with user inputted data from the form
-                  // replace hardcoded ingredients list with user inputted data
+              <Link to="../recipes">
+                <Button
+                  w="7rem"
+                  colorScheme="red"
+                  variant="solid"
+                  onClick={() => {
+                    const instructionsStorage: any =
+                      window.localStorage.getItem('INSTRUCTIONS');
+                    const instructions = JSON.parse(instructionsStorage);
+                    toast({
+                      title: 'Recipe created.',
+                      description: "We've created your recipe for you.",
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    // TODO
+                    // replace hardcoded data with user inputted data from the form
+                    // replace hardcoded ingredients list with user inputted data
 
-                  // call to the DB with hardcoded data (for now)
-                  toDB(
-                    recipeName,
-                    servings,
-                    allergens,
-                    appliances,
-                    cookingTime,
-                    cost,
-                    difficulty,
-                    false,
-                    ingredients,
-                    instructions,
-                  );
-                  window.localStorage.removeItem('RECIPENAME');
-                  window.localStorage.removeItem('COOKINGTIME');
-                  window.localStorage.removeItem('DIFFICULTY');
-                  window.localStorage.removeItem('APPLIANCES');
-                  window.localStorage.removeItem('COST');
-                  window.localStorage.removeItem('ALLERGENS');
-                  window.localStorage.removeItem('SERVINGS');
-                  window.localStorage.removeItem('INSTRUCTIONS');
-                  window.localStorage.removeItem('INGREDIENTSTRING');
-                  window.localStorage.removeItem('INGREDIENTAMOUNT');
-                  window.localStorage.removeItem('INGREDIENTMEASUREMENT');
-                  window.localStorage.removeItem('INGREDIENTNAME');
-                }}>
-                Submit
-              </Button>
+                    // call to the DB with hardcoded data (for now)
+                    toDB(
+                      recipeName,
+                      servings,
+                      allergens,
+                      appliances,
+                      cookingTime,
+                      cost,
+                      difficulty,
+                      false,
+                      ingredients,
+                      instructions,
+                    );
+                    window.localStorage.removeItem('RECIPENAME');
+                    window.localStorage.removeItem('COOKINGTIME');
+                    window.localStorage.removeItem('DIFFICULTY');
+                    window.localStorage.removeItem('APPLIANCES');
+                    window.localStorage.removeItem('COST');
+                    window.localStorage.removeItem('ALLERGENS');
+                    window.localStorage.removeItem('SERVINGS');
+                    window.localStorage.removeItem('INSTRUCTIONS');
+                    window.localStorage.removeItem('INGREDIENTNAME');
+                    window.localStorage.removeItem('INGREDIENTCOUNT');
+                  }}>
+                  Submit
+                </Button>
+              </Link>
             ) : null}
           </Flex>
         </ButtonGroup>

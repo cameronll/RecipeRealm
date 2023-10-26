@@ -22,6 +22,9 @@ import {
   Avatar,
   Text,
   Button,
+  VStack,
+  Container,
+  Flex,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
@@ -50,8 +53,14 @@ const Recipes: React.FC = () => {
   // example display
   const recipesList = recipes.map(recipe => (
     <div id="my-recipe-tiles" key={recipe.data.recipe_name}>
-      {["Name: ", recipe.data.recipe_name, " Difficulty: ", recipe.data.difficulty, 
-        " Calories: ", recipe.data.nutrients.calories]}
+      {[
+        'Name: ',
+        recipe.data.recipe_name,
+        ' Difficulty: ',
+        recipe.data.difficulty,
+        ' Calories: ',
+        recipe.data.nutrients.calories,
+      ]}
     </div>
   ));
 
@@ -81,17 +90,27 @@ const Recipes: React.FC = () => {
             window.localStorage.removeItem('SERVINGS');
             window.localStorage.removeItem('INSTRUCTIONS');
             window.localStorage.removeItem('INGREDIENTSTRING');
-            window.localStorage.removeItem('INGREDIENTAMOUNT');
-            window.localStorage.removeItem('INGREDIENTMEASUREMENT');
-            window.localStorage.removeItem('INGREDIENTNAME');
+            window.localStorage.removeItem('INGREDIENTCOUNT');
           }}>
           Create Recipe
         </Button>
       </Link>
-        {/* Need to loop through recipesList to make a tile for each recipe */}
-      <body>
-        
-      </body>
+      <VStack>
+        {recipes.map(recipe => (
+          <Container
+            maxW="container.sm"
+            bg="blue.600"
+            color="white"
+            minH="350"
+            display="flex"
+            flexDirection="column">
+            <Flex>{recipe.data.recipe_name}</Flex>
+            <Box padding="4" bg="blue.400" color="black" maxW="container.sm">
+              {recipe.data.nutrients.calories}
+            </Box>
+          </Container>
+        ))}
+      </VStack>
     </>
   );
 };
