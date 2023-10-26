@@ -35,10 +35,14 @@ import {
   NumberInputStepper,
   NumberDecrementStepper,
   NumberIncrementStepper,
+  List,
+  ListItem,
+  ListIcon,
 } from '@chakra-ui/react';
 
 import {useToast} from '@chakra-ui/react';
 import React from 'react';
+import {MinusIcon} from '@chakra-ui/icons';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -209,8 +213,7 @@ async function toDB(
   ingredients: string[],
   instructions: string,
 ) {
-
-// if there is a user logged in...
+  // if there is a user logged in...
   // store the currently logged in user's email in email
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // get the total nutrients, pass in the provided ingredients string array
@@ -227,7 +230,7 @@ async function toDB(
     ingredients: ingredients,
     instructions: instructions,
     nutrients: nutrients,
-  }
+  };
   // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
   // creates a document with name: <recipe_name>
   await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
@@ -235,7 +238,7 @@ async function toDB(
     data: recipe,
   });
   console.log('Document written successfully');
-  }
+}
 
 const Form1 = () => {
   const [show, setShow] = useState(false);
@@ -244,7 +247,8 @@ const Form1 = () => {
 
   useEffect(() => {
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
-    const cooking_time_storage: any = window.localStorage.getItem('COOKINGTIME');
+    const cooking_time_storage: any =
+      window.localStorage.getItem('COOKINGTIME');
 
     setRecipeName(JSON.parse(recipe_name_storage));
     setCookingTime(JSON.parse(cooking_time_storage));
@@ -319,16 +323,19 @@ const Form2 = () => {
   //TO DO
   // FIX LOCAL STORAGE
 
-
   useEffect(() => {
     const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
-    const appliances_storage: any =
-      window.localStorage.getItem('APPLIANCES');
+    const appliances_storage: any = window.localStorage.getItem('APPLIANCES');
     const cost_storage: any = window.localStorage.getItem('COST');
     const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
     const servings_storage: any = window.localStorage.getItem('SERVINGS');
-    if (difficulty_storage !== null && appliances_storage !== null && 
-        cost_storage !== null && allergens_storage !== null && servings_storage !== null) {
+    if (
+      difficulty_storage !== null &&
+      appliances_storage !== null &&
+      cost_storage !== null &&
+      allergens_storage !== null &&
+      servings_storage !== null
+    ) {
       setDifficulty(JSON.parse(difficulty_storage));
       setAppliances(JSON.parse(appliances_storage));
       setCost(JSON.parse(cost_storage));
@@ -348,9 +355,14 @@ const Form2 = () => {
     const ingredientMeasurement_store: any = window.localStorage.getItem(
       'INGREDIENTMEASUREMENT',
     );
-    if (ingredientString_store !== null && ingredientCount_store !== null && ingredientName_store !== null &&
-      ingredientAmount_store !== null && ingredientMeasurement_store !== null ) {
-      setcount(JSON.parse(ingredientCount_store) + 1);
+    if (
+      ingredientString_store !== null &&
+      ingredientCount_store !== null &&
+      ingredientName_store !== null &&
+      ingredientAmount_store !== null &&
+      ingredientMeasurement_store !== null
+    ) {
+      setcount(JSON.parse(ingredientCount_store));
       setIngredientString(JSON.parse(ingredientString_store));
       setIngredientName(JSON.parse(ingredientName_store));
       setIngredientAmount(JSON.parse(ingredientAmount_store));
@@ -405,12 +417,6 @@ const Form2 = () => {
     }
     return false;
   };
-  const disabled = (index: number): boolean => {
-    if (ingredientCount - 1 !== index) {
-      return true;
-    }
-    return false;
-  };
   const handleIName = (e: any) => {
     const newName = e.target.value;
     window.localStorage.setItem('INGREDIENTNAME', JSON.stringify(newName));
@@ -434,22 +440,20 @@ const Form2 = () => {
 
   function incrementCount() {
     //create new ingredient String
-    const newIngredient =
-      ingredientName + ' ' + ingredientAmount + ' ' + ingredientMeasurement;
+    const newIngredient = `${ingredientAmount} ${ingredientMeasurement} ${ingredientName}`;
 
-    if (localStorage.getItem('INGREDIENTSTRING') === null){
-      const helperString:string[] = [];
+    if (localStorage.getItem('INGREDIENTSTRING') === null) {
+      const helperString: string[] = [];
       helperString.push(newIngredient);
       localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
-    }
-    else{
-      let retString = localStorage.getItem("INGREDIENTSTRING")
-      let helperString:any = JSON.parse(retString as string);
+      setIngredientString(helperString);
+    } else {
+      let retString = localStorage.getItem('INGREDIENTSTRING');
+      let helperString: any = JSON.parse(retString as string);
       helperString.push(newIngredient);
       localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
+      setIngredientString(helperString);
     }
-
-    //setIngredientString(helperString);
     //clear data
     setIngredientAmount(0);
     setIngredientMeasurement('');
@@ -458,14 +462,18 @@ const Form2 = () => {
     //testing
     console.log(ingredientString);
 
-    setcount(prevCount => prevCount + 1);
+    setcount(ingredientString.length + 2);
+    localStorage.setItem('INGREDIENTCOUNT', JSON.stringify(ingredientCount));
   }
 
   function decrementCount() {
-    let retString = localStorage.getItem("INGREDIENTSTRING")
-    let helperString:any = JSON.parse(retString as string);
+    let retString = localStorage.getItem('INGREDIENTSTRING');
+    let helperString: any = JSON.parse(retString as string);
     helperString.pop();
     localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
+    setIngredientString(helperString);
+    setcount(ingredientString.length);
+    localStorage.setItem('INGREDIENTCOUNT', JSON.stringify(ingredientCount));
   }
 
   return (
@@ -608,70 +616,83 @@ const Form2 = () => {
           onChange={handleServingsChange}
         />
       </FormControl>
-      {Array.from({length: ingredientCount}).map((_, index) => (
-        <Flex key={index}>
-          <React.Fragment>
-            <FormControl mr="5%">
-              <FormLabel htmlFor={`ingredient-${index}`} fontWeight={'normal'}>
-                Ingredient Name #{`${index}`}
-              </FormLabel>
-              <Input
-                id={`ingredient-${index}`}
-                placeholder="Ingredient..."
-                value={ingredientName}
-                onChange={handleIName}
-                isDisabled={disabled(index)}
-                isRequired={true}
-              />
-            </FormControl>
+      <Heading
+        paddingTop={5}
+        w="100%"
+        textAlign={'center'}
+        fontWeight="normal"
+        mb="2%">
+        Ingredient List
+      </Heading>
+      <Flex>
+        <List spacing={3}>
+          {Array.from({length: ingredientCount}).map((_, index) => (
+            <ListItem>
+              <ListIcon as={MinusIcon} color="green.500" />
+              {ingredientString.at(index)}
+            </ListItem>
+          ))}
+        </List>
+      </Flex>
+      <Flex>
+        <React.Fragment>
+          <FormControl mr="5%">
+            <FormLabel htmlFor={`ingredient-`} fontWeight={'normal'}>
+              Ingredient Name #
+            </FormLabel>
+            <Input
+              id={`ingredient-`}
+              placeholder="Ingredient..."
+              value={ingredientName}
+              onChange={handleIName}
+              isRequired={true}
+            />
+          </FormControl>
 
-            <FormControl mr="5%">
-              <FormLabel htmlFor={`amount-${index}`} fontWeight={'normal'}>
-                Amount
-              </FormLabel>
-              <NumberInput
-                max={999}
-                min={0}
-                value = {ingredientAmount}
-                onChange={handleIAmount}
-                isDisabled={disabled(index)}
-                isRequired={true}>
-                <NumberInputField id={`amount-${index}`} />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor={`unit-${index}`} fontWeight={'normal'}>
-                Unit of Measurement
-              </FormLabel>
-              <Select
-                id={`unit-${index}`}
-                placeholder=""
-                focusBorderColor="brand.400"
-                shadow="sm"
-                size="md"
-                w="full"
-                rounded="md"
-                value = {ingredientMeasurement}
-                onChange={handleIMeasurement}
-                isDisabled={disabled(index)}
-                isRequired={true}>
-                <option> </option>
-                <option>Ibs</option>
-                <option>oz</option>
-                <option>grams</option>
-                <option>milligrams</option>
-                <option>cups</option>
-                <option>tablespoon</option>
-                <option>teaspoon</option>
-              </Select>
-            </FormControl>
-          </React.Fragment>
-        </Flex>
-      ))}
+          <FormControl mr="5%">
+            <FormLabel htmlFor={`amount-`} fontWeight={'normal'}>
+              Amount
+            </FormLabel>
+            <NumberInput
+              max={999}
+              min={0}
+              value={ingredientAmount}
+              onChange={handleIAmount}
+              isRequired={true}>
+              <NumberInputField id={`amount-`} />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </FormControl>
+          <FormControl>
+            <FormLabel htmlFor={`unit-`} fontWeight={'normal'}>
+              Unit of Measurement
+            </FormLabel>
+            <Select
+              id={`unit-`}
+              placeholder=""
+              focusBorderColor="brand.400"
+              shadow="sm"
+              size="md"
+              w="full"
+              rounded="md"
+              value={ingredientMeasurement}
+              onChange={handleIMeasurement}
+              isRequired={true}>
+              <option> </option>
+              <option>Ibs</option>
+              <option>oz</option>
+              <option>grams</option>
+              <option>milligrams</option>
+              <option>cups</option>
+              <option>tablespoon</option>
+              <option>teaspoon</option>
+            </Select>
+          </FormControl>
+        </React.Fragment>
+      </Flex>
       <Flex>
         <Button
           onClick={incrementCount}
@@ -770,7 +791,8 @@ export default function Multistep() {
   const allergens = JSON.parse(allergensStorage);
   const servingsStorage: any = window.localStorage.getItem('SERVINGS');
   const servings = JSON.parse(servingsStorage);
-  const ingredientsStorage: any = window.localStorage.getItem('INGREDIENTSTRING');
+  const ingredientsStorage: any =
+    window.localStorage.getItem('INGREDIENTSTRING');
   const ingredients = JSON.parse(ingredientsStorage);
 
   return (
@@ -828,7 +850,8 @@ export default function Multistep() {
                 colorScheme="red"
                 variant="solid"
                 onClick={() => {
-                  const instructionsStorage: any = window.localStorage.getItem('INSTRUCTIONS');
+                  const instructionsStorage: any =
+                    window.localStorage.getItem('INSTRUCTIONS');
                   const instructions = JSON.parse(instructionsStorage);
                   toast({
                     title: 'Recipe created.',
@@ -852,7 +875,7 @@ export default function Multistep() {
                     difficulty,
                     false,
                     ingredients,
-                    instructions
+                    instructions,
                   );
                   window.localStorage.removeItem('RECIPENAME');
                   window.localStorage.removeItem('COOKINGTIME');
