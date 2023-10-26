@@ -87,7 +87,6 @@ const Recipes: React.FC = () => {
           }}>
           Create Recipe
         </Button>
-        
       </Link>
         {/* Need to loop through recipesList to make a tile for each recipe */}
       <body>

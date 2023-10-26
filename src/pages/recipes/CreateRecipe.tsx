@@ -174,26 +174,32 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
     sugars: 0,
     protein: 0,
   };
+  let nullNutrients = recipeNutrients;
   // for every element in ingredients, add the ingredients nutrients to the recipe nutrient total
-  await Promise.all(
-    ingredients.map(async ingredient => {
-      let ingredientNutrients: nutrition = await getIngredientNutrients(
-        ingredient,
-      );
-      recipeNutrients.calories += ingredientNutrients.calories;
-      recipeNutrients.total_fat += ingredientNutrients.total_fat;
-      recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
-      recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
-      recipeNutrients.sodium += ingredientNutrients.sodium;
-      recipeNutrients.total_carbohydrate +=
-        ingredientNutrients.total_carbohydrate;
-      recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
-      recipeNutrients.sugars += ingredientNutrients.sugars;
-      recipeNutrients.protein += ingredientNutrients.protein;
-    }),
-  );
-  // return the nutrition facts for the whole recipe
-  return recipeNutrients;
+  try {
+    await Promise.all(
+      ingredients.map(async ingredient => {
+        let ingredientNutrients: nutrition = await getIngredientNutrients(
+          ingredient,
+        );
+        recipeNutrients.calories += ingredientNutrients.calories;
+        recipeNutrients.total_fat += ingredientNutrients.total_fat;
+        recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
+        recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
+        recipeNutrients.sodium += ingredientNutrients.sodium;
+        recipeNutrients.total_carbohydrate +=
+          ingredientNutrients.total_carbohydrate;
+        recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
+        recipeNutrients.sugars += ingredientNutrients.sugars;
+        recipeNutrients.protein += ingredientNutrients.protein;
+      }),
+    );
+    // return the nutrition facts for the whole recipe
+    return recipeNutrients;
+  }
+  catch (e) {
+    return nullNutrients;
+  }
 }
 
 /*
@@ -233,10 +239,13 @@ async function toDB(
   };
   // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
   // creates a document with name: <recipe_name>
-  await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
-    // name in database: variable
-    data: recipe,
-  });
+  if (recipe_name === null){
+    recipe_name = "null";
+  }
+    await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
+      // name in database: variable
+      data: recipe,
+    });
   console.log('Document written successfully');
 }
 
@@ -248,15 +257,11 @@ const Form1 = () => {
   useEffect(() => {
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
     const cooking_time_storage: any =
-      window.localStorage.getItem('COOKINGTIME');
+    window.localStorage.getItem('COOKINGTIME');
 
     setRecipeName(JSON.parse(recipe_name_storage));
     setCookingTime(JSON.parse(cooking_time_storage));
   }, []);
-  // const handleSubmit = (e: {preventDefault: () => void}) => {
-  //   e.preventDefault();
-  //   console.log(JSON.stringify(form1));
-  // };
 
   const handleNameChange = (e: any) => {
     const name = e.target.value;
@@ -329,19 +334,11 @@ const Form2 = () => {
     const cost_storage: any = window.localStorage.getItem('COST');
     const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
     const servings_storage: any = window.localStorage.getItem('SERVINGS');
-    if (
-      difficulty_storage !== null &&
-      appliances_storage !== null &&
-      cost_storage !== null &&
-      allergens_storage !== null &&
-      servings_storage !== null
-    ) {
-      setDifficulty(JSON.parse(difficulty_storage));
-      setAppliances(JSON.parse(appliances_storage));
-      setCost(JSON.parse(cost_storage));
-      setAllergens(JSON.parse(allergens_storage));
-      setServings(JSON.parse(servings_storage));
-    }
+    setDifficulty(JSON.parse(difficulty_storage));
+    setAppliances(JSON.parse(appliances_storage));
+    setCost(JSON.parse(cost_storage));
+    setAllergens(JSON.parse(allergens_storage));
+    setServings(JSON.parse(servings_storage));
 
     const ingredientCount_store: any = Number(
       window.localStorage.getItem('INGREDIENTCOUNT'),
@@ -355,19 +352,11 @@ const Form2 = () => {
     const ingredientMeasurement_store: any = window.localStorage.getItem(
       'INGREDIENTMEASUREMENT',
     );
-    if (
-      ingredientString_store !== null &&
-      ingredientCount_store !== null &&
-      ingredientName_store !== null &&
-      ingredientAmount_store !== null &&
-      ingredientMeasurement_store !== null
-    ) {
-      setcount(JSON.parse(ingredientCount_store));
-      setIngredientString(JSON.parse(ingredientString_store));
-      setIngredientName(JSON.parse(ingredientName_store));
-      setIngredientAmount(JSON.parse(ingredientAmount_store));
-      setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
-    }
+    setcount(JSON.parse(ingredientCount_store));
+    setIngredientString(JSON.parse(ingredientString_store));
+    setIngredientName(JSON.parse(ingredientName_store));
+    setIngredientAmount(JSON.parse(ingredientAmount_store));
+    setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
   }, []);
 
   const handleDifficultyChange = (e: any) => {
@@ -727,9 +716,7 @@ const Form3 = () => {
   useEffect(() => {
     const instructions_storage: any =
       window.localStorage.getItem('INSTRUCTIONS');
-    if (instructions !== 'null') {
-      setInstructions(JSON.parse(instructions_storage));
-    }
+    setInstructions(JSON.parse(instructions_storage));
   }, []);
 
   const handleInstructionsChange = (e: any) => {
