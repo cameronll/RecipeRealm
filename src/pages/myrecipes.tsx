@@ -41,8 +41,22 @@ const Recipes: React.FC = () => {
   }, []);
 
   const recipesList = recipes.map(recipe => (
-    <li key={recipe.data.recipe_name}>{["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}</li>
+    <div id="my-recipe-tiles" key={recipe.data.recipe_name}>
+      {["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}
+    </div>
   ));
+
+  // function recipeTiles(){
+  //   const recipeTiles = document.createElement("div")
+
+  //   // for(var recipe of recipesList){
+  //   const tile = document.createTextNode(recipesList[0]);
+  //   recipeTiles.appendChild(tile);
+  //   // }
+  //   document.getElementById("my-recipe-tiles")?.appendChild(recipeTiles);
+  // };
+  // recipeTiles();
+
   return (
     <>
       <Navbar />
@@ -64,8 +78,12 @@ const Recipes: React.FC = () => {
           }}>
           Create Recipe
         </Button>
-        <ul>{recipesList}</ul>
+        
       </Link>
+        {/* Need to loop through recipesList to make a tile for each recipe */}
+      <body>
+        {recipesList}
+      </body>
     </>
   );
 };
