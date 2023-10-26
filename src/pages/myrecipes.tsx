@@ -90,7 +90,7 @@ const Recipes: React.FC = () => {
       </Link>
         {/* Need to loop through recipesList to make a tile for each recipe */}
       <body>
-        {recipesList}
+        
       </body>
     </>
   );
