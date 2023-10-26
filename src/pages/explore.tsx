@@ -36,6 +36,11 @@ const Explore: React.FC = () => {
     getData();
   }, []);
 
+  /*
+  data that can be displayed:
+  post.username.<description, title, username>
+  post.username.date_time.toDate().toString()
+  */
   const allPostsList = allPosts.map(post => (
     <li key={post?.title}>{["Username: ", post?.username, " ||| Title: ", post?.title, " ||| Posted: ", post?.date_time.toDate().toString()]}</li>
   ));

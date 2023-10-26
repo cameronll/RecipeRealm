@@ -40,9 +40,18 @@ const Recipes: React.FC = () => {
     getRecipes();
   }, []);
 
+  /*
+  data that can be displayed: 
+  recipe.data.<recipe_name, difficulty, allergens, cooking_time, cost_per_serving, instructions, servings>
+  recipe.data.nutrients.<calories, cholesterol, 
+      dietary_fiber, protein, saturated_fat, sodium, sugars, total_carbohydrate, total_fat>
+  */
+
+  // example display
   const recipesList = recipes.map(recipe => (
     <div id="my-recipe-tiles" key={recipe.data.recipe_name}>
-      {["Name: ", recipe.data.recipe_name, "    Difficulty: ", recipe.data.difficulty]}
+      {["Name: ", recipe.data.recipe_name, " Difficulty: ", recipe.data.difficulty, 
+        " Calories: ", recipe.data.nutrients.calories]}
     </div>
   ));
 
