@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
+import {AiOutlineHeart} from 'react-icons/ai';
 import {
   collection,
   addDoc,
@@ -103,8 +104,24 @@ const Recipes: React.FC = () => {
             color="white"
             minH="350"
             display="flex"
-            flexDirection="column">
-            <Flex>{recipe.data.recipe_name}</Flex>
+            flexDirection="column"
+            boxShadow="xs"
+            rounded="md"
+            padding="4">
+            <div style={{flex: 1, fontSize: '24px'}}>
+              {recipe.data.recipe_name}
+            </div>
+
+            <AiOutlineHeart style={{fontSize: '24px'}} />
+            <Box
+              boxShadow="xs"
+              rounded="md"
+              padding="4"
+              bg="blue.200"
+              color="black"
+              maxW="container.sm">
+              {recipe.data.difficulty}
+            </Box>
             <Box padding="4" bg="blue.400" color="black" maxW="container.sm">
               {recipe.data.nutrients.calories}
             </Box>
