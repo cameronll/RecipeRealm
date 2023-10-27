@@ -35,10 +35,15 @@ import {
   NumberInputStepper,
   NumberDecrementStepper,
   NumberIncrementStepper,
+  List,
+  ListItem,
+  ListIcon,
 } from '@chakra-ui/react';
+import {Link} from 'react-router-dom';
 
 import {useToast} from '@chakra-ui/react';
 import React from 'react';
+import {MinusIcon} from '@chakra-ui/icons';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -118,15 +123,17 @@ async function getIngredientNutrients(query: string): Promise<nutrition> {
     let nutrients: nutrition = {
       // since this data is now in a JSON object, the values can be accessed
       // with their keys like fields in a struct
-      calories: obj.foods[0].nf_calories,
-      total_fat: obj.foods[0].nf_total_fat,
-      saturated_fat: obj.foods[0].nf_saturated_fat,
-      cholesterol: obj.foods[0].nf_cholesterol,
-      sodium: obj.foods[0].nf_sodium,
-      total_carbohydrate: obj.foods[0].nf_total_carbohydrate,
-      dietary_fiber: obj.foods[0].nf_dietary_fiber,
-      sugars: obj.foods[0].nf_sugars,
-      protein: obj.foods[0].nf_protein,
+      calories: parseFloat(obj.foods[0].nf_calories.toFixed(2)),
+      total_fat: parseFloat(obj.foods[0].nf_total_fat.toFixed(2)),
+      saturated_fat: parseFloat(obj.foods[0].nf_saturated_fat.toFixed(2)),
+      cholesterol: parseFloat(obj.foods[0].nf_cholesterol.toFixed(2)),
+      sodium: parseFloat(obj.foods[0].nf_sodium.toFixed(2)),
+      total_carbohydrate: parseFloat(
+        obj.foods[0].nf_total_carbohydrate.toFixed(2),
+      ),
+      dietary_fiber: parseFloat(obj.foods[0].nf_dietary_fiber.toFixed(2)),
+      sugars: parseFloat(obj.foods[0].nf_sugars.toFixed(2)),
+      protein: parseFloat(obj.foods[0].nf_protein.toFixed(2)),
     };
     // return the nutrition information for this ONE ingredient
     return nutrients;
@@ -170,26 +177,31 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
     sugars: 0,
     protein: 0,
   };
+  let nullNutrients = recipeNutrients;
   // for every element in ingredients, add the ingredients nutrients to the recipe nutrient total
-  await Promise.all(
-    ingredients.map(async ingredient => {
-      let ingredientNutrients: nutrition = await getIngredientNutrients(
-        ingredient,
-      );
-      recipeNutrients.calories += ingredientNutrients.calories;
-      recipeNutrients.total_fat += ingredientNutrients.total_fat;
-      recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
-      recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
-      recipeNutrients.sodium += ingredientNutrients.sodium;
-      recipeNutrients.total_carbohydrate +=
-        ingredientNutrients.total_carbohydrate;
-      recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
-      recipeNutrients.sugars += ingredientNutrients.sugars;
-      recipeNutrients.protein += ingredientNutrients.protein;
-    }),
-  );
-  // return the nutrition facts for the whole recipe
-  return recipeNutrients;
+  try {
+    await Promise.all(
+      ingredients.map(async ingredient => {
+        let ingredientNutrients: nutrition = await getIngredientNutrients(
+          ingredient,
+        );
+        recipeNutrients.calories += ingredientNutrients.calories;
+        recipeNutrients.total_fat += ingredientNutrients.total_fat;
+        recipeNutrients.saturated_fat += ingredientNutrients.saturated_fat;
+        recipeNutrients.cholesterol += ingredientNutrients.cholesterol;
+        recipeNutrients.sodium += ingredientNutrients.sodium;
+        recipeNutrients.total_carbohydrate +=
+          ingredientNutrients.total_carbohydrate;
+        recipeNutrients.dietary_fiber += ingredientNutrients.dietary_fiber;
+        recipeNutrients.sugars += ingredientNutrients.sugars;
+        recipeNutrients.protein += ingredientNutrients.protein;
+      }),
+    );
+    // return the nutrition facts for the whole recipe
+    return recipeNutrients;
+  } catch (e) {
+    return nullNutrients;
+  }
 }
 
 /*
@@ -209,8 +221,7 @@ async function toDB(
   ingredients: string[],
   instructions: string,
 ) {
-
-// if there is a user logged in...
+  // if there is a user logged in...
   // store the currently logged in user's email in email
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // get the total nutrients, pass in the provided ingredients string array
@@ -227,15 +238,18 @@ async function toDB(
     ingredients: ingredients,
     instructions: instructions,
     nutrients: nutrients,
-  }
+  };
   // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
   // creates a document with name: <recipe_name>
+  if (recipe_name === null) {
+    recipe_name = 'null';
+  }
   await setDoc(doc(db, 'users/' + email + '/Recipes', recipe_name), {
     // name in database: variable
     data: recipe,
   });
   console.log('Document written successfully');
-  }
+}
 
 const Form1 = () => {
   const [show, setShow] = useState(false);
@@ -244,15 +258,12 @@ const Form1 = () => {
 
   useEffect(() => {
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
-    const cooking_time_storage: any = window.localStorage.getItem('COOKINGTIME');
+    const cooking_time_storage: any =
+      window.localStorage.getItem('COOKINGTIME');
 
     setRecipeName(JSON.parse(recipe_name_storage));
     setCookingTime(JSON.parse(cooking_time_storage));
   }, []);
-  // const handleSubmit = (e: {preventDefault: () => void}) => {
-  //   e.preventDefault();
-  //   console.log(JSON.stringify(form1));
-  // };
 
   const handleNameChange = (e: any) => {
     const name = e.target.value;
@@ -302,11 +313,11 @@ const Form1 = () => {
 };
 
 const Form2 = () => {
-  const [difficulty, setDifficulty] = useState('');
-  const [appliances, setAppliances] = useState('');
-  const [cost, setCost] = useState('');
-  const [allergens, setAllergens] = useState('');
-  const [servings, setServings] = useState('');
+  const [difficulty, setDifficulty] = useState(' ');
+  const [appliances, setAppliances] = useState(' ');
+  const [cost, setCost] = useState(' ');
+  const [allergens, setAllergens] = useState(' ');
+  const [servings, setServings] = useState(' ');
 
   const toast = useToast();
   const [ingredientCount, setcount] = useState(1);
@@ -317,44 +328,39 @@ const Form2 = () => {
   const [ingredientMeasurement, setIngredientMeasurement] = useState(' ');
 
   //TO DO
-  // FIX LOCAL STORAGE
-
+  // FIX LOCAL STORxAGE
 
   useEffect(() => {
-    const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
-    const appliances_storage: any =
-      window.localStorage.getItem('APPLIANCES');
-    const cost_storage: any = window.localStorage.getItem('COST');
-    const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
-    const servings_storage: any = window.localStorage.getItem('SERVINGS');
-    if (difficulty_storage !== null && appliances_storage !== null && 
-        cost_storage !== null && allergens_storage !== null && servings_storage !== null) {
+    if (window.localStorage.getItem('DIFFICULTY') !== null) {
+      const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
       setDifficulty(JSON.parse(difficulty_storage));
+    }
+    if (window.localStorage.getItem('APPLIANCES') !== null) {
+      const appliances_storage: any = window.localStorage.getItem('APPLIANCES');
       setAppliances(JSON.parse(appliances_storage));
+    }
+    if (window.localStorage.getItem('COST')) {
+      const cost_storage: any = window.localStorage.getItem('COST');
       setCost(JSON.parse(cost_storage));
+    }
+    if (window.localStorage.getItem('ALLERGENS')) {
+      const allergens_storage: any = window.localStorage.getItem('ALLERGENS');
       setAllergens(JSON.parse(allergens_storage));
+    }
+    if (window.localStorage.getItem('SERVINGS')) {
+      const servings_storage: any = window.localStorage.getItem('SERVINGS');
       setServings(JSON.parse(servings_storage));
     }
-
-    const ingredientCount_store: any = Number(
-      window.localStorage.getItem('INGREDIENTCOUNT'),
-    );
-    const ingredientString_store: any =
-      window.localStorage.getItem('INGREDIENTSTRING');
-    const ingredientName_store: any =
-      window.localStorage.getItem('INGREDIENTNAME');
-    const ingredientAmount_store: any =
-      window.localStorage.getItem('INGREDIENTAMOUNT');
-    const ingredientMeasurement_store: any = window.localStorage.getItem(
-      'INGREDIENTMEASUREMENT',
-    );
-    if (ingredientString_store !== null && ingredientCount_store !== null && ingredientName_store !== null &&
-      ingredientAmount_store !== null && ingredientMeasurement_store !== null ) {
-      setcount(JSON.parse(ingredientCount_store) + 1);
+    if (window.localStorage.getItem('INGREDIENTCOUNT')) {
+      const ingredientCount_store: any = Number(
+        window.localStorage.getItem('INGREDIENTCOUNT'),
+      );
+      setcount(JSON.parse(ingredientCount_store));
+    }
+    if (window.localStorage.getItem('INGREDIENTSTRING')) {
+      const ingredientString_store: any =
+        window.localStorage.getItem('INGREDIENTSTRING');
       setIngredientString(JSON.parse(ingredientString_store));
-      setIngredientName(JSON.parse(ingredientName_store));
-      setIngredientAmount(JSON.parse(ingredientAmount_store));
-      setIngredientMeasurement(JSON.parse(ingredientMeasurement_store));
     }
   }, []);
 
@@ -405,51 +411,37 @@ const Form2 = () => {
     }
     return false;
   };
-  const disabled = (index: number): boolean => {
-    if (ingredientCount - 1 !== index) {
-      return true;
-    }
-    return false;
-  };
   const handleIName = (e: any) => {
     const newName = e.target.value;
-    window.localStorage.setItem('INGREDIENTNAME', JSON.stringify(newName));
     setIngredientName(newName);
   };
 
   const handleIAmount = (value: any) => {
     const newAmount = value;
-    window.localStorage.setItem('INGREDIENTAMOUNT', JSON.stringify(newAmount));
     setIngredientAmount(newAmount);
   };
 
   const handleIMeasurement = (e: any) => {
     const newMeasurement = e.target.value;
-    window.localStorage.setItem(
-      'INGREDIENTMEASUREMENT',
-      JSON.stringify(newMeasurement),
-    );
     setIngredientMeasurement(newMeasurement);
   };
 
   function incrementCount() {
     //create new ingredient String
-    const newIngredient =
-      ingredientName + ' ' + ingredientAmount + ' ' + ingredientMeasurement;
+    const newIngredient = `${ingredientAmount} ${ingredientMeasurement} ${ingredientName}`;
 
-    if (localStorage.getItem('INGREDIENTSTRING') === null){
-      const helperString:string[] = [];
+    if (localStorage.getItem('INGREDIENTSTRING') === null) {
+      const helperString: string[] = [];
       helperString.push(newIngredient);
       localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
-    }
-    else{
-      let retString = localStorage.getItem("INGREDIENTSTRING")
-      let helperString:any = JSON.parse(retString as string);
+      setIngredientString(helperString);
+    } else {
+      let retString = localStorage.getItem('INGREDIENTSTRING');
+      let helperString: any = JSON.parse(retString as string);
       helperString.push(newIngredient);
       localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
+      setIngredientString(helperString);
     }
-
-    //setIngredientString(helperString);
     //clear data
     setIngredientAmount(0);
     setIngredientMeasurement('');
@@ -458,14 +450,18 @@ const Form2 = () => {
     //testing
     console.log(ingredientString);
 
-    setcount(prevCount => prevCount + 1);
+    setcount(ingredientString.length + 2);
+    localStorage.setItem('INGREDIENTCOUNT', JSON.stringify(ingredientCount));
   }
 
   function decrementCount() {
-    let retString = localStorage.getItem("INGREDIENTSTRING")
-    let helperString:any = JSON.parse(retString as string);
+    let retString = localStorage.getItem('INGREDIENTSTRING');
+    let helperString: any = JSON.parse(retString as string);
     helperString.pop();
     localStorage.setItem('INGREDIENTSTRING', JSON.stringify(helperString));
+    setIngredientString(helperString);
+    setcount(ingredientString.length);
+    localStorage.setItem('INGREDIENTCOUNT', JSON.stringify(ingredientCount));
   }
 
   return (
@@ -608,70 +604,83 @@ const Form2 = () => {
           onChange={handleServingsChange}
         />
       </FormControl>
-      {Array.from({length: ingredientCount}).map((_, index) => (
-        <Flex key={index}>
-          <React.Fragment>
-            <FormControl mr="5%">
-              <FormLabel htmlFor={`ingredient-${index}`} fontWeight={'normal'}>
-                Ingredient Name #{`${index}`}
-              </FormLabel>
-              <Input
-                id={`ingredient-${index}`}
-                placeholder="Ingredient..."
-                value={ingredientName}
-                onChange={handleIName}
-                isDisabled={disabled(index)}
-                isRequired={true}
-              />
-            </FormControl>
+      <Heading
+        paddingTop={5}
+        w="100%"
+        textAlign={'center'}
+        fontWeight="normal"
+        mb="2%">
+        Ingredient List
+      </Heading>
+      <Flex>
+        <List spacing={3}>
+          {Array.from({length: ingredientCount}).map((_, index) => (
+            <ListItem>
+              <ListIcon as={MinusIcon} color="green.500" />
+              {ingredientString.at(index)}
+            </ListItem>
+          ))}
+        </List>
+      </Flex>
+      <Flex>
+        <React.Fragment>
+          <FormControl mr="5%">
+            <FormLabel htmlFor={`ingredient-`} fontWeight={'normal'}>
+              Ingredient Name #
+            </FormLabel>
+            <Input
+              id={`ingredient-`}
+              placeholder="Ingredient..."
+              value={ingredientName}
+              onChange={handleIName}
+              isRequired={true}
+            />
+          </FormControl>
 
-            <FormControl mr="5%">
-              <FormLabel htmlFor={`amount-${index}`} fontWeight={'normal'}>
-                Amount
-              </FormLabel>
-              <NumberInput
-                max={999}
-                min={0}
-                value = {ingredientAmount}
-                onChange={handleIAmount}
-                isDisabled={disabled(index)}
-                isRequired={true}>
-                <NumberInputField id={`amount-${index}`} />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor={`unit-${index}`} fontWeight={'normal'}>
-                Unit of Measurement
-              </FormLabel>
-              <Select
-                id={`unit-${index}`}
-                placeholder=""
-                focusBorderColor="brand.400"
-                shadow="sm"
-                size="md"
-                w="full"
-                rounded="md"
-                value = {ingredientMeasurement}
-                onChange={handleIMeasurement}
-                isDisabled={disabled(index)}
-                isRequired={true}>
-                <option> </option>
-                <option>Ibs</option>
-                <option>oz</option>
-                <option>grams</option>
-                <option>milligrams</option>
-                <option>cups</option>
-                <option>tablespoon</option>
-                <option>teaspoon</option>
-              </Select>
-            </FormControl>
-          </React.Fragment>
-        </Flex>
-      ))}
+          <FormControl mr="5%">
+            <FormLabel htmlFor={`amount-`} fontWeight={'normal'}>
+              Amount
+            </FormLabel>
+            <NumberInput
+              max={999}
+              min={0}
+              value={ingredientAmount}
+              onChange={handleIAmount}
+              isRequired={true}>
+              <NumberInputField id={`amount-`} />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </FormControl>
+          <FormControl>
+            <FormLabel htmlFor={`unit-`} fontWeight={'normal'}>
+              Unit of Measurement
+            </FormLabel>
+            <Select
+              id={`unit-`}
+              placeholder=""
+              focusBorderColor="brand.400"
+              shadow="sm"
+              size="md"
+              w="full"
+              rounded="md"
+              value={ingredientMeasurement}
+              onChange={handleIMeasurement}
+              isRequired={true}>
+              <option> </option>
+              <option>Ibs</option>
+              <option>oz</option>
+              <option>grams</option>
+              <option>milligrams</option>
+              <option>cups</option>
+              <option>tablespoon</option>
+              <option>teaspoon</option>
+            </Select>
+          </FormControl>
+        </React.Fragment>
+      </Flex>
       <Flex>
         <Button
           onClick={incrementCount}
@@ -706,9 +715,7 @@ const Form3 = () => {
   useEffect(() => {
     const instructions_storage: any =
       window.localStorage.getItem('INSTRUCTIONS');
-    if (instructions !== 'null') {
-      setInstructions(JSON.parse(instructions_storage));
-    }
+    setInstructions(JSON.parse(instructions_storage));
   }, []);
 
   const handleInstructionsChange = (e: any) => {
@@ -770,7 +777,8 @@ export default function Multistep() {
   const allergens = JSON.parse(allergensStorage);
   const servingsStorage: any = window.localStorage.getItem('SERVINGS');
   const servings = JSON.parse(servingsStorage);
-  const ingredientsStorage: any = window.localStorage.getItem('INGREDIENTSTRING');
+  const ingredientsStorage: any =
+    window.localStorage.getItem('INGREDIENTSTRING');
   const ingredients = JSON.parse(ingredientsStorage);
 
   return (
@@ -823,52 +831,53 @@ export default function Multistep() {
               </Button>
             </Flex>
             {step === 3 ? (
-              <Button
-                w="7rem"
-                colorScheme="red"
-                variant="solid"
-                onClick={() => {
-                  const instructionsStorage: any = window.localStorage.getItem('INSTRUCTIONS');
-                  const instructions = JSON.parse(instructionsStorage);
-                  toast({
-                    title: 'Recipe created.',
-                    description: "We've created your recipe for you.",
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                  // TODO
-                  // replace hardcoded data with user inputted data from the form
-                  // replace hardcoded ingredients list with user inputted data
+              <Link to="../recipes">
+                <Button
+                  w="7rem"
+                  colorScheme="red"
+                  variant="solid"
+                  onClick={() => {
+                    const instructionsStorage: any =
+                      window.localStorage.getItem('INSTRUCTIONS');
+                    const instructions = JSON.parse(instructionsStorage);
+                    toast({
+                      title: 'Recipe created.',
+                      description: "We've created your recipe for you.",
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                    // TODO
+                    // replace hardcoded data with user inputted data from the form
+                    // replace hardcoded ingredients list with user inputted data
 
-                  // call to the DB with hardcoded data (for now)
-                  toDB(
-                    recipeName,
-                    servings,
-                    allergens,
-                    appliances,
-                    cookingTime,
-                    cost,
-                    difficulty,
-                    false,
-                    ingredients,
-                    instructions
-                  );
-                  window.localStorage.removeItem('RECIPENAME');
-                  window.localStorage.removeItem('COOKINGTIME');
-                  window.localStorage.removeItem('DIFFICULTY');
-                  window.localStorage.removeItem('APPLIANCES');
-                  window.localStorage.removeItem('COST');
-                  window.localStorage.removeItem('ALLERGENS');
-                  window.localStorage.removeItem('SERVINGS');
-                  window.localStorage.removeItem('INSTRUCTIONS');
-                  window.localStorage.removeItem('INGREDIENTSTRING');
-                  window.localStorage.removeItem('INGREDIENTAMOUNT');
-                  window.localStorage.removeItem('INGREDIENTMEASUREMENT');
-                  window.localStorage.removeItem('INGREDIENTNAME');
-                }}>
-                Submit
-              </Button>
+                    // call to the DB with hardcoded data (for now)
+                    toDB(
+                      recipeName,
+                      servings,
+                      allergens,
+                      appliances,
+                      cookingTime,
+                      cost,
+                      difficulty,
+                      false,
+                      ingredients,
+                      instructions,
+                    );
+                    window.localStorage.removeItem('RECIPENAME');
+                    window.localStorage.removeItem('COOKINGTIME');
+                    window.localStorage.removeItem('DIFFICULTY');
+                    window.localStorage.removeItem('APPLIANCES');
+                    window.localStorage.removeItem('COST');
+                    window.localStorage.removeItem('ALLERGENS');
+                    window.localStorage.removeItem('SERVINGS');
+                    window.localStorage.removeItem('INSTRUCTIONS');
+                    window.localStorage.removeItem('INGREDIENTSTRING');
+                    window.localStorage.removeItem('INGREDIENTCOUNT');
+                  }}>
+                  Submit
+                </Button>
+              </Link>
             ) : null}
           </Flex>
         </ButtonGroup>
