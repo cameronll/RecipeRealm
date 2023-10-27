@@ -20,7 +20,6 @@ import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
 
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -84,12 +83,12 @@ const Login = () => {
             />
 
             <Flex>
-            <Link to="/Recipes">
-              <Button colorScheme="teal" size="lg" onClick={signIn}>
-                Login
-              </Button>
-              
-                <Button mt={4} colorScheme="red" size="lg"></Button>
+              <Link to="/Recipes">
+                <Button colorScheme="teal" size="lg" onClick={signIn}>
+                  Login
+                </Button>
+
+                {/* <Button mt={4} colorScheme="red" size="lg"></Button> */}
               </Link>
 
               <Spacer />

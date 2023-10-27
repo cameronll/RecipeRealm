@@ -54,14 +54,18 @@ const Explore: React.FC = () => {
       const following: string[] = JSON.parse(
         localStorage.getItem('FOLLOWING') as string,
       );
-      const friendsPostsQuery = query(
-        collection(db, 'posts'),
-        where('email', 'in', following),
-        orderBy('date_time', 'desc'),
-      );
-      const friendsPostsDocs = await getDocs(friendsPostsQuery);
-      const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
-      setFriendsPosts(friendsPostsData);
+      if (following[0]) {
+        const friendsPostsQuery = query(
+          collection(db, 'posts'),
+          where('email', 'in', following),
+          orderBy('date_time', 'desc'),
+        );
+        const friendsPostsDocs = await getDocs(friendsPostsQuery);
+        const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
+        setFriendsPosts(friendsPostsData);
+      } else {
+        setFriendsPosts(allPostsData);
+      }
     }
     getData();
   }, []);
@@ -103,32 +107,32 @@ const Explore: React.FC = () => {
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
                     <AiOutlineHeart style={{fontSize: '24px'}} />
                     <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="blue.400"
-                    color="black"
-                    maxW="container.sm">
-                    <h1>Recipe Name: {post.recipe_name}</h1>
-                  </Box>
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="blue.200"
-                    color="black"
-                    maxW="container.sm">
-                    <h1>Description: {post.description}</h1>
-                  </Box>
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="blue.100"
-                    color="black"
-                    maxW="container.sm">
-                    {post?.date_time.toDate().toString()}
-                  </Box>
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.400"
+                      color="black"
+                      maxW="container.sm">
+                      <h1>Recipe Name: {post.recipe_name}</h1>
+                    </Box>
+                    <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.200"
+                      color="black"
+                      maxW="container.sm">
+                      <h1>Description: {post.description}</h1>
+                    </Box>
+                    <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.100"
+                      color="black"
+                      maxW="container.sm">
+                      {post?.date_time.toDate().toString()}
+                    </Box>
                   </Box>
                 </Container>
               ))}
@@ -157,32 +161,32 @@ const Explore: React.FC = () => {
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
                     <AiOutlineHeart style={{fontSize: '24px'}} />
                     <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="blue.400"
-                    color="black"
-                    maxW="container.sm">
-                    <h1>Recipe Name: {post.recipe_name}</h1>
-                  </Box>
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="blue.200"
-                    color="black"
-                    maxW="container.sm">
-                    <h1>Description: {post.description}</h1>
-                  </Box>
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="blue.100"
-                    color="black"
-                    maxW="container.sm">
-                    {post?.date_time.toDate().toString()}
-                  </Box>
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.400"
+                      color="black"
+                      maxW="container.sm">
+                      <h1>Recipe Name: {post.recipe_name}</h1>
+                    </Box>
+                    <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.200"
+                      color="black"
+                      maxW="container.sm">
+                      <h1>Description: {post.description}</h1>
+                    </Box>
+                    <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.100"
+                      color="black"
+                      maxW="container.sm">
+                      {post?.date_time.toDate().toString()}
+                    </Box>
                   </Box>
                 </Container>
               ))}

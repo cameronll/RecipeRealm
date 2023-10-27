@@ -18,6 +18,7 @@ import {
   Image,
 } from '@chakra-ui/react';
 import {HamburgerIcon, CloseIcon} from '@chakra-ui/icons';
+import {Link} from 'react-router-dom';
 
 interface NavLinkProps {
   href: string; // Define href as a prop
@@ -95,7 +96,9 @@ const Navbar: React.FC = () => {
                 <MenuItem>Settings</MenuItem>
                 <MenuItem>Add Friends</MenuItem>
                 <MenuDivider />
-                <MenuItem>Logout</MenuItem>
+                <Link to="/login">
+                  <MenuItem>Logout</MenuItem>
+                </Link>
               </MenuList>
             </Menu>
           </Flex>

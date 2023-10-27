@@ -3,12 +3,13 @@ import {Flex, Input, Button, Stack, ButtonGroup, Box} from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
-import { getAuth } from "firebase/auth";
+import {getAuth} from 'firebase/auth';
 import {db} from '../../firebaseConfig';
-import { doc, setDoc } from "firebase/firestore"; 
-import {collection, addDoc, DocumentReference} from "firebase/firestore";
+import {doc, setDoc} from 'firebase/firestore';
+import {collection, addDoc, DocumentReference} from 'firebase/firestore';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link} from 'react-router-dom';
+import {useToast} from '@chakra-ui/react';
 import Footer from '../../components/Footer';
 
 function validateName(value: any) {
@@ -23,7 +24,8 @@ function validateName(value: any) {
 }
 
 const SignUp = () => {
-  const following:string[] = [];
+  const toast = useToast();
+  const following: string[] = [];
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -40,13 +42,13 @@ const SignUp = () => {
           values.password,
         );
 
-        const docRef = await setDoc(doc(db, "users", values.email), {
+        const docRef = await setDoc(doc(db, 'users', values.email), {
           email: values.email,
           name: values.name,
           username: values.username,
-          following: following
+          following: following,
         });
-        console.log("Document written with ID: ", docRef);
+        console.log('Document written with ID: ', docRef);
 
         // Additional actions upon successful signup (if needed)
       } catch (e) {
@@ -109,7 +111,20 @@ const SignUp = () => {
                 value={formik.values.password}
               />
               <ButtonGroup variant="outline" spacing="6">
-                <Button mt={4} colorScheme="teal" type="submit" size="lg">
+                <Button
+                  mt={4}
+                  colorScheme="teal"
+                  type="submit"
+                  size="lg"
+                  onClick={() => {
+                    toast({
+                      title: 'Account created.',
+                      description: "We've created your recipe for you.",
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                  }}>
                   Submit
                 </Button>
                 <Link to="/login">
