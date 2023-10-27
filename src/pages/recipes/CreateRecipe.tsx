@@ -328,7 +328,7 @@ const Form2 = () => {
   const [ingredientMeasurement, setIngredientMeasurement] = useState(' ');
 
   //TO DO
-  // FIX LOCAL STORAGE
+  // FIX LOCAL STORxAGE
 
   useEffect(() => {
     if (window.localStorage.getItem('DIFFICULTY') !== null) {
@@ -413,22 +413,16 @@ const Form2 = () => {
   };
   const handleIName = (e: any) => {
     const newName = e.target.value;
-    window.localStorage.setItem('INGREDIENTNAME', JSON.stringify(newName));
     setIngredientName(newName);
   };
 
   const handleIAmount = (value: any) => {
     const newAmount = value;
-    window.localStorage.setItem('INGREDIENTAMOUNT', JSON.stringify(newAmount));
     setIngredientAmount(newAmount);
   };
 
   const handleIMeasurement = (e: any) => {
     const newMeasurement = e.target.value;
-    window.localStorage.setItem(
-      'INGREDIENTMEASUREMENT',
-      JSON.stringify(newMeasurement),
-    );
     setIngredientMeasurement(newMeasurement);
   };
 
@@ -878,7 +872,7 @@ export default function Multistep() {
                     window.localStorage.removeItem('ALLERGENS');
                     window.localStorage.removeItem('SERVINGS');
                     window.localStorage.removeItem('INSTRUCTIONS');
-                    window.localStorage.removeItem('INGREDIENTNAME');
+                    window.localStorage.removeItem('INGREDIENTSTRING');
                     window.localStorage.removeItem('INGREDIENTCOUNT');
                   }}>
                   Submit

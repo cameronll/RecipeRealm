@@ -68,33 +68,9 @@ const Explore: React.FC = () => {
 
   /*
   data that can be displayed:
-  post.username.<description, title, username>
+  post.username.<description, title, username, recipe_name>
   post.username.date_time.toDate().toString()
   */
-  const allPostsList = allPosts.map(post => (
-    <li key={post?.title}>
-      {[
-        'Username: ',
-        post?.username,
-        ' ||| Title: ',
-        post?.title,
-        ' ||| Posted: ',
-        post?.date_time.toDate().toString(),
-      ]}
-    </li>
-  ));
-  const friendsPostsList = friendsPosts.map(post => (
-    <li key={post?.title}>
-      {[
-        'Username: ',
-        post?.username,
-        ' ||| Title: ',
-        post?.title,
-        ' ||| Posted: ',
-        post?.date_time.toDate().toString(),
-      ]}
-    </li>
-  ));
   return (
     <Box>
       <Navbar />
@@ -127,58 +103,14 @@ const Explore: React.FC = () => {
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
                     <AiOutlineHeart style={{fontSize: '24px'}} />
                     <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="blue.200"
-                      color="black"
-                      maxW="container.sm">
-                      Description: {post.description}
-                    </Box>
-                    <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="blue.400"
-                      color="black"
-                      maxW="container.sm">
-                      {post?.date_time.toDate().toString()}
-                    </Box>
+                    boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="blue.400"
+                    color="black"
+                    maxW="container.sm">
+                    <h1>Recipe Name: {post.recipe_name}</h1>
                   </Box>
-                </Container>
-              ))}
-              {/* {allPosts.map(post => (
-                <li key={post?.title}>
-                  {[
-                    'Username: ',
-                    post?.username,
-                    ' ||| Title: ',
-                    post?.title,
-                    ' ||| Posted: ',
-                    // post?.date_time.toDate().toString(),
-                  ]}
-                </li>
-              ))} */}
-              ;
-            </VStack>
-          </TabPanel>
-          <TabPanel>
-            <p>Friends</p>
-            <Container
-              justifyContent="center" /* Center vertically */
-              alignItems="center">
-              {friendsPosts.map(post => (
-                <Box
-                  boxShadow="xs"
-                  rounded="md"
-                  maxW="container.sm"
-                  bg="blue.600"
-                  color="white"
-                  minH="350"
-                  display="flex"
-                  flexDirection="column">
-                  <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
-                  <AiOutlineHeart style={{fontSize: '24px'}} />
                   <Box
                     boxShadow="xs"
                     rounded="md"
@@ -186,20 +118,75 @@ const Explore: React.FC = () => {
                     bg="blue.200"
                     color="black"
                     maxW="container.sm">
-                    Description: {post.description}
+                    <h1>Description: {post.description}</h1>
                   </Box>
                   <Box
+                    boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="blue.100"
+                    color="black"
+                    maxW="container.sm">
+                    {post?.date_time.toDate().toString()}
+                  </Box>
+                  </Box>
+                </Container>
+              ))}
+            </VStack>
+          </TabPanel>
+          <TabPanel>
+            <p>Friends</p>
+            <VStack>
+              {friendsPosts.map(post => (
+                <Container
+                  maxW="container.sm"
+                  bg="blue.600"
+                  color="white"
+                  minH="350"
+                  display="flex"
+                  flexDirection="column">
+                  <Box
+                    boxShadow="xs"
+                    rounded="md"
+                    maxW="container.sm"
+                    bg="blue.600"
+                    color="white"
+                    minH="350"
+                    display="flex"
+                    flexDirection="column">
+                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
+                    <AiOutlineHeart style={{fontSize: '24px'}} />
+                    <Box
                     boxShadow="xs"
                     rounded="md"
                     padding="4"
                     bg="blue.400"
                     color="black"
                     maxW="container.sm">
+                    <h1>Recipe Name: {post.recipe_name}</h1>
+                  </Box>
+                  <Box
+                    boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="blue.200"
+                    color="black"
+                    maxW="container.sm">
+                    <h1>Description: {post.description}</h1>
+                  </Box>
+                  <Box
+                    boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="blue.100"
+                    color="black"
+                    maxW="container.sm">
                     {post?.date_time.toDate().toString()}
                   </Box>
-                </Box>
+                  </Box>
+                </Container>
               ))}
-            </Container>
+            </VStack>
           </TabPanel>
         </TabPanels>
       </Tabs>

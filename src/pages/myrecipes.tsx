@@ -65,17 +65,6 @@ const Recipes: React.FC = () => {
     </div>
   ));
 
-  // function recipeTiles(){
-  //   const recipeTiles = document.createElement("div")
-
-  //   // for(var recipe of recipesList){
-  //   const tile = document.createTextNode(recipesList[0]);
-  //   recipeTiles.appendChild(tile);
-  //   // }
-  //   document.getElementById("my-recipe-tiles")?.appendChild(recipeTiles);
-  // };
-  // recipeTiles();
-
   return (
     <>
       <Navbar />
@@ -117,13 +106,25 @@ const Recipes: React.FC = () => {
               boxShadow="xs"
               rounded="md"
               padding="4"
-              bg="blue.200"
+              bg="blue.400"
               color="black"
               maxW="container.sm">
-              {recipe.data.difficulty}
+              <h1>Difficulty: {recipe.data.difficulty}</h1>
+              <h1>Time: {recipe.data.cooking_time}</h1>
+              <h1>Servings: {recipe.data.servings}</h1>
+              <h1>Cost Per Serving: {recipe.data.cost_per_serving}</h1>
+              <h1>Cooking Applications: {recipe.data.cooking_applications}</h1>
+              <h1>Allergens: {recipe.data.allergens}</h1>
             </Box>
-            <Box padding="4" bg="blue.400" color="black" maxW="container.sm">
-              {recipe.data.nutrients.calories}
+            <Box padding="4" bg="blue.200" color="black" maxW="container.sm">
+              <h1>Calories: {recipe.data.nutrients.calories}</h1>
+              <h1>Protein: {recipe.data.nutrients.protein}</h1>
+              <h1>Carbs: {recipe.data.nutrients.total_carbohydrate}</h1>
+              <h1>Fat: {recipe.data.nutrients.total_fat}</h1>
+            </Box>
+            
+            <Box padding="4" bg="blue.100" color="black" maxW="container.sm">
+              <h1>Instructions: {recipe.data.instructions}</h1>
             </Box>
           </Container>
         ))}
