@@ -29,6 +29,16 @@ import {CopyIcon} from '@chakra-ui/icons';
 import {collapseTextChangeRangesAcrossMultipleVersions} from 'typescript';
 import {AiOutlineHeart} from 'react-icons/ai';
 
+function getIndex(email:string): number{
+  const profiles: any[] = JSON.parse(localStorage.getItem("PROFILES") as string)
+  for (let i = 0; i < profiles.length; i++){
+    if (profiles[i].email === email){
+      return i;
+    }
+  }
+  return -1;
+}
+
 const Explore: React.FC = () => {
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
@@ -36,12 +46,17 @@ const Explore: React.FC = () => {
 
   useEffect(() => {
     async function getData() {
-      console.log(email);
       const getUser = doc(db, 'users/', email);
       const getUserData = await getDoc(getUser);
       const userFollowing = getUserData?.data()?.following;
-      console.log(userFollowing);
       localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
+
+      const profilesQuery = query(
+        collection(db, 'users')
+      );
+      const profilesDocs = await getDocs(profilesQuery);
+      const profilesData = profilesDocs.docs.map(doc => doc.data());
+      localStorage.setItem("PROFILES", JSON.stringify(profilesData));
 
       const allPostsQuery = query(
         collection(db, 'posts'),
@@ -114,6 +129,7 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
+                      <h1>Username: {JSON.parse(localStorage.getItem("PROFILES") as string)[getIndex(post.email)].username}</h1>
                     </Box>
                     <Box
                       boxShadow="xs"
@@ -168,6 +184,7 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
+                      <h1>Username: {JSON.parse(localStorage.getItem("PROFILES") as string)[getIndex(post.email)].username}</h1>
                     </Box>
                     <Box
                       boxShadow="xs"
