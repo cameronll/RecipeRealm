@@ -43,8 +43,16 @@ const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const profile = JSON.parse(localStorage.getItem('USERPROFILE') as string);
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
+    async function getProfile() {
+      const getUser = doc(db, 'users/', email);
+      const getProfile = await getDoc(getUser);
+      localStorage.setItem('USERPROFILE', JSON.stringify(getProfile.data()));
+    }
+    getProfile();
     const username_from_storage:any = window.localStorage.getItem('NEWUSERNAME');
     const email_from_storage:any = window.localStorage.getItem('NEWBIOGRAPHY');
     
@@ -88,6 +96,7 @@ const Profile: React.FC = () => {
         my={12}>
         <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
           User Profile Edit
+          <h1>{profile.username}</h1>
         </Heading>
         <FormControl id="userName">
           <FormLabel>User Icon</FormLabel>

@@ -42,6 +42,7 @@ function getIndex(email:string): number{
 const Explore: React.FC = () => {
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
+  const profiles = JSON.parse(localStorage.getItem('PROFILES') as string);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
@@ -184,7 +185,7 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
-                      <h1>Username: {JSON.parse(localStorage.getItem("PROFILES") as string)[getIndex(post.email)].username}</h1>
+                      <h1>Username: {profiles[getIndex(post.email)].username}</h1>
                     </Box>
                     <Box
                       boxShadow="xs"
