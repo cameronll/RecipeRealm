@@ -37,6 +37,48 @@ import {
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
 
+type nutrition = {
+  calories: number;
+  total_fat: number;
+  saturated_fat: number;
+  cholesterol: number;
+  sodium: number;
+  total_carbohydrate: number;
+  dietary_fiber: number;
+  sugars: number;
+  protein: number;
+};
+
+type recipe = {
+  recipe_name: string;
+  servings: string;
+  allergens: string;
+  cooking_applications: string;
+  cooking_time: string;
+  cost_per_serving: string;
+  difficulty: string;
+  posted: boolean;
+  ingredients: string[];
+  instructions: string;
+  nutrients: nutrition;
+};
+
+async function toDB(title:string, description:string, recipe:recipe){
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const getUser = doc(db, 'users/', email);
+  const getUserData = await getDoc(getUser);
+  const username = getUserData?.data()?.username;
+  const date = new Date();
+  await setDoc(doc(db, 'posts/' + title), {
+    // name in database: variable
+    email: email,
+    username: username,
+    date_time: date,
+    title: title,
+    description: description,
+    recipe: recipe
+  });
+}
 const Posts: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
