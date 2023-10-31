@@ -10,6 +10,7 @@ import {
   where,
   query,
   orderBy,
+  updateDoc,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -85,6 +86,16 @@ const Explore: React.FC = () => {
     getData();
   }, []);
 
+  async function addFollowing(followingEmail: string){
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string)
+    following.push(followingEmail);
+    localStorage.setItem('FOLLOWING', following);
+    const getUser = doc(db, 'users/', email);
+    await updateDoc(getUser, {
+      following: following
+    });
+  }
+
   /*
   data that can be displayed:
   post.username.<description, title, username, recipe_name>
@@ -129,7 +140,18 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
-                      <h1>Username: {profiles[getIndex(profiles, post.email)]?.username}</h1>
+                      Username: {profiles[getIndex(profiles, post.email)]?.username}
+                      <Button
+                        bg={'blue.400'}
+                        color={'white'}
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                        onClick = {() => {
+                          addFollowing(post.email);
+                          }}>
+                          Follow
+                      </Button>
                     </Box>
                     <Box
                       boxShadow="xs"
