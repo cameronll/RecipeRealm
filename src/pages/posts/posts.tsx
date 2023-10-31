@@ -28,6 +28,12 @@ import {
   Center,
   Link,
   Badge,
+  SimpleGrid,
+  FormControl,
+  FormLabel,
+  Textarea,
+  FormHelperText,
+  AbsoluteCenter,
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
 
@@ -46,15 +52,131 @@ const Posts: React.FC = () => {
   return (
     <>
       <Navbar />
+      <Heading w="100%" textAlign={'center'} fontWeight="normal">
+        Create Posts
+      </Heading>
+      <Center h="100%">
+        <SimpleGrid w="75" columns={1}>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Posts Stuff
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Posts Stuff
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Posts Stuff
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Posts Stuff
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Posts Stuff
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+        </SimpleGrid>
+      </Center>
       <Box p={4}>
-        <Input
-          type="text"
-          placeholder="Enter your text"
-          value={inputText}
-          onChange={handleInputChange}
-        />
         <Button colorScheme="teal" onClick={handleSubmit}>
-          /**submits the form */ Submit
+          Create
         </Button>
       </Box>
     </>

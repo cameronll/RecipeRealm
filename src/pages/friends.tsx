@@ -106,7 +106,6 @@ const Friends: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Posts />
       <Center py={6}>
         <Box
           maxW={'320px'}

@@ -101,9 +101,8 @@ const Explore: React.FC = () => {
       await updateDoc(getUser, {
         following: following,
       });
-    }
-    else{
-      console.log("Already following");
+    } else {
+      console.log('Already following');
     }
   }
 
@@ -132,7 +131,7 @@ const Explore: React.FC = () => {
           bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
           <Stack maxW={'2xl'} spacing={6}>
             <Stack direction={'row'}>
-              <Link to="/posts/posts">
+              <Link to="/Posts">
                 <Button
                   justifyItems={'right'}
                   bg={'teal.400'}
@@ -176,42 +175,46 @@ const Explore: React.FC = () => {
             <p>Explore</p>
             <VStack>
               {allPosts.map(post => (
-                <Container
-                  maxW="container.sm"
-                  bg="blue.600"
-                  color="white"
-                  minH="350"
-                  display="flex"
-                  flexDirection="column">
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
+                <Flex>
+                  <Container
                     maxW="container.sm"
                     bg="blue.600"
                     color="white"
                     minH="350"
                     display="flex"
                     flexDirection="column">
-                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
-                    <AiOutlineHeart style={{fontSize: '24px'}} />
                     <Box
                       boxShadow="xs"
                       rounded="md"
-                      padding="4"
-                      bg="blue.400"
-                      color="black"
-                      maxW="container.sm">
-                      <h1>Recipe Name: {post.recipe_name}</h1>
-                      Username: {profiles[getIndex(profiles, post.email)]?.username}
-                      <Button
-                        bg={'blue.400'}
-                        color={'white'}
-                        _hover={{
-                          bg: 'blue.500',
-                        }}
-                        style={{flex: 1, fontSize: '14px'}}
-                        onClick = {() => {
-                          addFollowing(post.email);
+                      maxW="container.sm"
+                      bg="blue.600"
+                      color="white"
+                      minH="350"
+                      display="flex"
+                      flexDirection="column">
+                      <div style={{flex: 1, fontSize: '24px'}}>
+                        {post?.title}
+                      </div>
+                      <AiOutlineHeart style={{fontSize: '24px'}} />
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="blue.400"
+                        color="black"
+                        maxW="container.sm">
+                        <h1>Recipe Name: {post.recipe_name}</h1>
+                        Username:{' '}
+                        {profiles[getIndex(profiles, post.email)]?.username}
+                        <Button
+                          bg={'blue.400'}
+                          color={'white'}
+                          _hover={{
+                            bg: 'blue.500',
+                          }}
+                          style={{flex: 1, fontSize: '14px'}}
+                          onClick={() => {
+                            addFollowing(post.email);
                           }}>
                           Follow
                         </Button>
@@ -270,7 +273,10 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
-                      <h1>Username: {profiles[getIndex(profiles, post.email)]?.username}</h1>
+                      <h1>
+                        Username:{' '}
+                        {profiles[getIndex(profiles, post.email)]?.username}
+                      </h1>
                     </Box>
                     <Box
                       boxShadow="xs"
