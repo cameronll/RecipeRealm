@@ -190,7 +190,8 @@ const Explore: React.FC = () => {
               {allPosts.map(post => (
                 <Flex>
                   <Container
-                    maxW="container.sm"
+                    maxW="container.lg"
+                    rounded="md"
                     bg="blue.600"
                     color="white"
                     minH="350"
@@ -199,7 +200,7 @@ const Explore: React.FC = () => {
                     <Box
                       boxShadow="xs"
                       rounded="md"
-                      maxW="container.sm"
+                      maxW="container.md"
                       bg="blue.600"
                       color="white"
                       minH="350"
@@ -215,16 +216,14 @@ const Explore: React.FC = () => {
                         padding="4"
                         bg="blue.400"
                         color="black"
-                        maxW="container.sm">
+                        maxW="container.md"
+                        h="0.5">
                         <h1>Recipe Name: {post.recipe_name}</h1>
                         Username:{' '}
                         {profiles[getIndex(profiles, post.email)]?.username}
                         <Button
-                          bg={'blue.400'}
-                          color={'white'}
-                          _hover={{
-                            bg: 'blue.500',
-                          }}
+                          colorScheme="teal"
+                          variant="solid"
                           style={{flex: 1, fontSize: '14px'}}
                           onClick={() => {
                             addFollowing(post.email);

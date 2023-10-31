@@ -34,6 +34,7 @@ import {
   Textarea,
   FormHelperText,
   AbsoluteCenter,
+  Select,
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
 
@@ -112,7 +113,13 @@ const Posts: React.FC = () => {
         Create Posts
       </Heading>
       <Center h="100%">
-        <SimpleGrid w="75" columns={1}>
+        <Box
+          boxShadow="xs"
+          rounded="md"
+          padding="4"
+          bg="blue.400"
+          color="black"
+          maxW="container.sm">
           <FormControl mt={1}>
             <FormLabel
               fontSize="sm"
@@ -122,7 +129,78 @@ const Posts: React.FC = () => {
                 color: 'gray.50',
               }}>
               {recipes[0]?.data.recipe_name}
+              Description
             </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Title
+              {recipes[0]?.recipe_name}
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Image
+            </FormLabel>
+            <Textarea
+              placeholder="Brody's Stuff"
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+            />
+            <FormHelperText>
+              *I am text on this line that helps the user do things
+            </FormHelperText>
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Recipe
+>>>>>>> Stashed changes
             <Textarea
               placeholder="Brody's Stuff"
               rows={3}
@@ -158,77 +236,24 @@ const Posts: React.FC = () => {
             <FormHelperText>
               *I am text on this line that helps the user do things
             </FormHelperText>
-          </FormControl>
-          <FormControl mt={1}>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              Posts Stuff
-            </FormLabel>
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
-              shadow="sm"
+            <Select
+              id="difficulty"
+              name="difficulty"
+              autoComplete="difficulty"
+              placeholder="Select option"
               focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-            />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
-          </FormControl>
-          <FormControl mt={1}>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              Posts Stuff
-            </FormLabel>
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
               shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-            />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
+              size="sm"
+              w="full"
+              rounded="md">
+              {/* {for } */}
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Seasoned Chef</option>
+              <option>Master Chef</option>
+            </Select>
           </FormControl>
-          <FormControl mt={1}>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              Posts Stuff
-            </FormLabel>
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
-              shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-            />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
-          </FormControl>
-        </SimpleGrid>
+        </Box>
       </Center>
       <Box p={4}>
         <Button colorScheme="teal" onClick={handleSubmit}>
