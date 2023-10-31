@@ -69,7 +69,7 @@ async function toDB(title:string, description:string, recipe:recipe){
   const getUserData = await getDoc(getUser);
   const username = getUserData?.data()?.username;
   const date = new Date();
-  await setDoc(doc(db, 'posts/' + title), {
+  await addDoc(collection(db, 'posts'), {
     // name in database: variable
     email: email,
     username: username,
