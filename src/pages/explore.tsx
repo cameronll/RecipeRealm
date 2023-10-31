@@ -24,6 +24,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import {CopyIcon} from '@chakra-ui/icons';
@@ -40,10 +41,12 @@ function getIndex(profiles:any[], email:string): number{
 }
 
 const Explore: React.FC = () => {
+  // useState to create constants
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const toast = useToast();
 
   useEffect(() => {
     async function getData() {
@@ -95,9 +98,6 @@ const Explore: React.FC = () => {
       await updateDoc(getUser, {
         following: following
       });
-    }
-    else{
-      console.log("Already following");
     }
   }
 
@@ -154,6 +154,13 @@ const Explore: React.FC = () => {
                         }}
                         style={{flex: 1, fontSize: '14px'}}
                         onClick = {() => {
+                          toast({
+                            title: 'Followed!',
+                            description: "Added to your friends",
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                          });
                           addFollowing(post.email);
                           }}>
                           Follow

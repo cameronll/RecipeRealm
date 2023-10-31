@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Navbar from '../components/Navbar';
 import {db} from '../firebaseConfig';
 import {collection, addDoc, doc, setDoc, getDoc, getDocs, where, query, orderBy, updateDoc} from "firebase/firestore";
-import { getAuth, onAuthStateChanged, updateEmail, updatePassword } from "firebase/auth";
+import { AuthCredential, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, updateEmail, updatePassword } from "firebase/auth";
 import {
   Button,
   Flex,
@@ -17,34 +17,38 @@ import {
   AvatarBadge,
   IconButton,
   Center,
+  useToast,
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
 
-async function toDB(newBiography:string, newUsername:string, newPassword: string){
+async function toDB(newBiography:string, newUsername:string, newPassword: string, oldPassword: string){
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const auth = getAuth();
   const user = auth.currentUser;
-  const docRef = doc(db, "users/", email)
-
+  const credential = EmailAuthProvider.credential(
+    email,
+    oldPassword
+  )
   if (user){
-    updatePassword(user, newPassword);
-    await updateDoc(docRef, {
+    reauthenticateWithCredential(user, credential).then(async () => {
+      updatePassword(user, newPassword);
+      await updateDoc(docRef, {
       username: newUsername,
       biography: newBiography
+      })
     })
-    console.log("Document Written");
   }
-  else{
-    console.log("No user!");
-  }
+  const docRef = doc(db, "users/", email)
 }
 
 const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const toast = useToast();
 
   useEffect(() => {
     async function getProfile() {
@@ -70,6 +74,11 @@ const Profile: React.FC = () => {
     const name = e.target.value;
     window.localStorage.setItem('NEWBIOGRAPHY', JSON.stringify(name));
     setNewBiography(name);
+  };
+
+  const handleOldPasswordChange = (e: any) => {
+    const name = e.target.value;
+    setOldPassword(name);
   };
 
   const handlePasswordChange = (e: any) => {
@@ -129,8 +138,18 @@ const Profile: React.FC = () => {
             onChange={handleUsernameChange}
           />
         </FormControl>
-        <FormControl id="password" isRequired>
-          <FormLabel>Password</FormLabel>
+        <FormControl id="oldpassword" isRequired>
+          <FormLabel>Old Password</FormLabel>
+          <Input
+            placeholder="password"
+            _placeholder={{ color: 'gray.500' }}
+            type="password"
+            value={oldPassword}
+            onChange={handleOldPasswordChange}
+          />
+        </FormControl>
+        <FormControl id="newpassword" isRequired>
+          <FormLabel>New Password</FormLabel>
           <Input
             placeholder="password"
             _placeholder={{ color: 'gray.500' }}
@@ -167,8 +186,14 @@ const Profile: React.FC = () => {
               bg: 'blue.500',
             }}
             onClick={() => {
-              console.log(newBiography);
-              toDB(newBiography, newUsername, newPassword);
+              toast({
+                title: 'Success!',
+                description: "Your profile data has been updated",
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+              });
+              toDB(newBiography, newUsername, newPassword, oldPassword);
             }}>
             Submit
           </Button>
