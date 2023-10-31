@@ -19,6 +19,33 @@ import {auth} from '../../firebaseConfig';
 import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
+import 'firebaseui';
+
+import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+const provider = new GoogleAuthProvider();
+
+
+
+signInWithPopup(auth, provider)
+  .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    
+    // The signed-in user info.
+    const user = result.user;
+    // IdP data available using getAdditionalUserInfo(result)
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+  });
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -123,12 +150,10 @@ const Login = () => {
             mb={2}
           />
 
-          <Text fontWeight={600}>Brody Tingle</Text>
-          <Text
-            fontSize={'sm'}
-            color={useColorModeValue('gray.400', 'gray.400')}>
-            Follower of Christ
-          </Text>
+<div>
+      <h2>Login with Google</h2>
+      <div id="firebaseui-auth-container"></div>
+    </div>
         </Box>
       </Stack>
     </>
