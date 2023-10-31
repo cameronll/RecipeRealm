@@ -106,6 +106,19 @@ const Explore: React.FC = () => {
     }
   }
 
+  async function removeFollowing(followingEmail: string){
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string)
+    if (following.includes(followingEmail)){
+      let index = following.indexOf(followingEmail);
+      following.splice(index, 1);
+      localStorage.setItem('FOLLOWING', JSON.stringify(following));
+      const getUser = doc(db, 'users/', email);
+      await updateDoc(getUser, {
+        following: following
+      });
+    }
+  }
+
   /*
   data that can be displayed:
   post.username.<description, title, username, recipe_name>
@@ -276,6 +289,25 @@ const Explore: React.FC = () => {
                       <h1>
                         Username:{' '}
                         {profiles[getIndex(profiles, post.email)]?.username}
+                        <Button
+                        bg={'blue.400'}
+                        color={'white'}
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                        style={{flex: 1, fontSize: '14px'}}
+                        onClick = {() => {
+                          toast({
+                            title: 'Unfollowed',
+                            description: "Removed from your friends",
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                          });
+                          removeFollowing(post.email);
+                          }}>
+                          Unfollow
+                      </Button>
                       </h1>
                     </Box>
                     <Box
