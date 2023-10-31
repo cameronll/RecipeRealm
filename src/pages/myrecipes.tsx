@@ -120,7 +120,12 @@ const Recipes: React.FC = () => {
               <h1>Calories: {recipe.data.nutrients.calories}</h1>
               <h1>Protein: {recipe.data.nutrients.protein}</h1>
               <h1>Carbs: {recipe.data.nutrients.total_carbohydrate}</h1>
+              <h1>Sugar: {recipe.data.nutrients.sugars}</h1>
               <h1>Fat: {recipe.data.nutrients.total_fat}</h1>
+              <h1>Saturated Fat: {recipe.data.nutrients.saturated_fat}</h1>
+              <h1>Cholesterol: {recipe.data.nutrients.cholesterol}</h1>
+              <h1>Sodium: {recipe.data.nutrients.sodium}</h1>
+              <h1>Fiber: {recipe.data.nutrients.dietary_fiber}</h1>
             </Box>
             
             <Box padding="4" bg="blue.100" color="black" maxW="container.sm">
