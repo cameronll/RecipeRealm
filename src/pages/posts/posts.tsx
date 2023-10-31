@@ -40,6 +40,20 @@ import {Header} from 'rsuite';
 const Posts: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+
+  useEffect(() => {
+    async function getRecipes() {
+      const querySnapshot = await getDocs(
+        collection(db, 'users/' + email + '/Recipes'),
+      );
+      const recipesData = querySnapshot.docs.map(doc => doc.data());
+      console.log(recipesData);
+      setRecipes(recipesData);
+    }
+    getRecipes();
+  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.value);
@@ -65,7 +79,7 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-              Posts Stuff
+              {recipes[0]?.data.recipe_name}
             </FormLabel>
             <Textarea
               placeholder="Brody's Stuff"
@@ -77,7 +91,7 @@ const Posts: React.FC = () => {
               }}
             />
             <FormHelperText>
-              *I am text on this line that helps the user do things
+              {recipes[0]?.data.recipe_name}
             </FormHelperText>
           </FormControl>
           <FormControl mt={1}>
@@ -88,7 +102,7 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-              Posts Stuff
+              {recipes[0]?.recipe_name}
             </FormLabel>
             <Textarea
               placeholder="Brody's Stuff"
