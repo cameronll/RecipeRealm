@@ -19,7 +19,6 @@ import {auth} from '../../firebaseConfig';
 import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
-import 'firebaseui';
 
 import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
