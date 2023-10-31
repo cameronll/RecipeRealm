@@ -193,6 +193,12 @@ const Profile: React.FC = () => {
                 duration: 3000,
                 isClosable: true,
               });
+              {
+                setNewUsername("");
+                setOldPassword("");
+                setNewPassword("");
+                setNewBiography("");
+              }
               toDB(newBiography, newUsername, newPassword, oldPassword);
             }}>
             Submit
