@@ -88,12 +88,17 @@ const Explore: React.FC = () => {
 
   async function addFollowing(followingEmail: string){
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string)
-    following.push(followingEmail);
-    localStorage.setItem('FOLLOWING', following);
-    const getUser = doc(db, 'users/', email);
-    await updateDoc(getUser, {
-      following: following
-    });
+    if (!(following.includes(followingEmail))){
+      following.push(followingEmail);
+      localStorage.setItem('FOLLOWING', JSON.stringify(following));
+      const getUser = doc(db, 'users/', email);
+      await updateDoc(getUser, {
+        following: following
+      });
+    }
+    else{
+      console.log("Already following");
+    }
   }
 
   /*
@@ -147,6 +152,7 @@ const Explore: React.FC = () => {
                         _hover={{
                           bg: 'blue.500',
                         }}
+                        style={{flex: 1, fontSize: '14px'}}
                         onClick = {() => {
                           addFollowing(post.email);
                           }}>
