@@ -24,6 +24,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  useToast,
   VStack,
   Flex,
   Stack,
@@ -45,10 +46,12 @@ function getIndex(profiles: any[], email: string): number {
 }
 
 const Explore: React.FC = () => {
+  // useState to create constants
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const toast = useToast();
 
   useEffect(() => {
     async function getData() {
@@ -98,8 +101,9 @@ const Explore: React.FC = () => {
       await updateDoc(getUser, {
         following: following,
       });
-    } else {
-      console.log('Already following');
+    }
+    else{
+      console.log("Already following");
     }
   }
 
@@ -172,51 +176,42 @@ const Explore: React.FC = () => {
             <p>Explore</p>
             <VStack>
               {allPosts.map(post => (
-                <Flex
-                  backgroundImage={
-                    'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
-                  }
-                  backgroundSize={'cover'}
-                  backgroundPosition={'center center'}>
-                  <Container
+                <Container
+                  maxW="container.sm"
+                  bg="blue.600"
+                  color="white"
+                  minH="350"
+                  display="flex"
+                  flexDirection="column">
+                  <Box
+                    boxShadow="xs"
+                    rounded="md"
                     maxW="container.sm"
                     bg="blue.600"
                     color="white"
                     minH="350"
                     display="flex"
                     flexDirection="column">
+                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
+                    <AiOutlineHeart style={{fontSize: '24px'}} />
                     <Box
                       boxShadow="xs"
                       rounded="md"
-                      maxW="container.sm"
-                      bg="blue.600"
-                      color="white"
-                      minH="350"
-                      display="flex"
-                      flexDirection="column">
-                      <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.title}
-                      </div>
-                      <AiOutlineHeart style={{fontSize: '24px'}} />
-                      <Box
-                        boxShadow="xs"
-                        rounded="md"
-                        padding="4"
-                        bg="blue.400"
-                        color="black"
-                        maxW="container.sm">
-                        <h1>Recipe Name: {post.recipe_name}</h1>
-                        Username:{' '}
-                        {profiles[getIndex(profiles, post.email)]?.username}
-                        <Button
-                          bg={'blue.400'}
-                          color={'white'}
-                          _hover={{
-                            bg: 'blue.500',
-                          }}
-                          style={{flex: 1, fontSize: '14px'}}
-                          onClick={() => {
-                            addFollowing(post.email);
+                      padding="4"
+                      bg="blue.400"
+                      color="black"
+                      maxW="container.sm">
+                      <h1>Recipe Name: {post.recipe_name}</h1>
+                      Username: {profiles[getIndex(profiles, post.email)]?.username}
+                      <Button
+                        bg={'blue.400'}
+                        color={'white'}
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                        style={{flex: 1, fontSize: '14px'}}
+                        onClick = {() => {
+                          addFollowing(post.email);
                           }}>
                           Follow
                         </Button>
@@ -275,10 +270,7 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
-                      <h1>
-                        Username:{' '}
-                        {profiles[getIndex(profiles, post.email)]?.username}
-                      </h1>
+                      <h1>Username: {profiles[getIndex(profiles, post.email)]?.username}</h1>
                     </Box>
                     <Box
                       boxShadow="xs"
