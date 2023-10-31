@@ -24,11 +24,14 @@ import {
   Button,
   Flex,
   Input,
+  Heading,
+  Center,
+  Link,
+  Badge,
 } from '@chakra-ui/react';
-import { Header } from 'rsuite';
+import {Header} from 'rsuite';
 
-
-function posts() {
+const Posts: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [submittedText, setSubmittedText] = useState('');
 
@@ -41,7 +44,8 @@ function posts() {
   };
 
   return (
-    
+    <>
+      <Navbar />
       <Box p={4}>
         <Input
           type="text"
@@ -49,13 +53,12 @@ function posts() {
           value={inputText}
           onChange={handleInputChange}
         />
-        <Button colorScheme="teal" onClick={handleSubmit}>/**submits the form */
-          Submit
+        <Button colorScheme="teal" onClick={handleSubmit}>
+          /**submits the form */ Submit
         </Button>
-        
       </Box>
-    
+    </>
   );
-}
+};
 
-export default posts;
+export default Posts;

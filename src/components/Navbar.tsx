@@ -4,7 +4,6 @@ import {
   Flex,
   Avatar,
   HStack,
-  Text,
   IconButton,
   Button,
   Menu,
@@ -30,6 +29,7 @@ const Links = [
   {text: 'Profile', href: '/profile'},
   {text: 'My Recipes', href: '/recipes'},
   {text: 'Explore', href: '/explore'},
+  {text: 'My Friends', href: '/friends'},
 ];
 
 const NavLink = (props: NavLinkProps) => {

@@ -1,5 +1,8 @@
 import * as React from 'react';
 import {ChakraProvider, theme} from '@chakra-ui/react';
+import Posts from './pages/posts/posts';
+import Feed from './pages/posts/feed';
+import Friends from './pages/friends';
 import Login from './pages/login/login';
 import Footer from './components/Footer';
 import LoginNavbar from './components/LoginNav';
@@ -35,6 +38,9 @@ export const App = () => (
     <BrowserRouter>
       <Routes>
         <Route index element={<Login />} />
+        <Route path="Feed" element={<Feed />} />
+        <Route path="Posts" element={<Posts />} />
+        <Route path="Friends" element={<Friends />} />
         <Route path="Calendar" element={<CalendarPage />} />
         <Route path="Profile" element={<Profile />} />
         <Route path="Recipes" element={<Recipes />} />

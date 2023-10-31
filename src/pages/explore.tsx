@@ -25,14 +25,19 @@ import {
   TabPanels,
   Tabs,
   VStack,
+  Flex,
+  Stack,
+  Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import {CopyIcon} from '@chakra-ui/icons';
 import {collapseTextChangeRangesAcrossMultipleVersions} from 'typescript';
 import {AiOutlineHeart} from 'react-icons/ai';
+import {Link} from 'react-router-dom';
 
-function getIndex(profiles:any[], email:string): number{
-  for (let i = 0; i < profiles.length; i++){
-    if (profiles[i].email === email){
+function getIndex(profiles: any[], email: string): number {
+  for (let i = 0; i < profiles.length; i++) {
+    if (profiles[i].email === email) {
       return i;
     }
   }
@@ -52,9 +57,7 @@ const Explore: React.FC = () => {
       const userFollowing = getUserData?.data()?.following;
       localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
 
-      const profilesQuery = query(
-        collection(db, 'users')
-      );
+      const profilesQuery = query(collection(db, 'users'));
       const profilesDocs = await getDocs(profilesQuery);
       const profilesData = profilesDocs.docs.map(doc => doc.data());
       setProfiles(profilesData);
@@ -86,18 +89,17 @@ const Explore: React.FC = () => {
     getData();
   }, []);
 
-  async function addFollowing(followingEmail: string){
-    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string)
-    if (!(following.includes(followingEmail))){
+  async function addFollowing(followingEmail: string) {
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
+    if (!following.includes(followingEmail)) {
       following.push(followingEmail);
       localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
-        following: following
+        following: following,
       });
-    }
-    else{
-      console.log("Already following");
+    } else {
+      console.log('Already following');
     }
   }
 
@@ -109,6 +111,57 @@ const Explore: React.FC = () => {
   return (
     <Box>
       <Navbar />
+      <Flex
+        w={'full'}
+        h={'100'}
+        backgroundImage={
+          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+        }
+        backgroundSize={'cover'}
+        backgroundPosition={'center center'}
+        alignContent={'flex-end'}>
+        <VStack
+          w={'full'}
+          justify={'center'}
+          align={'right'}
+          px={useBreakpointValue({base: 4, md: 8})}
+          bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
+          <Stack maxW={'2xl'} spacing={6}>
+            <Stack direction={'row'}>
+              <Link to="/posts/posts">
+                <Button
+                  justifyItems={'right'}
+                  bg={'teal.400'}
+                  rounded={'full'}
+                  color={'white'}
+                  _hover={{bg: 'blue.500'}}>
+                  Create Post
+                </Button>
+              </Link>
+              <Link to="/friends">
+                <Button
+                  alignSelf={'right'}
+                  bg={'green.300'}
+                  rounded={'full'}
+                  color={'white'}
+                  _hover={{bg: 'whiteAlpha.500'}}>
+                  View My Posts
+                </Button>
+              </Link>
+              <Link to="/friends">
+                <Button
+                  alignSelf={'right'}
+                  bg={'green.300'}
+                  rounded={'full'}
+                  color={'white'}
+                  _hover={{bg: 'whiteAlpha.500'}}>
+                  View Friends
+                </Button>
+              </Link>
+            </Stack>
+          </Stack>
+        </VStack>
+      </Flex>
       <Tabs isFitted variant="enclosed">
         <TabList mb="1em">
           <Tab>Explore</Tab>
@@ -119,66 +172,76 @@ const Explore: React.FC = () => {
             <p>Explore</p>
             <VStack>
               {allPosts.map(post => (
-                <Container
-                  maxW="container.sm"
-                  bg="blue.600"
-                  color="white"
-                  minH="350"
-                  display="flex"
-                  flexDirection="column">
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
+                <Flex
+                  backgroundImage={
+                    'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+                  }
+                  backgroundSize={'cover'}
+                  backgroundPosition={'center center'}>
+                  <Container
                     maxW="container.sm"
                     bg="blue.600"
                     color="white"
                     minH="350"
                     display="flex"
                     flexDirection="column">
-                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
-                    <AiOutlineHeart style={{fontSize: '24px'}} />
                     <Box
                       boxShadow="xs"
                       rounded="md"
-                      padding="4"
-                      bg="blue.400"
-                      color="black"
-                      maxW="container.sm">
-                      <h1>Recipe Name: {post.recipe_name}</h1>
-                      Username: {profiles[getIndex(profiles, post.email)]?.username}
-                      <Button
-                        bg={'blue.400'}
-                        color={'white'}
-                        _hover={{
-                          bg: 'blue.500',
-                        }}
-                        style={{flex: 1, fontSize: '14px'}}
-                        onClick = {() => {
-                          addFollowing(post.email);
+                      maxW="container.sm"
+                      bg="blue.600"
+                      color="white"
+                      minH="350"
+                      display="flex"
+                      flexDirection="column">
+                      <div style={{flex: 1, fontSize: '24px'}}>
+                        {post?.title}
+                      </div>
+                      <AiOutlineHeart style={{fontSize: '24px'}} />
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="blue.400"
+                        color="black"
+                        maxW="container.sm">
+                        <h1>Recipe Name: {post.recipe_name}</h1>
+                        Username:{' '}
+                        {profiles[getIndex(profiles, post.email)]?.username}
+                        <Button
+                          bg={'blue.400'}
+                          color={'white'}
+                          _hover={{
+                            bg: 'blue.500',
+                          }}
+                          style={{flex: 1, fontSize: '14px'}}
+                          onClick={() => {
+                            addFollowing(post.email);
                           }}>
                           Follow
-                      </Button>
+                        </Button>
+                      </Box>
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="blue.200"
+                        color="black"
+                        maxW="container.sm">
+                        <h1>Description: {post.description}</h1>
+                      </Box>
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="blue.100"
+                        color="black"
+                        maxW="container.sm">
+                        {post?.date_time.toDate().toString()}
+                      </Box>
                     </Box>
-                    <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="blue.200"
-                      color="black"
-                      maxW="container.sm">
-                      <h1>Description: {post.description}</h1>
-                    </Box>
-                    <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="blue.100"
-                      color="black"
-                      maxW="container.sm">
-                      {post?.date_time.toDate().toString()}
-                    </Box>
-                  </Box>
-                </Container>
+                  </Container>
+                </Flex>
               ))}
             </VStack>
           </TabPanel>
@@ -212,7 +275,10 @@ const Explore: React.FC = () => {
                       color="black"
                       maxW="container.sm">
                       <h1>Recipe Name: {post.recipe_name}</h1>
-                      <h1>Username: {profiles[getIndex(profiles, post.email)]?.username}</h1>
+                      <h1>
+                        Username:{' '}
+                        {profiles[getIndex(profiles, post.email)]?.username}
+                      </h1>
                     </Box>
                     <Box
                       boxShadow="xs"
