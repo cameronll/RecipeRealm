@@ -106,15 +106,15 @@ const Explore: React.FC = () => {
     }
   }
 
-  async function removeFollowing(followingEmail: string){
-    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string)
-    if (following.includes(followingEmail)){
+  async function removeFollowing(followingEmail: string) {
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
+    if (following.includes(followingEmail)) {
       let index = following.indexOf(followingEmail);
       following.splice(index, 1);
       localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
-        following: following
+        following: following,
       });
     }
   }
@@ -194,7 +194,7 @@ const Explore: React.FC = () => {
                     rounded="md"
                     bg="blue.600"
                     color="white"
-                    minH="350"
+                    minH="500"
                     display="flex"
                     flexDirection="column">
                     <Box
@@ -203,7 +203,7 @@ const Explore: React.FC = () => {
                       maxW="container.md"
                       bg="blue.600"
                       color="white"
-                      minH="350"
+                      minH="100%"
                       display="flex"
                       flexDirection="column">
                       <div style={{flex: 1, fontSize: '24px'}}>
@@ -289,24 +289,24 @@ const Explore: React.FC = () => {
                         Username:{' '}
                         {profiles[getIndex(profiles, post.email)]?.username}
                         <Button
-                        bg={'blue.400'}
-                        color={'white'}
-                        _hover={{
-                          bg: 'blue.500',
-                        }}
-                        style={{flex: 1, fontSize: '14px'}}
-                        onClick = {() => {
-                          toast({
-                            title: 'Unfollowed',
-                            description: "Removed from your friends",
-                            status: 'success',
-                            duration: 3000,
-                            isClosable: true,
-                          });
-                          removeFollowing(post.email);
+                          bg={'blue.400'}
+                          color={'white'}
+                          _hover={{
+                            bg: 'blue.500',
+                          }}
+                          style={{flex: 1, fontSize: '14px'}}
+                          onClick={() => {
+                            toast({
+                              title: 'Unfollowed',
+                              description: 'Removed from your friends',
+                              status: 'success',
+                              duration: 3000,
+                              isClosable: true,
+                            });
+                            removeFollowing(post.email);
                           }}>
                           Unfollow
-                      </Button>
+                        </Button>
                       </h1>
                     </Box>
                     <Box

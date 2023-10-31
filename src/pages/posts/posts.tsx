@@ -38,6 +38,15 @@ import {
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
 
+function getRecipeIndex(recipes: any[], recipe_name: string):number{
+  for (let i = 0; i < recipes.length; i++){
+    if (recipes[i]?.data.recipe_name === recipe_name){
+      return i;
+    }
+  }
+  return -1;
+}
+
 type nutrition = {
   calories: number;
   total_fat: number;
@@ -64,7 +73,7 @@ type recipe = {
   nutrients: nutrition;
 };
 
-async function toDB(title:string, description:string, recipe:recipe){
+async function toDB(title: string, description: string, recipe: recipe) {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const getUser = doc(db, 'users/', email);
   const getUserData = await getDoc(getUser);
@@ -77,13 +86,15 @@ async function toDB(title:string, description:string, recipe:recipe){
     date_time: date,
     title: title,
     description: description,
-    recipe: recipe
+    recipe: recipe,
   });
 }
 const Posts: React.FC = () => {
-  const [inputText, setInputText] = useState('');
-  const [submittedText, setSubmittedText] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [recipeName, setRecipeName] = useState<any>();
+  const [postRecipe, setPostRecipe] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
@@ -96,14 +107,47 @@ const Posts: React.FC = () => {
       setRecipes(recipesData);
     }
     getRecipes();
+    if (window.localStorage.getItem('TITLE')) {
+      const title_store: any =
+        window.localStorage.getItem('TITLE');
+      setTitle(JSON.parse(title_store));
+    }
+    if (window.localStorage.getItem('DESCRIPTION')) {
+      const description_store: any =
+        window.localStorage.getItem('DESCRIPTION');
+      setDescription(JSON.parse(description_store));
+    }
+    if (window.localStorage.getItem('RECIPE')) {
+      const recipe_store: any =
+        window.localStorage.getItem('RECIPE');
+      setPostRecipe(JSON.parse(recipe_store));
+    }
   }, []);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(event.target.value);
-  };
+  const handleTitleChange = (e:any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('TITLE', JSON.stringify(targ));
+    setTitle(targ);
+  }
+  const handleDescriptionChange = (e:any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('DESCRIPTION', JSON.stringify(targ));
+    setDescription(targ);
+  }
+
+  const handleRecipeChange = (e:any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('RECIPE', JSON.stringify(targ));
+    setRecipeName(targ);
+  }
 
   const handleSubmit = () => {
-    setSubmittedText(inputText);
+    const title = JSON.parse(localStorage.getItem('TITLE') as string);
+    const description = JSON.parse(localStorage.getItem('DESCRIPTION') as string);
+    const recipe = recipes[getRecipeIndex(recipes, JSON.parse(localStorage.getItem('RECIPE') as string))];
+    console.log(recipe);
+    toDB(title, description, recipe);
+    console.log("Document created!")
   };
 
   return (
@@ -119,7 +163,7 @@ const Posts: React.FC = () => {
           padding="4"
           bg="blue.400"
           color="black"
-          maxW="container.sm">
+          minW="container.sm">
           <FormControl mt={1}>
             <FormLabel
               fontSize="sm"
@@ -128,7 +172,27 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-              {recipes[0]?.data.recipe_name}
+              Title
+            </FormLabel>
+            <Textarea
+              rows={3}
+              shadow="sm"
+              focusBorderColor="brand.400"
+              fontSize={{
+                sm: 'sm',
+              }}
+              onChange = {handleTitleChange}
+              value = {title}
+            />
+          </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
               Description
             </FormLabel>
             <Textarea
@@ -139,34 +203,9 @@ const Posts: React.FC = () => {
               fontSize={{
                 sm: 'sm',
               }}
+              onChange = {handleDescriptionChange}
+              value = {description}
             />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
-          </FormControl>
-          <FormControl mt={1}>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              Title
-              {recipes[0]?.recipe_name}
-            </FormLabel>
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
-              shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-            />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
           </FormControl>
           <FormControl mt={1}>
             <FormLabel
@@ -187,9 +226,6 @@ const Posts: React.FC = () => {
                 sm: 'sm',
               }}
             />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
           </FormControl>
           <FormControl mt={1}>
             <FormLabel
@@ -200,42 +236,7 @@ const Posts: React.FC = () => {
                 color: 'gray.50',
               }}>
               Recipe
->>>>>>> Stashed changes
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
-              shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-            />
-            <FormHelperText>
-              {recipes[0]?.data.recipe_name}
-            </FormHelperText>
-          </FormControl>
-          <FormControl mt={1}>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              {recipes[0]?.recipe_name}
             </FormLabel>
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
-              shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-            />
-            <FormHelperText>
-              *I am text on this line that helps the user do things
-            </FormHelperText>
             <Select
               id="difficulty"
               name="difficulty"
@@ -245,13 +246,16 @@ const Posts: React.FC = () => {
               shadow="sm"
               size="sm"
               w="full"
-              rounded="md">
-              {/* {for } */}
-              <option>Beginner</option>
-              <option>Intermediate</option>
-              <option>Seasoned Chef</option>
-              <option>Master Chef</option>
+              rounded="md"
+              onChange = {handleRecipeChange}
+              value = {recipeName}>
+              {recipes.map(recipe => (
+                <option>{recipe?.data.recipe_name}</option>
+              ))}
             </Select>
+            <FormHelperText>
+              *You can only choose from your recipe list
+            </FormHelperText>
           </FormControl>
         </Box>
       </Center>

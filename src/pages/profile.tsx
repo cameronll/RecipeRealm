@@ -31,14 +31,16 @@ async function toDB(newBiography:string, newUsername:string, newPassword: string
   )
   if (user){
     reauthenticateWithCredential(user, credential).then(async () => {
-      updatePassword(user, newPassword);
-      await updateDoc(docRef, {
-      username: newUsername,
-      biography: newBiography
-      })
+      if (newPassword){
+        updatePassword(user, newPassword);
+      }
     })
   }
   const docRef = doc(db, "users/", email)
+  await updateDoc(docRef, {
+    username: newUsername,
+    biography: newBiography
+    })
 }
 
 const Profile: React.FC = () => {
