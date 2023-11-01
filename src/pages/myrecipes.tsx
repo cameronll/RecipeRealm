@@ -10,6 +10,8 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  where,
+  query,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -48,6 +50,7 @@ import {Link} from 'react-router-dom';
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
@@ -58,6 +61,12 @@ const Recipes: React.FC = () => {
       );
       const recipesData = querySnapshot.docs.map(doc => doc.data());
       setRecipes(recipesData);
+    }
+    async function getNumPosts() {
+      const myQuery = query(collection(db, 'users/' + email + '/Recipes'), where('posted', '==', 'true'));
+      const numPosts = await getDocs(myQuery);
+      const numPostsData = numPosts.docs.map(doc => doc.data());
+      setPosts(numPostsData);
     }
     async function getProfile() {
       const docRef = doc(db, 'users/', email);
