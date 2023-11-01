@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
 import {AiOutlineHeart} from 'react-icons/ai';
+import {CgBowl} from 'react-icons/cg';
+import {BsWindow, BsFillChatDotsFill} from 'react-icons/bs';
 import {
   collection,
   addDoc,
@@ -57,7 +59,7 @@ const Recipes: React.FC = () => {
       const recipesData = querySnapshot.docs.map(doc => doc.data());
       setRecipes(recipesData);
     }
-    async function getProfile(){
+    async function getProfile() {
       const docRef = doc(db, 'users/', email);
       const docSnap = await getDoc(docRef);
       setProfile(docSnap.data());
@@ -90,25 +92,8 @@ const Recipes: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Link to="/CreateRecipe">
-        <Button
-          onClick={() => {
-            window.localStorage.removeItem('RECIPENAME');
-            window.localStorage.removeItem('COOKINGTIME');
-            window.localStorage.removeItem('DIFFICULTY');
-            window.localStorage.removeItem('APPLIANCES');
-            window.localStorage.removeItem('COST');
-            window.localStorage.removeItem('ALLERGENS');
-            window.localStorage.removeItem('SERVINGS');
-            window.localStorage.removeItem('INSTRUCTIONS');
-            window.localStorage.removeItem('INGREDIENTSTRING');
-            window.localStorage.removeItem('INGREDIENTCOUNT');
-          }}>
-          Create Recipe
-        </Button>
-      </Link>
       <Container maxW={'5xl'} py={12}>
-        <SimpleGrid columns={{base: 1, md: 2}} spacing={10}>
+        <HStack spacing="65px">
           <Stack spacing={4}>
             <Text
               textTransform={'uppercase'}
@@ -161,7 +146,7 @@ const Recipes: React.FC = () => {
               /> */}
             </Stack>
           </Stack>
-          <Flex>
+          <Stack>
             <Image
               rounded={'md'}
               alt={'feature image'}
@@ -170,16 +155,43 @@ const Recipes: React.FC = () => {
               }
               objectFit={'cover'}
             />
-          </Flex>
-        </SimpleGrid>
+          </Stack>
+          <Stack>
+            <Link to="/CreateRecipe">
+              <Button
+                w="200px"
+                rightIcon={<CgBowl />}
+                colorScheme="teal"
+                onClick={() => {
+                  window.localStorage.removeItem('RECIPENAME');
+                  window.localStorage.removeItem('COOKINGTIME');
+                  window.localStorage.removeItem('DIFFICULTY');
+                  window.localStorage.removeItem('APPLIANCES');
+                  window.localStorage.removeItem('COST');
+                  window.localStorage.removeItem('ALLERGENS');
+                  window.localStorage.removeItem('SERVINGS');
+                  window.localStorage.removeItem('INSTRUCTIONS');
+                  window.localStorage.removeItem('INGREDIENTSTRING');
+                  window.localStorage.removeItem('INGREDIENTCOUNT');
+                }}>
+                Create Recipe
+              </Button>
+            </Link>
+            <Link to="/Posts">
+              <Button w="200px" rightIcon={<BsWindow />} colorScheme="gray">
+                Create Post
+              </Button>
+            </Link>
+          </Stack>
+        </HStack>
       </Container>
       <HStack spacing={10}>
         <Box>
-          <SimpleGrid columns={3}>
+          <SimpleGrid columns={3} padding={3}>
             {recipes.map(recipe => (
               <Container
                 minW="container.sm"
-                bg="blue.600"
+                bg="teal"
                 color="white"
                 minH="350"
                 display="flex"
@@ -187,11 +199,23 @@ const Recipes: React.FC = () => {
                 boxShadow="xs"
                 rounded="md"
                 padding="4">
-                <div style={{flex: 1, fontSize: '24px'}}>
-                  {recipe.data.recipe_name}
-                </div>
-
-                <AiOutlineHeart style={{fontSize: '24px'}} />
+                <Box rounded="md" bg="#D3D3D3" w="100%" p={4} color="white">
+                  <Heading
+                    as="h3"
+                    size="lg"
+                    color="black
+                  ">
+                    {recipe.data.recipe_name}
+                  </Heading>
+                </Box>
+                <Stack direction="row" spacing={4} align="center">
+                  <Button variant="link" colorScheme="red">
+                    <AiOutlineHeart style={{fontSize: '34px'}} />
+                  </Button>
+                  <Button variant="link" colorScheme="green">
+                    <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                  </Button>
+                </Stack>
                 <Box
                   boxShadow="xs"
                   rounded="md"

@@ -144,16 +144,6 @@ const Explore: React.FC = () => {
           bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
           <Stack maxW={'2xl'} spacing={6}>
             <Stack direction={'row'}>
-              <Link to="/Posts">
-                <Button
-                  justifyItems={'right'}
-                  bg={'teal.400'}
-                  rounded={'full'}
-                  color={'white'}
-                  _hover={{bg: 'blue.500'}}>
-                  Create Post
-                </Button>
-              </Link>
               <Link to="/friends">
                 <Button
                   alignSelf={'right'}
