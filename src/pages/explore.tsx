@@ -218,7 +218,7 @@ const Explore: React.FC = () => {
                         color="black"
                         maxW="container.md"
                         h="0.5">
-                        <h1>Recipe Name: {post.recipe_name}</h1>
+                        <h1>Recipe Name: {post?.recipe?.data?.recipe_name}</h1>
                         Username:{' '}
                         {profiles[getIndex(profiles, post.email)]?.username}
                         <Button
@@ -284,7 +284,7 @@ const Explore: React.FC = () => {
                       bg="blue.400"
                       color="black"
                       maxW="container.sm">
-                      <h1>Recipe Name: {post.recipe_name}</h1>
+                      <h1>Recipe Name: {post?.recipe?.data?.recipe_name}</h1>
                       <h1>
                         Username:{' '}
                         {profiles[getIndex(profiles, post.email)]?.username}
