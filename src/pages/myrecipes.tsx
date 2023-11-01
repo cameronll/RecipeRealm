@@ -92,7 +92,15 @@ const Recipes: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Container maxW={'5xl'} py={12}>
+
+      <Container
+        maxW={'10xl'}
+        py={12}
+        bgGradient="linear(to-t, teal.200, gray)"
+        alignContent="center"
+        display="flex"
+        justifyContent="center"
+        alignItems="center">
         <HStack spacing="65px">
           <Stack spacing={4}>
             <Text
@@ -107,44 +115,11 @@ const Recipes: React.FC = () => {
               {}
             </Text>
             <Heading>{profile?.username}'s Page</Heading>
-            <h1>{recipes.length} Recipes</h1>
-            <Text color={'gray.500'} fontSize={'lg'}>
+            <Text>{recipes.length} Recipes</Text>
+            <Text>{/* posts.length */}# Posts</Text>
+            <Text color={'black'} fontSize={'lg'}>
               {profile?.biography}
             </Text>
-            <Stack
-              spacing={4}
-              divider={
-                <StackDivider
-                  borderColor={useColorModeValue('gray.100', 'gray.700')}
-                />
-              }>
-              {/* <Box
-                icon={
-                  <Icon
-                    as={IoAnalyticsSharp}
-                    color={'yellow.500'}
-                    w={5}
-                    h={5}
-                  />
-                }
-                iconBg={useColorModeValue('yellow.100', 'yellow.900')}
-                text={'Business Planning'}
-              />
-              <Feature
-                icon={
-                  <Icon as={IoLogoBitcoin} color={'green.500'} w={5} h={5} />
-                }
-                iconBg={useColorModeValue('green.100', 'green.900')}
-                text={'Financial Planning'}
-              />
-              <Feature
-                icon={
-                  <Icon as={IoSearchSharp} color={'purple.500'} w={5} h={5} />
-                }
-                iconBg={useColorModeValue('purple.100', 'purple.900')}
-                text={'Market Analysis'}
-              /> */}
-            </Stack>
           </Stack>
           <Stack>
             <Image
@@ -191,7 +166,8 @@ const Recipes: React.FC = () => {
         backgroundImage={
           'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
         }
-        bgGradient="linear(to-t, teal.200, gray)"
+        bgColor="gray.400"
+        borderColor="gray.200"
         dropShadow="lg">
         <Box margin={4} textAlign="center">
           <Heading
@@ -206,7 +182,13 @@ const Recipes: React.FC = () => {
 
       <HStack spacing={10}>
         <Box>
-          <SimpleGrid columns={3} padding={3}>
+          <SimpleGrid
+            columns={3}
+            padding={3}
+            alignContent="center"
+            display="flex"
+            justifyContent="center"
+            alignItems="center">
             {recipes.map(recipe => (
               <Container
                 minW="sm"

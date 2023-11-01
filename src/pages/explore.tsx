@@ -31,6 +31,7 @@ import {
   Stack,
   Text,
   useBreakpointValue,
+  Center,
 } from '@chakra-ui/react';
 import {CopyIcon} from '@chakra-ui/icons';
 import {collapseTextChangeRangesAcrossMultipleVersions} from 'typescript';
@@ -181,25 +182,29 @@ const Explore: React.FC = () => {
             <VStack>
               {allPosts.map(post => (
                 <Container
-                  maxW="container.sm"
+                  shadow={1000}
+                  maxW="container.lg"
                   color="white"
                   minH="350"
                   display="flex"
                   flexDirection="column"
                   padding={1}
-                  rounded="lg">
+                  rounded="lg"
+                  boxShadow="dark-lg"
+                  bgColor="black">
                   <Box
-                    border="5px solid black"
+                    border="1px solid black"
                     padding={4}
                     boxShadow="xs"
                     rounded="md"
-                    maxW="container.sm"
-                    backgroundColor="rgba(0, 128, 128, 0.7)"
+                    maxW="container.lg"
+                    backgroundColor="rgba(0, 128, 128, 1)"
                     color="white"
                     minH="350"
                     display="flex"
                     flexDirection="column">
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
+                    <Center>Image goes here</Center>
                     <Stack direction="row" spacing={4} align="stretch">
                       <Button variant="link" colorScheme="red">
                         <AiOutlineHeart style={{fontSize: '34px'}} />
@@ -213,42 +218,40 @@ const Explore: React.FC = () => {
                       boxShadow="xs"
                       rounded="md"
                       padding="4"
-                      bg="blue.400"
+                      bg="teal"
                       color="black"
-                      maxW="container.sm">
-                      <h1>Recipe Name: {post?.recipe?.data?.recipe_name}</h1>
-                      <h1>
-                        Username:{' '}
-                        {profiles[getIndex(profiles, post.email)]?.username}
-                        <Button
-                          bg={'blue.400'}
-                          color={'white'}
-                          _hover={{
-                            bg: 'blue.500',
-                          }}
-                          style={{flex: 1, fontSize: '14px'}}
-                          onClick={() => {
-                            toast({
-                              title: 'Unfollowed',
-                              description: 'Removed from your friends',
-                              status: 'success',
-                              duration: 3000,
-                              isClosable: true,
-                            });
-                            removeFollowing(post.email);
-                          }}>
-                          Unfollow
-                        </Button>
-                      </h1>
-                    </Box>
-                    <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="blue.200"
-                      color="black"
-                      maxW="container.sm">
-                      <h1>Description: {post.description}</h1>
+                      maxW="container.lg"
+                      bgColor="#4fb9af">
+                      <Flex>
+                        <Text fontSize={18}>Posted by: </Text>
+                        <Text marginLeft={2}>
+                          <Button size="sm" variant="link" colorScheme="black">
+                            {profiles[getIndex(profiles, post.email)]?.username}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="link"
+                            colorScheme="red"
+                            marginLeft={2}
+                            onClick={() => {
+                              toast({
+                                title: 'Unfollowed',
+                                description: 'Removed from your friends',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                              });
+                              removeFollowing(post.email);
+                            }}>
+                            {' '}
+                            unfollow
+                          </Button>
+                        </Text>
+                      </Flex>
+                      <Container>
+                        <Text fontSize={20}>Description:</Text>
+                        <Text>{post.description}</Text>
+                      </Container>
                     </Box>
                   </Box>
                 </Container>
@@ -260,25 +263,28 @@ const Explore: React.FC = () => {
             <VStack>
               {friendsPosts.map(post => (
                 <Container
-                  maxW="container.sm"
+                  maxW="container.lg"
                   color="white"
                   minH="350"
                   display="flex"
                   flexDirection="column"
                   padding={1}
-                  rounded="lg">
+                  rounded="lg"
+                  boxShadow="dark-lg"
+                  bgColor="black">
                   <Box
-                    border="5px solid black"
+                    border="1px solid black"
                     padding={4}
                     boxShadow="xs"
                     rounded="md"
-                    maxW="container.sm"
-                    backgroundColor="rgba(0, 128, 128, 0.7)"
+                    maxW="container.lg"
+                    backgroundColor="rgba(0, 128, 128, 1)"
                     color="white"
                     minH="350"
                     display="flex"
                     flexDirection="column">
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
+                    <Center>Image goes here</Center>
                     <Stack direction="row" spacing={4} align="stretch">
                       <Button variant="link" colorScheme="red">
                         <AiOutlineHeart style={{fontSize: '34px'}} />
@@ -292,42 +298,39 @@ const Explore: React.FC = () => {
                       boxShadow="xs"
                       rounded="md"
                       padding="4"
-                      bg="blue.400"
+                      bg="teal"
                       color="black"
-                      maxW="container.sm">
-                      <h1>Recipe Name: {post?.recipe?.data?.recipe_name}</h1>
-                      <h1>
-                        Username:{' '}
-                        {profiles[getIndex(profiles, post.email)]?.username}
-                        <Button
-                          bg={'blue.400'}
-                          color={'white'}
-                          _hover={{
-                            bg: 'blue.500',
-                          }}
-                          style={{flex: 1, fontSize: '14px'}}
-                          onClick={() => {
-                            toast({
-                              title: 'Unfollowed',
-                              description: 'Removed from your friends',
-                              status: 'success',
-                              duration: 3000,
-                              isClosable: true,
-                            });
-                            removeFollowing(post.email);
-                          }}>
-                          Unfollow
-                        </Button>
-                      </h1>
-                    </Box>
-                    <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="blue.200"
-                      color="black"
-                      maxW="container.sm">
-                      <h1>Description: {post.description}</h1>
+                      maxW="container.lg"
+                      bgColor="#4fb9af">
+                      <Flex>
+                        <Text fontSize={18}>Posted by: </Text>
+                        <Text marginLeft={2}>
+                          <Button size="sm" variant="link" colorScheme="black">
+                            {profiles[getIndex(profiles, post.email)]?.username}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="link"
+                            colorScheme="red"
+                            marginLeft={2}
+                            onClick={() => {
+                              toast({
+                                title: 'Unfollowed',
+                                description: 'Removed from your friends',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                              });
+                              removeFollowing(post.email);
+                            }}>
+                            {' '}
+                            unfollow
+                          </Button>
+                        </Text>
+                      </Flex>
+
+                      <Text fontSize={20}>Description:</Text>
+                      <Text>{post.description}</Text>
                     </Box>
                   </Box>
                 </Container>
