@@ -230,7 +230,7 @@ const Recipes: React.FC = () => {
                     boxShadow="xs"
                     rounded="md"
                     padding="4"
-                    bg="blue.400"
+                    bg="#4fb9af"
                     color="black"
                     maxW="container.sm">
                     <h1>Difficulty: {recipe.data.difficulty}</h1>
