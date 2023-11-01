@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
 import {AiOutlineHeart} from 'react-icons/ai';
 import {CgBowl} from 'react-icons/cg';
-import {BsWindow, BsFillChatDotsFill} from 'react-icons/bs';
+import {BsWindow, BsFillChatDotsFill, BsKanbanFill} from 'react-icons/bs';
 import {
   collection,
   addDoc,
@@ -185,76 +185,107 @@ const Recipes: React.FC = () => {
           </Stack>
         </HStack>
       </Container>
+      <VStack
+        w={'full'}
+        h={'100'}
+        backgroundImage={
+          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+        }
+        bgGradient="linear(to-t, teal.200, gray)"
+        dropShadow="lg">
+        <Box margin={4} textAlign="center">
+          <Heading
+            size="lg"
+            fontSize="50px"
+            textAlign="center"
+            alignSelf={'center'}>
+            {profile?.username}'s Recipes
+          </Heading>
+        </Box>
+      </VStack>
+
       <HStack spacing={10}>
         <Box>
           <SimpleGrid columns={3} padding={3}>
             {recipes.map(recipe => (
               <Container
-                minW="container.sm"
-                bg="teal"
-                color="white"
+                minW="sm"
+                borderRadius="lg"
+                overflow="hidden"
+                justify-content="space-between"
+                backgroundColor="rgba(0, 128, 128, 0.7)"
                 minH="350"
                 display="flex"
                 flexDirection="column"
                 boxShadow="xs"
                 rounded="md"
-                padding="4">
-                <Box rounded="md" bg="#D3D3D3" w="100%" p={4} color="white">
-                  <Heading
-                    as="h3"
-                    size="lg"
-                    color="black
-                  ">
-                    {recipe.data.recipe_name}
-                  </Heading>
-                </Box>
-                <Stack direction="row" spacing={4} align="center">
-                  <Button variant="link" colorScheme="red">
-                    <AiOutlineHeart style={{fontSize: '34px'}} />
-                  </Button>
-                  <Button variant="link" colorScheme="green">
-                    <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                  </Button>
-                </Stack>
-                <Box
-                  boxShadow="xs"
-                  rounded="md"
-                  padding="4"
-                  bg="blue.400"
-                  color="black"
-                  maxW="container.sm">
-                  <h1>Difficulty: {recipe.data.difficulty}</h1>
-                  <h1>Time: {recipe.data.cooking_time}</h1>
-                  <h1>Servings: {recipe.data.servings}</h1>
-                  <h1>Cost Per Serving: {recipe.data.cost_per_serving}</h1>
-                  <h1>
-                    Cooking Applications: {recipe.data.cooking_applications}
-                  </h1>
-                  <h1>Allergens: {recipe.data.allergens}</h1>
-                </Box>
-                <Box
-                  padding="4"
-                  bg="blue.200"
-                  color="black"
-                  maxW="container.sm">
-                  <h1>Calories: {recipe.data.nutrients.calories}</h1>
-                  <h1>Protein: {recipe.data.nutrients.protein}</h1>
-                  <h1>Carbs: {recipe.data.nutrients.total_carbohydrate}</h1>
-                  <h1>Sugar: {recipe.data.nutrients.sugars}</h1>
-                  <h1>Fat: {recipe.data.nutrients.total_fat}</h1>
-                  <h1>Saturated Fat: {recipe.data.nutrients.saturated_fat}</h1>
-                  <h1>Cholesterol: {recipe.data.nutrients.cholesterol}</h1>
-                  <h1>Sodium: {recipe.data.nutrients.sodium}</h1>
-                  <h1>Fiber: {recipe.data.nutrients.dietary_fiber}</h1>
-                </Box>
+                padding={4}
+                margin={4}
+                marginRight={10}
+                marginLeft={10}>
+                <VStack shadow={'xs'} align="stretch">
+                  <Box rounded="md" bg="#D3D3D3" w="100%" p={4} color="white">
+                    <Button
+                      variant="link"
+                      rounded="md"
+                      as="h3"
+                      size="lg"
+                      color="black"
+                      padding={1}>
+                      {recipe.data.recipe_name}
+                    </Button>
+                  </Box>
+                  <Stack direction="row" spacing={4} align="stretch">
+                    <Button variant="link" colorScheme="red">
+                      <AiOutlineHeart style={{fontSize: '34px'}} />
+                    </Button>
+                    <Button variant="link" colorScheme="green">
+                      <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                    </Button>
+                  </Stack>
 
-                <Box
-                  padding="4"
-                  bg="blue.100"
-                  color="black"
-                  maxW="container.sm">
-                  <h1>Instructions: {recipe.data.instructions}</h1>
-                </Box>
+                  <Box
+                    boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="blue.400"
+                    color="black"
+                    maxW="container.sm">
+                    <h1>Difficulty: {recipe.data.difficulty}</h1>
+                    <h1>Time: {recipe.data.cooking_time}</h1>
+                    <h1>Servings: {recipe.data.servings}</h1>
+                    <h1>Cost Per Serving: {recipe.data.cost_per_serving}</h1>
+                    <h1>
+                      Cooking Applications: {recipe.data.cooking_applications}
+                    </h1>
+                    <h1>Allergens: {recipe.data.allergens}</h1>
+                  </Box>
+                  {/* <Box
+                    padding="4"
+                    bg="blue.200"
+                    color="black"
+                    maxW="container.sm">
+                    <h1>Calories: {recipe.data.nutrients.calories}</h1>
+                    <h1>Protein: {recipe.data.nutrients.protein}</h1>
+                    <h1>Carbs: {recipe.data.nutrients.total_carbohydrate}</h1>
+                    <h1>Sugar: {recipe.data.nutrients.sugars}</h1>
+                    <h1>Fat: {recipe.data.nutrients.total_fat}</h1>
+                    <h1>
+                      Saturated Fat: {recipe.data.nutrients.saturated_fat}
+                    </h1>
+                    <h1>Cholesterol: {recipe.data.nutrients.cholesterol}</h1>
+                    <h1>Sodium: {recipe.data.nutrients.sodium}</h1>
+                    <h1>Fiber: {recipe.data.nutrients.dietary_fiber}</h1>
+                  </Box>
+
+                  <Box
+                    padding="4"
+                    bg="blue.100"
+                    color="black"
+                    maxW="container.sm">
+                    <h1>Instructions: {recipe.data.instructions}</h1>
+                  </Box> */}
+                </VStack>
               </Container>
             ))}
           </SimpleGrid>

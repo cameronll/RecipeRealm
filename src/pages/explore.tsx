@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {db} from '../firebaseConfig';
+import {BsWindow, BsFillChatDotsFill, BsKanbanFill} from 'react-icons/bs';
 import {
   collection,
   addDoc,
@@ -135,7 +136,8 @@ const Explore: React.FC = () => {
         }
         backgroundSize={'cover'}
         backgroundPosition={'center center'}
-        alignContent={'flex-end'}>
+        alignContent={'flex-end'}
+        backgroundColor="rgba(0, 128, 128, 0.7)">
         <VStack
           w={'full'}
           justify={'center'}
@@ -178,95 +180,35 @@ const Explore: React.FC = () => {
             <p>Explore</p>
             <VStack>
               {allPosts.map(post => (
-                <Flex>
-                  <Container
-                    maxW="container.lg"
-                    rounded="md"
-                    bg="blue.600"
-                    color="white"
-                    minH="500"
-                    display="flex"
-                    flexDirection="column">
-                    <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      maxW="container.md"
-                      bg="blue.600"
-                      color="white"
-                      minH="100%"
-                      display="flex"
-                      flexDirection="column">
-                      <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.title}
-                      </div>
-                      <AiOutlineHeart style={{fontSize: '24px'}} />
-                      <Box
-                        boxShadow="xs"
-                        rounded="md"
-                        padding="4"
-                        bg="blue.400"
-                        color="black"
-                        maxW="container.md"
-                        h="0.5">
-                        <h1>Recipe Name: {post?.recipe?.data?.recipe_name}</h1>
-                        Username:{' '}
-                        {profiles[getIndex(profiles, post.email)]?.username}
-                        <Button
-                          colorScheme="teal"
-                          variant="solid"
-                          style={{flex: 1, fontSize: '14px'}}
-                          onClick={() => {
-                            addFollowing(post.email);
-                          }}>
-                          Follow
-                        </Button>
-                      </Box>
-                      <Box
-                        boxShadow="xs"
-                        rounded="md"
-                        padding="4"
-                        bg="blue.200"
-                        color="black"
-                        maxW="container.sm">
-                        <h1>Description: {post.description}</h1>
-                      </Box>
-                      <Box
-                        boxShadow="xs"
-                        rounded="md"
-                        padding="4"
-                        bg="blue.100"
-                        color="black"
-                        maxW="container.sm">
-                        {post?.date_time.toDate().toString()}
-                      </Box>
-                    </Box>
-                  </Container>
-                </Flex>
-              ))}
-            </VStack>
-          </TabPanel>
-          <TabPanel>
-            <p>Friends</p>
-            <VStack>
-              {friendsPosts.map(post => (
                 <Container
                   maxW="container.sm"
-                  bg="blue.600"
                   color="white"
                   minH="350"
                   display="flex"
-                  flexDirection="column">
+                  flexDirection="column"
+                  padding={1}
+                  rounded="lg">
                   <Box
+                    border="5px solid black"
+                    padding={4}
                     boxShadow="xs"
                     rounded="md"
                     maxW="container.sm"
-                    bg="blue.600"
+                    backgroundColor="rgba(0, 128, 128, 0.7)"
                     color="white"
                     minH="350"
                     display="flex"
                     flexDirection="column">
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
-                    <AiOutlineHeart style={{fontSize: '24px'}} />
+                    <Stack direction="row" spacing={4} align="stretch">
+                      <Button variant="link" colorScheme="red">
+                        <AiOutlineHeart style={{fontSize: '34px'}} />
+                      </Button>
+                      <Button variant="link" colorScheme="blue">
+                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                      </Button>
+                    </Stack>
+                    <Text>{post?.date_time.toDate().toString()}</Text>
                     <Box
                       boxShadow="xs"
                       rounded="md"
@@ -308,14 +250,84 @@ const Explore: React.FC = () => {
                       maxW="container.sm">
                       <h1>Description: {post.description}</h1>
                     </Box>
+                  </Box>
+                </Container>
+              ))}
+            </VStack>
+          </TabPanel>
+          <TabPanel>
+            <p>Friends</p>
+            <VStack>
+              {friendsPosts.map(post => (
+                <Container
+                  maxW="container.sm"
+                  color="white"
+                  minH="350"
+                  display="flex"
+                  flexDirection="column"
+                  padding={1}
+                  rounded="lg">
+                  <Box
+                    border="5px solid black"
+                    padding={4}
+                    boxShadow="xs"
+                    rounded="md"
+                    maxW="container.sm"
+                    backgroundColor="rgba(0, 128, 128, 0.7)"
+                    color="white"
+                    minH="350"
+                    display="flex"
+                    flexDirection="column">
+                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
+                    <Stack direction="row" spacing={4} align="stretch">
+                      <Button variant="link" colorScheme="red">
+                        <AiOutlineHeart style={{fontSize: '34px'}} />
+                      </Button>
+                      <Button variant="link" colorScheme="blue">
+                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                      </Button>
+                    </Stack>
+                    <Text>{post?.date_time.toDate().toString()}</Text>
                     <Box
                       boxShadow="xs"
                       rounded="md"
                       padding="4"
-                      bg="blue.100"
+                      bg="blue.400"
                       color="black"
                       maxW="container.sm">
-                      {post?.date_time.toDate().toString()}
+                      <h1>Recipe Name: {post?.recipe?.data?.recipe_name}</h1>
+                      <h1>
+                        Username:{' '}
+                        {profiles[getIndex(profiles, post.email)]?.username}
+                        <Button
+                          bg={'blue.400'}
+                          color={'white'}
+                          _hover={{
+                            bg: 'blue.500',
+                          }}
+                          style={{flex: 1, fontSize: '14px'}}
+                          onClick={() => {
+                            toast({
+                              title: 'Unfollowed',
+                              description: 'Removed from your friends',
+                              status: 'success',
+                              duration: 3000,
+                              isClosable: true,
+                            });
+                            removeFollowing(post.email);
+                          }}>
+                          Unfollow
+                        </Button>
+                      </h1>
+                    </Box>
+                    <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="blue.200"
+                      color="black"
+                      maxW="container.sm">
+                      <h1>Description: {post.description}</h1>
                     </Box>
                   </Box>
                 </Container>
