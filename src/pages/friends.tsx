@@ -38,6 +38,8 @@ import {
   Link,
   Badge,
   Center,
+  VStack,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
 import Posts from './posts/posts';
@@ -106,6 +108,24 @@ const Friends: React.FC = () => {
   return (
     <>
       <Navbar />
+      <Flex
+        w={'full'}
+        h={'100'}
+        backgroundSize={'cover'}
+        backgroundPosition={'center center'}
+        alignContent={'flex-end'}
+        backgroundColor="rgba(0, 128, 128, 0.7)">
+        <VStack
+          w={'full'}
+          px={useBreakpointValue({base: 4, md: 8})}
+          bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
+          <Stack maxW={'2xl'} spacing={6}>
+            <Text textAlign="center" fontSize="6xl" as="b">
+              Friends Page
+            </Text>
+          </Stack>
+        </VStack>
+      </Flex>
       <Center py={6}>
         <Box
           maxW={'320px'}

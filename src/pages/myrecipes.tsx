@@ -45,6 +45,11 @@ import {
   Icon,
   Image,
   StackDivider,
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
@@ -63,7 +68,10 @@ const Recipes: React.FC = () => {
       setRecipes(recipesData);
     }
     async function getNumPosts() {
-      const myQuery = query(collection(db, 'users/' + email + '/Recipes'), where('posted', '==', 'true'));
+      const myQuery = query(
+        collection(db, 'users/' + email + '/Recipes'),
+        where('posted', '==', 'true'),
+      );
       const numPosts = await getDocs(myQuery);
       const numPostsData = numPosts.docs.map(doc => doc.data());
       setPosts(numPostsData);
@@ -73,6 +81,7 @@ const Recipes: React.FC = () => {
       const docSnap = await getDoc(docRef);
       setProfile(docSnap.data());
     }
+    getNumPosts();
     getProfile();
     getRecipes();
   }, []);
@@ -105,7 +114,7 @@ const Recipes: React.FC = () => {
       <Container
         maxW={'10xl'}
         py={12}
-        bgGradient="linear(to-t, teal.200, gray)"
+        bgGradient="linear(to-t, grey, #05e0f0)"
         alignContent="center"
         display="flex"
         justifyContent="center"
@@ -125,7 +134,7 @@ const Recipes: React.FC = () => {
             </Text>
             <Heading>{profile?.username}'s Page</Heading>
             <Text>{recipes.length} Recipes</Text>
-            <Text>{/* posts.length */}# Posts</Text>
+            <Text>{posts}# Posts</Text>
             <Text color={'black'} fontSize={'lg'}>
               {profile?.biography}
             </Text>
@@ -171,7 +180,7 @@ const Recipes: React.FC = () => {
       </Container>
       <VStack
         w={'full'}
-        h={'100'}
+        h={'80px'}
         backgroundImage={
           'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
         }
@@ -180,8 +189,8 @@ const Recipes: React.FC = () => {
         dropShadow="lg">
         <Box margin={4} textAlign="center">
           <Heading
-            size="lg"
-            fontSize="50px"
+            size="sm"
+            fontSize="35px"
             textAlign="center"
             alignSelf={'center'}>
             {profile?.username}'s Recipes
@@ -200,15 +209,15 @@ const Recipes: React.FC = () => {
             alignItems="center">
             {recipes.map(recipe => (
               <Container
+                boxShadow={'2xl'}
                 minW="sm"
                 borderRadius="lg"
                 overflow="hidden"
                 justify-content="space-between"
-                backgroundColor="rgba(0, 128, 128, 0.7)"
+                backgroundColor="rgba(6, 176, 189, 0.7)"
                 minH="350"
                 display="flex"
                 flexDirection="column"
-                boxShadow="xs"
                 rounded="md"
                 padding={4}
                 margin={4}
@@ -251,31 +260,45 @@ const Recipes: React.FC = () => {
                     </h1>
                     <h1>Allergens: {recipe.data.allergens}</h1>
                   </Box>
-                  {/* <Box
-                    padding="4"
-                    bg="blue.200"
-                    color="black"
-                    maxW="container.sm">
-                    <h1>Calories: {recipe.data.nutrients.calories}</h1>
-                    <h1>Protein: {recipe.data.nutrients.protein}</h1>
-                    <h1>Carbs: {recipe.data.nutrients.total_carbohydrate}</h1>
-                    <h1>Sugar: {recipe.data.nutrients.sugars}</h1>
-                    <h1>Fat: {recipe.data.nutrients.total_fat}</h1>
-                    <h1>
-                      Saturated Fat: {recipe.data.nutrients.saturated_fat}
-                    </h1>
-                    <h1>Cholesterol: {recipe.data.nutrients.cholesterol}</h1>
-                    <h1>Sodium: {recipe.data.nutrients.sodium}</h1>
-                    <h1>Fiber: {recipe.data.nutrients.dietary_fiber}</h1>
-                  </Box>
+                  <Accordion allowToggle allowMultiple>
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton bg="#4fb9af">
+                          <Box as="span" flex="1" textAlign="left">
+                            Nutrition Data
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <Box padding="4" color="black" maxW="container.sm">
+                          <h1>Calories: {recipe.data.nutrients.calories}</h1>
+                          <h1>Protein: {recipe.data.nutrients.protein}</h1>
+                          <h1>
+                            Carbs: {recipe.data.nutrients.total_carbohydrate}
+                          </h1>
+                          <h1>Sugar: {recipe.data.nutrients.sugars}</h1>
+                          <h1>Fat: {recipe.data.nutrients.total_fat}</h1>
+                          <h1>
+                            Saturated Fat: {recipe.data.nutrients.saturated_fat}
+                          </h1>
+                          <h1>
+                            Cholesterol: {recipe.data.nutrients.cholesterol}
+                          </h1>
+                          <h1>Sodium: {recipe.data.nutrients.sodium}</h1>
+                          <h1>Fiber: {recipe.data.nutrients.dietary_fiber}</h1>
+                        </Box>
 
-                  <Box
-                    padding="4"
-                    bg="blue.100"
-                    color="black"
-                    maxW="container.sm">
-                    <h1>Instructions: {recipe.data.instructions}</h1>
-                  </Box> */}
+                        <Box
+                          padding="4"
+                          bg="blue.100"
+                          color="black"
+                          maxW="container.sm">
+                          <h1>Instructions: {recipe.data.instructions}</h1>
+                        </Box>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
                 </VStack>
               </Container>
             ))}
