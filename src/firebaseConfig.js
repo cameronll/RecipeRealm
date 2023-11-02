@@ -3,10 +3,9 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-//import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-//import firebase from 'firebase/compat/app';
-//import 'firebase/compat/auth';
-
+import firebase from 'firebase/compat/app';
+import * as firebaseui from 'firebaseui'
+import 'firebaseui/dist/firebaseui.css'
 
 
 const firebaseConfig = {
@@ -19,28 +18,9 @@ const firebaseConfig = {
     'measurementId': "G-97DKH32RKW",
     'databaseURL': ''
 };
-/** 
-const uiConfig = {
-    // Popup signin flow rather than redirect flow.
-    signInFlow: 'popup',
-    // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-    signInSuccessUrl: '/signedIn',
-    // We will display Google and Facebook as auth providers.
-    signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-    ],
-  };
 
-  function SignInScreen() {
-    return (
-      <div>
-        <h1>My App</h1>
-        <p>Please sign-in:</p>
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-      </div>
-    );
-  }**/
+
+
 
 
 
@@ -49,5 +29,8 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-export { app, auth, db };
-//export default SignInScreen
+
+ 
+
+
+export { app, auth, db};
