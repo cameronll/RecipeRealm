@@ -108,7 +108,7 @@ const Explore: React.FC = () => {
         const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
         setFriendsPosts(friendsPostsData);
       } else {
-        setFriendsPosts(allPostsData);
+        setFriendsPosts([]);
       }
     }
     getData();
@@ -303,10 +303,10 @@ const Explore: React.FC = () => {
                                           px={3}>
                                           <Text color="white">
                                             {
-                                            profiles[
+                                              profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.biography
-                                          }
+                                            }
                                           </Text>
                                         </Text>
 
@@ -373,182 +373,188 @@ const Explore: React.FC = () => {
           <TabPanel>
             <p>Friends</p>
             <VStack>
-              {friendsPosts.map(post => (
-                <Container
-                  shadow={1000}
-                  maxW="container.lg"
-                  color="white"
-                  minH="350"
-                  display="flex"
-                  flexDirection="column"
-                  padding={1}
-                  rounded="lg"
-                  boxShadow="dark-lg"
-                  bgColor="black">
-                  <Box
-                    border="1px solid black"
-                    padding={4}
-                    boxShadow="xs"
-                    rounded="md"
+              {friendsPosts.length === 0 ? (
+                <Heading textAlign="center">You have no friends</Heading>
+              ) : (
+                friendsPosts.map(post => (
+                  <Container
+                    shadow={1000}
                     maxW="container.lg"
-                    backgroundColor="rgba(0, 128, 128, 1)"
                     color="white"
                     minH="350"
                     display="flex"
-                    flexDirection="column">
-                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
-                    <Center>Image goes here</Center>
-                    <Stack direction="row" spacing={4} align="stretch">
-                      <Button variant="link" colorScheme="red">
-                        <AiOutlineHeart style={{fontSize: '34px'}} />
-                      </Button>
-                      <Button variant="link" colorScheme="blue">
-                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                      </Button>
-                      <Spacer />
-                      <Text>{post?.date_time.toDate().toString()}</Text>
-                    </Stack>
-
+                    flexDirection="column"
+                    padding={1}
+                    rounded="lg"
+                    boxShadow="dark-lg"
+                    bgColor="black">
                     <Box
+                      border="1px solid black"
+                      padding={4}
                       boxShadow="xs"
                       rounded="md"
-                      padding="4"
-                      bg="teal"
-                      color="black"
                       maxW="container.lg"
-                      bgColor="#4fb9af">
-                      <Flex>
-                        <Text fontSize={18}>Posted by: </Text>
-                        <Text fontSize={18} marginLeft={2}>
-                          {profiles[getIndex(profiles, post.email)]?.username}{' '}
-                        </Text>
-                        <Popover
-                          closeOnBlur={false}
-                          placement="left"
-                          initialFocusRef={initRef}>
-                          {({isOpen, onClose}) => (
-                            <>
-                              <PopoverTrigger>
-                                <Button
-                                  marginLeft={2}
-                                  colorScheme="whiteAlpha"
-                                  variant="outline"
-                                  size="sm">
-                                  {isOpen ? 'Close' : 'View'} Profile
-                                </Button>
-                              </PopoverTrigger>
-                              <Portal>
-                                <PopoverContent>
-                                  <PopoverCloseButton />
-                                  <PopoverBody
-                                    bg="teal"
-                                    boxShadow="dark-lg"
-                                    rounded={'lg'}>
-                                    <Box>
-                                      <Box
-                                        maxW={'320px'}
-                                        w={'full'}
-                                        bg="teal"
-                                        boxShadow={'2xl'}
-                                        rounded={'lg'}
-                                        p={6}
-                                        textAlign={'center'}>
-                                        <Avatar
-                                          size={'xl'}
-                                          src={
-                                            'https://i.ytimg.com/vi/WH7uKNQDzWI/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBYKEowDw==&rs=AOn4CLCPPCr7AOoCWseh5XdjlHeFmyc2rQ'
-                                          }
-                                          mb={4}
-                                          pos={'relative'}
-                                          _after={{
-                                            content: '""',
-                                            w: 4,
-                                            h: 4,
-                                            bg: 'green.300',
-                                            border: '2px solid white',
-                                            rounded: 'full',
-                                            pos: 'absolute',
-                                            bottom: 0,
-                                            right: 3,
-                                          }}
-                                        />
-                                        <Heading
-                                          fontSize={'2xl'}
-                                          fontFamily={'body'}>
-                                          {
-                                            profiles[
-                                              getIndex(profiles, post.email)
-                                            ]?.username
-                                          }
-                                        </Heading>
-                                        <Text
-                                          textAlign={'center'}
-                                          as="b"
-                                          color="white"
-                                          px={3}>
-                                          <Text color="white">
-                                            BIO INFO HERE
-                                          </Text>
-                                        </Text>
+                      backgroundColor="rgba(0, 128, 128, 1)"
+                      color="white"
+                      minH="350"
+                      display="flex"
+                      flexDirection="column">
+                      <div style={{flex: 1, fontSize: '24px'}}>
+                        {post?.title}
+                      </div>
+                      <Center>Image goes here</Center>
+                      <Stack direction="row" spacing={4} align="stretch">
+                        <Button variant="link" colorScheme="red">
+                          <AiOutlineHeart style={{fontSize: '34px'}} />
+                        </Button>
+                        <Button variant="link" colorScheme="blue">
+                          <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                        </Button>
+                        <Spacer />
+                        <Text>{post?.date_time.toDate().toString()}</Text>
+                      </Stack>
 
-                                        <Stack
-                                          mt={8}
-                                          direction={'row'}
-                                          spacing={4}>
-                                          <Button
-                                            flex={1}
-                                            fontSize={'sm'}
-                                            rounded={'full'}
-                                            _focus={{
-                                              bg: 'gray.200',
-                                            }}>
-                                            View Posts
-                                          </Button>
-                                          <Button
-                                            flex={1}
-                                            fontSize={'sm'}
-                                            rounded={'full'}
-                                            bg={'blue.400'}
-                                            color={'white'}
-                                            boxShadow={
-                                              '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="teal"
+                        color="black"
+                        maxW="container.lg"
+                        bgColor="#4fb9af">
+                        <Flex>
+                          <Text fontSize={18}>Posted by: </Text>
+                          <Text fontSize={18} marginLeft={2}>
+                            {profiles[getIndex(profiles, post.email)]?.username}{' '}
+                          </Text>
+                          <Popover
+                            closeOnBlur={false}
+                            placement="left"
+                            initialFocusRef={initRef}>
+                            {({isOpen, onClose}) => (
+                              <>
+                                <PopoverTrigger>
+                                  <Button
+                                    marginLeft={2}
+                                    colorScheme="whiteAlpha"
+                                    variant="outline"
+                                    size="sm">
+                                    {isOpen ? 'Close' : 'View'} Profile
+                                  </Button>
+                                </PopoverTrigger>
+                                <Portal>
+                                  <PopoverContent>
+                                    <PopoverCloseButton />
+                                    <PopoverBody
+                                      bg="teal"
+                                      boxShadow="dark-lg"
+                                      rounded={'lg'}>
+                                      <Box>
+                                        <Box
+                                          maxW={'320px'}
+                                          w={'full'}
+                                          bg="teal"
+                                          boxShadow={'2xl'}
+                                          rounded={'lg'}
+                                          p={6}
+                                          textAlign={'center'}>
+                                          <Avatar
+                                            size={'xl'}
+                                            src={
+                                              'https://i.ytimg.com/vi/WH7uKNQDzWI/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBYKEowDw==&rs=AOn4CLCPPCr7AOoCWseh5XdjlHeFmyc2rQ'
                                             }
-                                            _hover={{
-                                              bg: 'blue.500',
+                                            mb={4}
+                                            pos={'relative'}
+                                            _after={{
+                                              content: '""',
+                                              w: 4,
+                                              h: 4,
+                                              bg: 'green.300',
+                                              border: '2px solid white',
+                                              rounded: 'full',
+                                              pos: 'absolute',
+                                              bottom: 0,
+                                              right: 3,
                                             }}
-                                            _focus={{
-                                              bg: 'blue.500',
-                                            }}
-                                            onClick={() => {
-                                              toast({
-                                                title: 'Unfollowed',
-                                                description:
-                                                  'Removed from your friends',
-                                                status: 'success',
-                                                duration: 3000,
-                                                isClosable: true,
-                                              });
-                                              removeFollowing(post.email);
-                                            }}>
-                                            Follow
-                                          </Button>
-                                        </Stack>
-                                      </Box>
-                                    </Box>
-                                  </PopoverBody>
-                                </PopoverContent>
-                              </Portal>
-                            </>
-                          )}
-                        </Popover>
-                      </Flex>
+                                          />
+                                          <Heading
+                                            fontSize={'2xl'}
+                                            fontFamily={'body'}>
+                                            {
+                                              profiles[
+                                                getIndex(profiles, post.email)
+                                              ]?.username
+                                            }
+                                          </Heading>
+                                          <Text
+                                            textAlign={'center'}
+                                            as="b"
+                                            color="white"
+                                            px={3}>
+                                            <Text color="white">
+                                              BIO INFO HERE
+                                            </Text>
+                                          </Text>
 
-                      <Text fontSize={20}>Description:</Text>
-                      <Text>{post.description}</Text>
+                                          <Stack
+                                            mt={8}
+                                            direction={'row'}
+                                            spacing={4}>
+                                            <Button
+                                              flex={1}
+                                              fontSize={'sm'}
+                                              rounded={'full'}
+                                              _focus={{
+                                                bg: 'gray.200',
+                                              }}>
+                                              View Posts
+                                            </Button>
+                                            <Button
+                                              flex={1}
+                                              fontSize={'sm'}
+                                              rounded={'full'}
+                                              bg={'blue.400'}
+                                              color={'white'}
+                                              boxShadow={
+                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                              }
+                                              _hover={{
+                                                bg: 'blue.500',
+                                              }}
+                                              _focus={{
+                                                bg: 'blue.500',
+                                              }}
+                                              onClick={() => {
+                                                toast({
+                                                  title: 'Unfollowed',
+                                                  description:
+                                                    'Removed from your friends',
+                                                  status: 'success',
+                                                  duration: 3000,
+                                                  isClosable: true,
+                                                });
+                                                removeFollowing(post.email);
+                                              }}>
+                                              Follow
+                                            </Button>
+                                          </Stack>
+                                        </Box>
+                                      </Box>
+                                    </PopoverBody>
+                                  </PopoverContent>
+                                </Portal>
+                              </>
+                            )}
+                          </Popover>
+                        </Flex>
+
+                        <Text fontSize={20}>Description:</Text>
+                        <Text>{post.description}</Text>
+                      </Box>
                     </Box>
-                  </Box>
-                </Container>
-              ))}
+                  </Container>
+                ))
+              )}
             </VStack>
           </TabPanel>
         </TabPanels>
