@@ -142,8 +142,11 @@ const Explore: React.FC = () => {
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
-  const isFollowing = (e: any) => {
-    if (Math.random != Math.random) {
+  const isFollowing = (email: string) => {
+    const following: string[] = JSON.parse(
+      localStorage.getItem('FOLLOWING') as string,
+    );
+    if (following.includes(email)){
       return true;
     }
     return false;
@@ -332,7 +335,7 @@ const Explore: React.FC = () => {
                                               View Recipes
                                             </Button>
                                           </Link>
-                                          {isFollowing(90) ? (
+                                          {isFollowing(post.email) ? (
                                             <Button
                                               flex={1}
                                               fontSize={'sm'}

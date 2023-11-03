@@ -19,7 +19,7 @@ import {auth} from '../../firebaseConfig';
 import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
-import GoogleButton from 'react-google-button'
+//import GoogleButton from 'react-google-button'
 
 import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
@@ -120,10 +120,7 @@ const Login = () => {
                 </Button>
               </Link>
             </Flex>
-          </form>
-          <GoogleButton
-                onClick={() => googleSignIn()}              
-          />
+          </form>           
         </Box>
       </Flex>
       <Stack
@@ -146,11 +143,6 @@ const Login = () => {
             }
             mb={2}
           />
-
-<div>
-      <h2>Login with Google</h2>
-      <div id="firebaseui-auth-container"></div>
-    </div>
         </Box>
       </Stack>
     </>
