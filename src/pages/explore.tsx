@@ -121,7 +121,7 @@ const Explore: React.FC = () => {
       }
     }
     getData();
-  }, [addFollowing, removeFollowing]);
+  }, []);
 
   async function addFollowing(followingEmail: string) {
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
