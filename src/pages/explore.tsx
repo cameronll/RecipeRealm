@@ -66,6 +66,15 @@ function getIndex(profiles: any[], email: string): number {
   }
   return -1;
 }
+const isFollowing = (email: string) => {
+  const following: string[] = JSON.parse(
+    localStorage.getItem('FOLLOWING') as string,
+  );
+  if (following.includes(email)) {
+    return true;
+  }
+  return false;
+};
 
 const Explore: React.FC = () => {
   // useState to create constants
@@ -112,7 +121,7 @@ const Explore: React.FC = () => {
       }
     }
     getData();
-  }, []);
+  }, [isFollowing, addFollowing, removeFollowing]);
 
   async function addFollowing(followingEmail: string) {
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
@@ -141,16 +150,6 @@ const Explore: React.FC = () => {
     }
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
-
-  const isFollowing = (email: string) => {
-    const following: string[] = JSON.parse(
-      localStorage.getItem('FOLLOWING') as string,
-    );
-    if (following.includes(email)){
-      return true;
-    }
-    return false;
-  };
 
   /*
   data that can be displayed:
@@ -547,44 +546,76 @@ const Explore: React.FC = () => {
                                             mt={8}
                                             direction={'row'}
                                             spacing={4}>
-                                            <Link to="FriendsProfile"></Link>
-                                            <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              _focus={{
-                                                bg: 'gray.200',
-                                              }}>
-                                              View Recipes
-                                            </Button>
-                                            <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              bg={'blue.400'}
-                                              color={'white'}
-                                              boxShadow={
-                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-                                              }
-                                              _hover={{
-                                                bg: 'blue.500',
-                                              }}
-                                              _focus={{
-                                                bg: 'blue.500',
-                                              }}
-                                              onClick={() => {
-                                                toast({
-                                                  title: 'Unfollowed',
-                                                  description:
-                                                    'Removed from your friends',
-                                                  status: 'success',
-                                                  duration: 3000,
-                                                  isClosable: true,
-                                                });
-                                                addFollowing(post.email);
-                                              }}>
-                                              Follow
-                                            </Button>
+                                            <Link to="/friendsProfile">
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                _focus={{
+                                                  bg: 'gray.200',
+                                                }}>
+                                                View Recipes
+                                              </Button>
+                                            </Link>
+                                            {isFollowing(post.email) ? (
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                bg={'red.400'}
+                                                color={'white'}
+                                                boxShadow={
+                                                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                                }
+                                                _hover={{
+                                                  bg: 'red.500',
+                                                }}
+                                                _focus={{
+                                                  bg: 'red.500',
+                                                }}
+                                                onClick={() => {
+                                                  toast({
+                                                    title: 'Unfollowed',
+                                                    description:
+                                                      'Removed from your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                  removeFollowing(post.email);
+                                                }}>
+                                                Unfollow
+                                              </Button>
+                                            ) : (
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                bg={'green.400'}
+                                                color={'white'}
+                                                boxShadow={
+                                                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                                }
+                                                _hover={{
+                                                  bg: 'green.500',
+                                                }}
+                                                _focus={{
+                                                  bg: 'green.500',
+                                                }}
+                                                onClick={() => {
+                                                  toast({
+                                                    title: 'Followed',
+                                                    description:
+                                                      'Added to your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                  addFollowing(post.email);
+                                                }}>
+                                                Follow
+                                              </Button>
+                                            )}
                                           </Stack>
                                         </Box>
                                       </Box>
