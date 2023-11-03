@@ -121,7 +121,7 @@ const Explore: React.FC = () => {
       }
     }
     getData();
-  }, [isFollowing, addFollowing, removeFollowing]);
+  }, [addFollowing, removeFollowing]);
 
   async function addFollowing(followingEmail: string) {
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
@@ -155,7 +155,7 @@ const Explore: React.FC = () => {
     const following: string[] = JSON.parse(
       localStorage.getItem('FOLLOWING') as string,
     );
-    if (following.includes(email)){
+    if (following.includes(email)) {
       return true;
     }
     return false;
@@ -339,10 +339,13 @@ const Explore: React.FC = () => {
                                               fontSize={'sm'}
                                               rounded={'full'}
                                               _focus={{
-                                                bg: 'gray.200'
+                                                bg: 'gray.200',
                                               }}
                                               onClick={() => {
-                                                window.localStorage.setItem('USERNAME', JSON.stringify(post.username));
+                                                window.localStorage.setItem(
+                                                  'USERNAME',
+                                                  JSON.stringify(post.username),
+                                                );
                                               }}>
                                               View Recipes
                                             </Button>
