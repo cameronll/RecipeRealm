@@ -132,7 +132,7 @@ const Recipes: React.FC = () => {
               rounded={'md'}>
               {}
             </Text>
-            <Heading>{profile?.username}'s Page</Heading>
+            <Heading>{profile?.email}'s Page</Heading>
             <Text>{recipes.length} Recipes</Text>
             <Text>{posts}# Posts</Text>
             <Text color={'black'} fontSize={'lg'}>
@@ -193,7 +193,7 @@ const Recipes: React.FC = () => {
             fontSize="35px"
             textAlign="center"
             alignSelf={'center'}>
-            {profile?.username}'s Recipes
+            {profile?.email}'s Recipes
           </Heading>
         </Box>
       </VStack>

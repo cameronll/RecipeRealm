@@ -141,7 +141,6 @@ const Explore: React.FC = () => {
     }
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
-
   const isFollowing = (email: string) => {
     const following: string[] = JSON.parse(
       localStorage.getItem('FOLLOWING') as string,
@@ -152,6 +151,7 @@ const Explore: React.FC = () => {
     return false;
   };
 
+  
   /*
   data that can be displayed:
   post.username.<description, title, username, recipe_name>
@@ -324,13 +324,16 @@ const Explore: React.FC = () => {
                                           mt={8}
                                           direction={'row'}
                                           spacing={4}>
-                                          <Link to="/friendsProfile">
+                                          <Link to="FriendsProfile">
                                             <Button
                                               flex={1}
                                               fontSize={'sm'}
                                               rounded={'full'}
                                               _focus={{
-                                                bg: 'gray.200',
+                                                bg: 'gray.200'
+                                              }}
+                                              onClick={() => {
+                                                window.localStorage.setItem('USERNAME', JSON.stringify(post.username));
                                               }}>
                                               View Recipes
                                             </Button>
@@ -547,16 +550,17 @@ const Explore: React.FC = () => {
                                             mt={8}
                                             direction={'row'}
                                             spacing={4}>
-                                            <Link to="FriendsProfile"></Link>
-                                            <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              _focus={{
-                                                bg: 'gray.200',
-                                              }}>
-                                              View Recipes
-                                            </Button>
+                                            <Link to={"FriendsProfile"}>
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                _focus={{
+                                                  bg: 'gray.200',
+                                                }}>
+                                                View Recipes
+                                              </Button>
+                                            </Link>
                                             <Button
                                               flex={1}
                                               fontSize={'sm'}

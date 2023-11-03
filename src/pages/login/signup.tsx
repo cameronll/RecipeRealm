@@ -5,7 +5,7 @@ import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
 import {getAuth} from 'firebase/auth';
 import {db} from '../../firebaseConfig';
-import {doc, setDoc} from 'firebase/firestore';
+import {doc, getDocs, setDoc} from 'firebase/firestore';
 import {collection, addDoc, DocumentReference} from 'firebase/firestore';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link} from 'react-router-dom';
@@ -23,6 +23,15 @@ function validateName(value: any) {
   return error;
 }
 
+async function uniqueUsername(email: string):Promise<boolean>{
+  const queryUsernames = await getDocs(collection(db, "users"));
+  const usernames = queryUsernames.docs.map(doc => doc.data().username);
+  if (usernames.includes(email)){
+    return false;
+  }
+  return true; 
+}
+
 const SignUp = () => {
   const toast = useToast();
   const following: string[] = [];
@@ -34,25 +43,27 @@ const SignUp = () => {
       password: '',
     },
     onSubmit: async values => {
-      try {
-        // Create a new user in Firebase authentication
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          values.email,
-          values.password,
-        );
+      if (await uniqueUsername(values.username)){
+        try {
+          // Create a new user in Firebase authentication
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            values.email,
+            values.password,
+          );
 
-        const docRef = await setDoc(doc(db, 'users', values.email), {
-          email: values.email,
-          name: values.name,
-          username: values.username,
-          following: following,
-        });
-        console.log('Document written with ID: ', docRef);
+          const docRef = await setDoc(doc(db, 'users', values.email), {
+            email: values.email,
+            name: values.name,
+            username: values.username,
+            following: following,
+          });
+          console.log('Document written with ID: ', docRef);
 
-        // Additional actions upon successful signup (if needed)
-      } catch (e) {
-        console.log(e);
+          // Additional actions upon successful signup (if needed)
+        } catch (e) {
+          console.log(e);
+        }
       }
     },
   });

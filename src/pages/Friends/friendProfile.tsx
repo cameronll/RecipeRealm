@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../../firebaseConfig';
-import {AiOutlineHeart} from 'react-icons/ai';
+import {AiOutlineConsoleSql, AiOutlineHeart} from 'react-icons/ai';
 import {CgBowl} from 'react-icons/cg';
 import {BsWindow, BsFillChatDotsFill, BsKanbanFill} from 'react-icons/bs';
 import {
@@ -53,13 +53,41 @@ import {
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
+async function getEmail():Promise<string>{
+  const username = JSON.parse(localStorage.getItem('USERNAME') as string);
+  const queryUsers = await getDocs(collection(db, "users"));
+  const users:any = queryUsers.docs.map(doc => doc.data());
+  for (let i = 0; i < users.length; i++){
+    if (users.username == username){
+      console.log(users.email);
+      return users.email;
+    }
+  }
+  return "not found!"
+}
 const FriendProfile: React.FC = (friend: any) => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>();
+  //const [email, setEmail] = useState();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
+    /*
+    async function getEmail(){
+      const username = JSON.parse(localStorage.getItem('USERNAME') as string);
+      const queryUsers = await getDocs(collection(db, "users"));
+      const users:any = queryUsers.docs.map(doc => doc.data());
+      for (let i = 0; i < users.length; i++){
+        if (users.username == username){
+          console.log(users.email);
+          setEmail(users.email);
+        }
+      }
+    }
+    getEmail();
+    */
+    
     async function getRecipes() {
       const querySnapshot = await getDocs(
         collection(db, 'users/' + email + '/Recipes'),
@@ -81,6 +109,7 @@ const FriendProfile: React.FC = (friend: any) => {
       const docSnap = await getDoc(docRef);
       setProfile(docSnap.data());
     }
+
     getNumPosts();
     getProfile();
     getRecipes();
