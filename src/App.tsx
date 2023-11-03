@@ -13,6 +13,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import SignUp from './pages/login/signup';
 import CreateRecipe from './pages/recipes/CreateRecipe';
 import Explore from './pages/explore';
+import FriendProfile from './pages/Friends/friendProfile';
 //Theme
 
 export const App = () => (
@@ -22,6 +23,7 @@ export const App = () => (
       <Routes>
         <Route index element={<Login />} />
         <Route path="Feed" element={<Feed />} />
+        <Route path="FriendsProfile" element={<FriendProfile />} />
         <Route path="Posts" element={<Posts />} />
         <Route path="Friends" element={<Friends />} />
         <Route path="Calendar" element={<CalendarPage />} />

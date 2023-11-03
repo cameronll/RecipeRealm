@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {db} from '../firebaseConfig';
+import {db} from '../../firebaseConfig';
 import {AiOutlineHeart} from 'react-icons/ai';
 import {CgBowl} from 'react-icons/cg';
 import {BsWindow, BsFillChatDotsFill, BsKanbanFill} from 'react-icons/bs';
@@ -19,7 +19,7 @@ import {
   onAuthStateChanged,
   setPersistence,
 } from 'firebase/auth';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/Navbar';
 import {
   Box,
   useColorModeValue,
@@ -53,7 +53,7 @@ import {
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
-const Recipes: React.FC = () => {
+const FriendProfile: React.FC = (friend: any) => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>();
@@ -344,4 +344,4 @@ const Recipes: React.FC = () => {
     </>
   );
 };
-export default Recipes;
+export default FriendProfile;
