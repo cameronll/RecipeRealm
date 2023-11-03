@@ -69,33 +69,31 @@ const FriendProfile: React.FC = (friend: any) => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>();
-  //const [email, setEmail] = useState();
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const [email, setEmail] = useState();
+  //const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
-    /*
     async function getEmail(){
       const username = JSON.parse(localStorage.getItem('USERNAME') as string);
       const queryUsers = await getDocs(collection(db, "users"));
       const users:any = queryUsers.docs.map(doc => doc.data());
       for (let i = 0; i < users.length; i++){
-        if (users.username == username){
-          console.log(users.email);
-          setEmail(users.email);
+        if (users[i].username == username){
+          console.log(users[i].email);
+          setEmail(users[i].email);
         }
       }
     }
     getEmail();
-    */
     
-    async function getRecipes() {
+    async function getRecipes(email:string) {
       const querySnapshot = await getDocs(
         collection(db, 'users/' + email + '/Recipes'),
       );
       const recipesData = querySnapshot.docs.map(doc => doc.data());
       setRecipes(recipesData);
     }
-    async function getNumPosts() {
+    async function getNumPosts(email:string) {
       const myQuery = query(
         collection(db, 'users/' + email + '/Recipes'),
         where('posted', '==', 'true'),
@@ -104,15 +102,16 @@ const FriendProfile: React.FC = (friend: any) => {
       const numPostsData = numPosts.docs.map(doc => doc.data());
       setPosts(numPostsData);
     }
-    async function getProfile() {
+    async function getProfile(email:string) {
       const docRef = doc(db, 'users/', email);
       const docSnap = await getDoc(docRef);
       setProfile(docSnap.data());
     }
-
-    getNumPosts();
-    getProfile();
-    getRecipes();
+    if (email){
+      getNumPosts(email);
+      getProfile(email);
+      getRecipes(email);
+    }
   }, []);
 
   /*

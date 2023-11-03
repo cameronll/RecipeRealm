@@ -121,7 +121,7 @@ const Explore: React.FC = () => {
       }
     }
     getData();
-  }, [addFollowing, removeFollowing]);
+  }, []);
 
   async function addFollowing(followingEmail: string) {
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
@@ -333,7 +333,7 @@ const Explore: React.FC = () => {
                                           mt={8}
                                           direction={'row'}
                                           spacing={4}>
-                                          <Link to="FriendsProfile">
+                                          <Link to="/Friends/FriendsProfile">
                                             <Button
                                               flex={1}
                                               fontSize={'sm'}
