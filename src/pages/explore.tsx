@@ -532,7 +532,11 @@ const Explore: React.FC = () => {
                                             color="white"
                                             px={3}>
                                             <Text color="white">
-                                              BIO INFO HERE
+                                              {
+                                                profiles[
+                                                  getIndex(profiles, post.email)
+                                                ]?.biography
+                                              }
                                             </Text>
                                           </Text>
 
