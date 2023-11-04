@@ -12,6 +12,7 @@ import {
   getDocs,
   where,
   query,
+  getCountFromServer,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -92,7 +93,7 @@ async function saveRecipe(recipe: Recipe, username: string){
 const FriendProfile: React.FC = (friend: any) => {
   const toast = useToast();
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [numPosts, setNumPosts] = useState(0);
   const [profile, setProfile] = useState<any>();
   const [email, setEmail] = useState('');
 
@@ -103,7 +104,6 @@ const FriendProfile: React.FC = (friend: any) => {
       const queryUsers = await getDocs(collection(db, "users"));
       const users:any = queryUsers.docs.map(doc => doc.data());
       for (let i = 0; i < users.length; i++){
-        console.log(users[i].username);
         if (users[i].username.localeCompare(username) === 0){
           setEmail(users[i].email);
         }
@@ -121,13 +121,11 @@ const FriendProfile: React.FC = (friend: any) => {
       setRecipes(recipesData);
     }
     async function getNumPosts(email:string) {
-      const myQuery = query(
-        collection(db, 'users/' + email + '/Recipes'),
-        where('posted', '==', 'true'),
-      );
-      const numPosts = await getDocs(myQuery);
-      const numPostsData = numPosts.docs.map(doc => doc.data());
-      setPosts(numPostsData);
+      const coll = collection(db, "posts");
+      const q = query(coll, where("email", "==", email));
+      const snapshot = await getCountFromServer(q);
+      console.log('count: ', snapshot.data().count);
+      setNumPosts(snapshot.data().count);
     }
     async function getProfile(email:string) {
       const docRef = doc(db, 'users/', email);
@@ -170,7 +168,7 @@ const FriendProfile: React.FC = (friend: any) => {
             </Text>
             <Heading>{profile?.username}'s Page</Heading>
             <Text>{recipes.length} Recipes</Text>
-            <Text>{posts}# Posts</Text>
+            <Text>{numPosts} Posts</Text>
             <Text color={'black'} fontSize={'lg'}>
               {profile?.biography}
             </Text>

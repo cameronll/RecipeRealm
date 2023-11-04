@@ -12,6 +12,7 @@ import {
   getDocs,
   where,
   query,
+  getCountFromServer,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -56,7 +57,7 @@ import {Link} from 'react-router-dom';
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [savedRecipes, setSavedRecipes] = useState<any[]>([]);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [numPosts, setNumPosts] = useState(0);
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
@@ -76,13 +77,11 @@ const Recipes: React.FC = () => {
       setSavedRecipes(savedRecipesData);
     }
     async function getNumPosts() {
-      const myQuery = query(
-        collection(db, 'users/' + email + '/Recipes'),
-        where('posted', '==', 'true'),
-      );
-      const numPosts = await getDocs(myQuery);
-      const numPostsData = numPosts.docs.map(doc => doc.data());
-      setPosts(numPostsData);
+      const coll = collection(db, "posts");
+      const q = query(coll, where("email", "==", email));
+      const snapshot = await getCountFromServer(q);
+      console.log('count: ', snapshot.data().count);
+      setNumPosts(snapshot.data().count);
     }
     async function getProfile() {
       const docRef = doc(db, 'users/', email);
@@ -123,9 +122,9 @@ const Recipes: React.FC = () => {
               rounded={'md'}>
               {}
             </Text>
-            <Heading>{profile?.email}'s Page</Heading>
+            <Heading>{profile?.username}'s Page</Heading>
             <Text>{recipes.length} Recipes</Text>
-            <Text>{posts}# Posts</Text>
+            <Text>{numPosts} Posts</Text>
             <Text color={'black'} fontSize={'lg'}>
               {profile?.biography}
             </Text>
@@ -184,7 +183,7 @@ const Recipes: React.FC = () => {
             fontSize="35px"
             textAlign="center"
             alignSelf={'center'}>
-            {profile?.email}'s Recipes
+            {profile?.username}'s Recipes
           </Heading>
         </Box>
       </VStack>
