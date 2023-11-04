@@ -13,6 +13,7 @@ import {
   where,
   query,
   getCountFromServer,
+  onSnapshot,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -61,38 +62,36 @@ const Recipes: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
-  useEffect(() => {
-    async function getRecipes() {
-      const querySnapshot = await getDocs(
-        collection(db, 'users/' + email + '/Recipes'),
-      );
-      const recipesData = querySnapshot.docs.map(doc => doc.data());
-      setRecipes(recipesData);
-    }
-    async function getSavedRecipes() {
-      const querySnapshot = await getDocs(
-        collection(db, 'users/' + email + '/SavedRecipes'),
-      );
-      const savedRecipesData = querySnapshot.docs.map(doc => doc.data());
-      setSavedRecipes(savedRecipesData);
-    }
-    async function getNumPosts() {
-      const coll = collection(db, "posts");
-      const q = query(coll, where("email", "==", email));
-      const snapshot = await getCountFromServer(q);
-      console.log('count: ', snapshot.data().count);
-      setNumPosts(snapshot.data().count);
-    }
-    async function getProfile() {
-      const docRef = doc(db, 'users/', email);
-      const docSnap = await getDoc(docRef);
-      setProfile(docSnap.data());
-    }
-    getNumPosts();
-    getProfile();
-    getRecipes();
-    getSavedRecipes();
-  }, []);
+  const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+  onSnapshot(recipesQuery, (querySnapshot) => {
+    const temp:any[] = [];
+    querySnapshot.forEach((doc) => {
+        temp.push(doc.data());
+    });
+    setRecipes(temp);
+  });
+
+  const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
+  onSnapshot(savedRecipesQuery, (querySnapshot) => {
+    const temp:any[] = [];
+    querySnapshot.forEach((doc) => {
+        temp.push(doc.data());
+    });
+    setSavedRecipes(temp);
+  });
+
+  const numPostsQuery = query(collection(db, 'users/' + email + '/Recipes'), where("posted", "==", true));
+  onSnapshot(numPostsQuery, (querySnapshot) => {
+    const temp:any[] = [];
+    querySnapshot.forEach((doc) => {
+        temp.push(doc.data());
+    });
+    setNumPosts(temp.length);
+  });
+
+  onSnapshot(doc(db, 'users/', email), (doc) => {
+    setProfile(doc.data());
+  });
 
   // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
   // recipe.creator to get the username of who posted it

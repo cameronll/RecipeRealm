@@ -7,6 +7,7 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  updateDoc,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -73,12 +74,16 @@ type recipe = {
   nutrients: nutrition;
 };
 
-async function toDB(title: string, description: string, recipe: recipe) {
+async function toDB(title: string, description: string, recipe: any) {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const getUser = doc(db, 'users/', email);
   const getUserData = await getDoc(getUser);
   const username = getUserData?.data()?.username;
   const date = new Date();
+  const recipeDoc = doc(db, 'users/', email, 'Recipes/', recipe.data.recipe_name)
+  await updateDoc(recipeDoc, {
+    posted:true
+  })
   await addDoc(collection(db, 'posts'), {
     // name in database: variable
     email: email,
