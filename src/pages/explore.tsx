@@ -1,11 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
-import {BsWindow, BsFillChatDotsFill, BsKanbanFill} from 'react-icons/bs';
+import {BsFillChatDotsFill, BsBookmarks} from 'react-icons/bs';
 import {
   collection,
-  addDoc,
   doc,
-  setDoc,
   getDoc,
   getDocs,
   where,
@@ -205,7 +203,6 @@ const Explore: React.FC = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <p>Explore</p>
             <VStack>
               {allPosts.map(post => (
                 <Container
@@ -238,6 +235,9 @@ const Explore: React.FC = () => {
                       </Button>
                       <Button variant="link" colorScheme="blue">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                      </Button>
+                      <Button variant="link" colorScheme="green">
+                        <BsBookmarks style={{fontSize: '34px'}} />
                       </Button>
                       <Spacer />
                       <Text>{post?.date_time.toDate().toString()}</Text>
@@ -344,7 +344,14 @@ const Explore: React.FC = () => {
                                               onClick={() => {
                                                 window.localStorage.setItem(
                                                   'USERNAME',
-                                                  JSON.stringify(profiles[getIndex(profiles, post.email)]?.username),
+                                                  JSON.stringify(
+                                                    profiles[
+                                                      getIndex(
+                                                        profiles,
+                                                        post.email,
+                                                      )
+                                                    ]?.username,
+                                                  ),
                                                 );
                                               }}>
                                               View Recipes
@@ -429,7 +436,6 @@ const Explore: React.FC = () => {
             </VStack>
           </TabPanel>
           <TabPanel>
-            <p>Friends</p>
             <VStack>
               {friendsPosts.length === 0 ? (
                 <Heading textAlign="center">You have no friends</Heading>
@@ -467,6 +473,9 @@ const Explore: React.FC = () => {
                         </Button>
                         <Button variant="link" colorScheme="blue">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                        </Button>
+                        <Button variant="link" colorScheme="green">
+                          <BsBookmarks style={{fontSize: '34px'}} />
                         </Button>
                         <Spacer />
                         <Text>{post?.date_time.toDate().toString()}</Text>
@@ -562,44 +571,89 @@ const Explore: React.FC = () => {
                                             mt={8}
                                             direction={'row'}
                                             spacing={4}>
-                                            <Link to="FriendsProfile"></Link>
-                                            <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              _focus={{
-                                                bg: 'gray.200',
-                                              }}>
-                                              View Recipes
-                                            </Button>
-                                            <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              bg={'blue.400'}
-                                              color={'white'}
-                                              boxShadow={
-                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-                                              }
-                                              _hover={{
-                                                bg: 'blue.500',
-                                              }}
-                                              _focus={{
-                                                bg: 'blue.500',
-                                              }}
-                                              onClick={() => {
-                                                toast({
-                                                  title: 'Unfollowed',
-                                                  description:
-                                                    'Removed from your friends',
-                                                  status: 'success',
-                                                  duration: 3000,
-                                                  isClosable: true,
-                                                });
-                                                addFollowing(post.email);
-                                              }}>
-                                              Follow
-                                            </Button>
+                                            <Link to="/FriendsProfile">
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                _focus={{
+                                                  bg: 'gray.200',
+                                                }}
+                                                onClick={() => {
+                                                  window.localStorage.setItem(
+                                                    'USERNAME',
+                                                    JSON.stringify(
+                                                      profiles[
+                                                        getIndex(
+                                                          profiles,
+                                                          post.email,
+                                                        )
+                                                      ]?.username,
+                                                    ),
+                                                  );
+                                                }}>
+                                                View Recipes
+                                              </Button>
+                                            </Link>
+                                            {isFollowing(post.email) ? (
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                bg={'red.400'}
+                                                color={'white'}
+                                                boxShadow={
+                                                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                                }
+                                                _hover={{
+                                                  bg: 'red.500',
+                                                }}
+                                                _focus={{
+                                                  bg: 'red.500',
+                                                }}
+                                                onClick={() => {
+                                                  toast({
+                                                    title: 'Unfollowed',
+                                                    description:
+                                                      'Removed from your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                  removeFollowing(post.email);
+                                                }}>
+                                                Unfollow
+                                              </Button>
+                                            ) : (
+                                              <Button
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                bg={'green.400'}
+                                                color={'white'}
+                                                boxShadow={
+                                                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                                }
+                                                _hover={{
+                                                  bg: 'green.500',
+                                                }}
+                                                _focus={{
+                                                  bg: 'green.500',
+                                                }}
+                                                onClick={() => {
+                                                  toast({
+                                                    title: 'Followed',
+                                                    description:
+                                                      'Added to your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                  addFollowing(post.email);
+                                                }}>
+                                                Follow
+                                              </Button>
+                                            )}
                                           </Stack>
                                         </Box>
                                       </Box>
