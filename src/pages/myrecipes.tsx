@@ -62,8 +62,9 @@ const Recipes: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
+  /*
   const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
-  onSnapshot(recipesQuery, (querySnapshot) => {
+  const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
     const temp:any[] = [];
     querySnapshot.forEach((doc) => {
         temp.push(doc.data());
@@ -72,7 +73,7 @@ const Recipes: React.FC = () => {
   });
 
   const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
-  onSnapshot(savedRecipesQuery, (querySnapshot) => {
+  const savedRecipesSnapshot = onSnapshot(savedRecipesQuery, (querySnapshot) => {
     const temp:any[] = [];
     querySnapshot.forEach((doc) => {
         temp.push(doc.data());
@@ -81,7 +82,7 @@ const Recipes: React.FC = () => {
   });
 
   const numPostsQuery = query(collection(db, 'users/' + email + '/Recipes'), where("posted", "==", true));
-  onSnapshot(numPostsQuery, (querySnapshot) => {
+  const numPostsSnapshot = onSnapshot(numPostsQuery, (querySnapshot) => {
     const temp:any[] = [];
     querySnapshot.forEach((doc) => {
         temp.push(doc.data());
@@ -89,9 +90,41 @@ const Recipes: React.FC = () => {
     setNumPosts(temp.length);
   });
 
-  onSnapshot(doc(db, 'users/', email), (doc) => {
+  const profileSnapshot = onSnapshot(doc(db, 'users/', email), (doc) => {
     setProfile(doc.data());
   });
+  */
+
+  useEffect(() => {
+    const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+    const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
+      const temp:any[] = [];
+      var tempNum = 0;
+      querySnapshot.forEach((doc) => {
+          if (doc.data().posted === true){
+            tempNum++;
+          }
+          temp.push(doc.data());
+      });
+      console.log("recipes");
+      setNumPosts(tempNum);
+      setRecipes(temp);
+  });
+
+    const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
+    const savedRecipesSnapshot = onSnapshot(savedRecipesQuery, (querySnapshot) => {
+      const temp:any[] = [];
+      querySnapshot.forEach((doc) => {
+          temp.push(doc.data());
+      });
+      setSavedRecipes(temp);
+      console.log("saved recipes");
+    });
+
+    const profileSnapshot = onSnapshot(doc(db, 'users/', email), (doc) => {
+      setProfile(doc.data());
+    });
+  }, [])
 
   // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
   // recipe.creator to get the username of who posted it
@@ -262,7 +295,7 @@ const Recipes: React.FC = () => {
                         Allergens: {recipe.data.allergens}
                       </Text>
                     </Box>
-                    <Accordion allowToggle allowMultiple>
+                    <Accordion allowMultiple>
                       <AccordionItem>
                         <h2>
                           <AccordionButton bg="#4fb9af">
@@ -306,7 +339,7 @@ const Recipes: React.FC = () => {
                         </AccordionPanel>
                       </AccordionItem>
                     </Accordion>
-                    <Accordion allowToggle allowMultiple>
+                    <Accordion allowMultiple>
                       <AccordionItem>
                         <h2>
                           <AccordionButton bg="#4fb9af">

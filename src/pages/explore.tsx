@@ -11,6 +11,7 @@ import {
   orderBy,
   updateDoc,
   setDoc,
+  onSnapshot,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -117,43 +118,45 @@ const Explore: React.FC = () => {
   const toast = useToast();
 
   useEffect(() => {
-    async function getData() {
-      const getUser = doc(db, 'users/', email);
-      const getUserData = await getDoc(getUser);
-      const userFollowing = getUserData?.data()?.following;
+    const followingUpdate = onSnapshot(doc(db, "users/", email), (doc) => {
+      const userFollowing = doc?.data()?.following;
       localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
+    });
 
-      const profilesQuery = query(collection(db, 'users'));
-      const profilesDocs = await getDocs(profilesQuery);
-      const profilesData = profilesDocs.docs.map(doc => doc.data());
-      setProfiles(profilesData);
+    const profilesQuery = query(collection(db, 'users'));
+    onSnapshot(profilesQuery, (querySnapshot) => {
+      const temp:any = [];
+      querySnapshot.forEach((doc) => {
+        temp.push(doc.data());
+      })
+      setProfiles(temp);
+    })
 
-      const allPostsQuery = query(
-        collection(db, 'posts'),
-        orderBy('date_time', 'desc'),
-      );
-      const allPostsDocs = await getDocs(allPostsQuery);
-      const allPostsData = allPostsDocs.docs.map(doc => doc.data());
-      setAllPosts(allPostsData);
+    const following: string[] = JSON.parse(
+      localStorage.getItem('FOLLOWING') as string,
+    );
 
-      const following: string[] = JSON.parse(
-        localStorage.getItem('FOLLOWING') as string,
-      );
-      if (following[0]) {
-        const friendsPostsQuery = query(
-          collection(db, 'posts'),
-          where('email', 'in', following),
-          orderBy('date_time', 'desc'),
-        );
-        const friendsPostsDocs = await getDocs(friendsPostsQuery);
-        const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
-        setFriendsPosts(friendsPostsData);
-      } else {
-        setFriendsPosts([]);
-      }
-    }
-    getData();
+    const postsQuery = query(
+      collection(db, 'posts'),
+      orderBy('date_time', 'desc'),
+    );
+    onSnapshot(postsQuery, (querySnapshot) => {
+      const allTemp:any[] = [];
+      const friendsTemp:any[] = [];
+      querySnapshot.forEach((doc) => {
+          if (following?.length != 0){
+            if (following.includes(doc.data().email)){
+              friendsTemp.push(doc.data())
+            }
+          }
+        allTemp.push(doc.data());
+      })
+      console.log("updating");
+      setFriendsPosts(friendsTemp);
+      setAllPosts(allTemp);
+    })
   }, []);
+
 
   async function addFollowing(followingEmail: string) {
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
