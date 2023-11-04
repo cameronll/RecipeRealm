@@ -64,21 +64,13 @@ function getIndex(profiles: any[], email: string): number {
   }
   return -1;
 }
-const isFollowing = (email: string) => {
-  const following: string[] = JSON.parse(
-    localStorage.getItem('FOLLOWING') as string,
-  );
-  if (following.includes(email)) {
-    return true;
-  }
-  return false;
-};
 
 const Explore: React.FC = () => {
   // useState to create constants
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
+  const [showButton, setShowButton] = useState(true);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
 
@@ -158,6 +150,10 @@ const Explore: React.FC = () => {
     }
     return false;
   };
+
+  const toggleButton = () => {
+    setShowButton(!showButton);
+  }
 
   /*
   data that can be displayed:
@@ -358,7 +354,9 @@ const Explore: React.FC = () => {
                                             </Button>
                                           </Link>
                                           {isFollowing(post.email) ? (
-                                            <Button
+                                            <div>
+                                              {showButton === true && 
+                                              <Button
                                               flex={1}
                                               fontSize={'sm'}
                                               rounded={'full'}
@@ -383,11 +381,49 @@ const Explore: React.FC = () => {
                                                   isClosable: true,
                                                 });
                                                 removeFollowing(post.email);
+                                                console.log(showButton);
+                                                toggleButton();
                                               }}>
                                               Unfollow
-                                            </Button>
+                                            </Button>}
+
+                                            {showButton === false && 
+                                              <Button
+                                              flex={1}
+                                              fontSize={'sm'}
+                                              rounded={'full'}
+                                              bg={'green.400'}
+                                              color={'white'}
+                                              boxShadow={
+                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                              }
+                                              _hover={{
+                                                bg: 'green.500',
+                                              }}
+                                              _focus={{
+                                                bg: 'green.500',
+                                              }}
+                                              onClick={() => {
+                                                toast({
+                                                  title: 'Followed',
+                                                  description:
+                                                    'Added to your friends',
+                                                  status: 'success',
+                                                  duration: 3000,
+                                                  isClosable: true,
+                                                });
+                                                console.log(showButton);
+                                                addFollowing(post.email);
+                                                toggleButton();
+                                              }}>
+                                              Follow
+                                            </Button>}
+                                            </div>
+                                    
                                           ) : (
-                                            <Button
+                                            <div>
+                                              {showButton === true && 
+                                              <Button
                                               flex={1}
                                               fontSize={'sm'}
                                               rounded={'full'}
@@ -412,9 +448,45 @@ const Explore: React.FC = () => {
                                                   isClosable: true,
                                                 });
                                                 addFollowing(post.email);
+                                                console.log(showButton);
+                                                toggleButton();
                                               }}>
                                               Follow
-                                            </Button>
+                                            </Button>}
+
+                                            {showButton === false && 
+                                              <Button
+                                              flex={1}
+                                              fontSize={'sm'}
+                                              rounded={'full'}
+                                              bg={'red.400'}
+                                              color={'white'}
+                                              boxShadow={
+                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                              }
+                                              _hover={{
+                                                bg: 'red.500',
+                                              }}
+                                              _focus={{
+                                                bg: 'red.500',
+                                              }}
+                                              onClick={() => {
+                                                toast({
+                                                  title: 'Unfollowed',
+                                                  description:
+                                                    'Removed from your friends',
+                                                  status: 'success',
+                                                  duration: 3000,
+                                                  isClosable: true,
+                                                });
+                                                removeFollowing(post.email);
+                                                console.log(showButton);
+                                                toggleButton();
+                                              }}>
+                                              Unfollow
+                                            </Button>}
+                                            </div>
+                                            
                                           )}
                                         </Stack>
                                       </Box>
