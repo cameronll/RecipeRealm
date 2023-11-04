@@ -113,7 +113,7 @@ const Explore: React.FC = () => {
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
-  const [showButton, setShowButton] = useState<any>(true);
+  const [click, setClick] = useState<any>(true);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
 
@@ -155,7 +155,7 @@ const Explore: React.FC = () => {
       setFriendsPosts(friendsTemp);
       setAllPosts(allTemp);
     })
-  }, []);
+  }, [click]);
 
 
   async function addFollowing(followingEmail: string) {
@@ -196,8 +196,8 @@ const Explore: React.FC = () => {
     return false;
   };
 
-  const toggleButton = () => {
-    setShowButton(!showButton);
+  const clicked = () => {
+    setClick(!click);
   }
 
   /*
@@ -409,8 +409,7 @@ const Explore: React.FC = () => {
                                             </Button>
                                           </Link>
                                             <div>
-                                              {setShowButton(isFollowing(post.email))}
-                                              {showButton && 
+                                              {isFollowing(post.email) && 
                                               <Button
                                               flex={1}
                                               fontSize={'sm'}
@@ -436,13 +435,12 @@ const Explore: React.FC = () => {
                                                   isClosable: true,
                                                 });
                                                 removeFollowing(post.email);
-                                                console.log(showButton);
-                                                toggleButton();
+                                                clicked();
                                               }}>
                                               Unfollow
                                             </Button>}
 
-                                            {!showButton && 
+                                            {!isFollowing(post.email) && 
                                               <Button
                                               flex={1}
                                               fontSize={'sm'}
@@ -467,9 +465,8 @@ const Explore: React.FC = () => {
                                                   duration: 3000,
                                                   isClosable: true,
                                                 });
-                                                console.log(showButton);
                                                 addFollowing(post.email);
-                                                toggleButton();
+                                                clicked();
                                               }}>
                                               Follow
                                             </Button>}
