@@ -192,7 +192,7 @@ const Recipes: React.FC = () => {
         <Box>
           <SimpleGrid
             columns={3}
-            padding={3}
+            padding={9}
             alignContent="center"
             display="flex"
             justifyContent="center"

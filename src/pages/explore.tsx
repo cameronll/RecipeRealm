@@ -10,6 +10,7 @@ import {
   query,
   orderBy,
   updateDoc,
+  setDoc,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -55,6 +56,47 @@ import {CopyIcon} from '@chakra-ui/icons';
 import {collapseTextChangeRangesAcrossMultipleVersions} from 'typescript';
 import {AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
+
+// type that holds nutrition facts
+type nutrition = {
+  calories: number;
+  total_fat: number;
+  saturated_fat: number;
+  cholesterol: number;
+  sodium: number;
+  total_carbohydrate: number;
+  dietary_fiber: number;
+  sugars: number;
+  protein: number;
+};
+
+type Recipe = {
+  recipe_name: string;
+  servings: string;
+  allergens: string;
+  cooking_applications: string;
+  cooking_time: string;
+  cost_per_serving: string;
+  difficulty: string;
+  posted: boolean;
+  ingredients: string[];
+  instructions: string;
+  nutrients: nutrition;
+};
+
+async function saveRecipe(recipe: Recipe, creatorEmail: string){
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const docRef = doc(db, "users", creatorEmail);
+  const docSnap = await getDoc(docRef);
+  if (docSnap){
+    const username = docSnap.data()?.username;
+    await setDoc(doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name), {
+      // name in database: variable
+      data: recipe,
+      creator: username
+    });
+  }
+}
 
 function getIndex(profiles: any[], email: string): number {
   for (let i = 0; i < profiles.length; i++) {
@@ -232,7 +274,17 @@ const Explore: React.FC = () => {
                       <Button variant="link" colorScheme="blue">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
-                      <Button variant="link" colorScheme="green">
+                      <Button variant="link" colorScheme="green"
+                      onClick = {() => {
+                        toast({
+                          title: 'Recipe Saved.',
+                          description: "This recipe has been added to My Recipes.",
+                          status: 'success',
+                          duration: 3000,
+                          isClosable: true,
+                        });
+                        saveRecipe(post.recipe?.data, post.email)
+                        }}>
                         <BsBookmarks style={{fontSize: '34px'}} />
                       </Button>
                       <Spacer />
@@ -477,7 +529,17 @@ const Explore: React.FC = () => {
                         <Button variant="link" colorScheme="blue">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
-                        <Button variant="link" colorScheme="green">
+                        <Button variant="link" colorScheme="green"
+                        onClick = {() => {
+                          toast({
+                            title: 'Recipe Saved.',
+                            description: "This recipe has been added to My Recipes.",
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                          });
+                          saveRecipe(post.recipe?.data, post.email)
+                          }}>
                           <BsBookmarks style={{fontSize: '34px'}} />
                         </Button>
                         <Spacer />
