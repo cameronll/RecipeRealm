@@ -50,15 +50,51 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  useToast,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
+// type that holds nutrition facts
+type nutrition = {
+  calories: number;
+  total_fat: number;
+  saturated_fat: number;
+  cholesterol: number;
+  sodium: number;
+  total_carbohydrate: number;
+  dietary_fiber: number;
+  sugars: number;
+  protein: number;
+};
+
+type Recipe = {
+  recipe_name: string;
+  servings: string;
+  allergens: string;
+  cooking_applications: string;
+  cooking_time: string;
+  cost_per_serving: string;
+  difficulty: string;
+  posted: boolean;
+  ingredients: string[];
+  instructions: string;
+  nutrients: nutrition;
+};
+
+async function saveRecipe(recipe: Recipe, username: string){
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  await setDoc(doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name), {
+    // name in database: variable
+    data: recipe,
+    creator: username
+  });
+}
 const FriendProfile: React.FC = (friend: any) => {
+  const toast = useToast();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>();
-  const [email, setEmail] = useState();
-  //const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     async function getEmail(){
@@ -245,6 +281,25 @@ const FriendProfile: React.FC = (friend: any) => {
                       <Button variant="link" colorScheme="green">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
+                      <Button
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="#4fb9af"
+                      color="black"
+                      maxW="container.sm"
+                      onClick = {() => {
+                      toast({
+                        title: 'Recipe Saved.',
+                        description: "This recipe has been added to My Recipes.",
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                      });
+                      saveRecipe(recipe.data, profile?.username)
+                      }}>
+                        Save Recipe
+                      </Button>
                     </Stack>
 
                     <Box
@@ -345,3 +400,4 @@ const FriendProfile: React.FC = (friend: any) => {
   );
 };
 export default FriendProfile;
+

@@ -55,6 +55,7 @@ import {Link} from 'react-router-dom';
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [savedRecipes, setSavedRecipes] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
@@ -66,6 +67,13 @@ const Recipes: React.FC = () => {
       );
       const recipesData = querySnapshot.docs.map(doc => doc.data());
       setRecipes(recipesData);
+    }
+    async function getSavedRecipes() {
+      const querySnapshot = await getDocs(
+        collection(db, 'users/' + email + '/SavedRecipes'),
+      );
+      const savedRecipesData = querySnapshot.docs.map(doc => doc.data());
+      setSavedRecipes(savedRecipesData);
     }
     async function getNumPosts() {
       const myQuery = query(
@@ -84,9 +92,11 @@ const Recipes: React.FC = () => {
     getNumPosts();
     getProfile();
     getRecipes();
+    getSavedRecipes();
   }, []);
 
-
+  // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
+  // recipe.creator to get the username of who posted it
 
   return (
     <>
