@@ -62,39 +62,6 @@ const Recipes: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
-  /*
-  const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
-  const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
-    const temp:any[] = [];
-    querySnapshot.forEach((doc) => {
-        temp.push(doc.data());
-    });
-    setRecipes(temp);
-  });
-
-  const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
-  const savedRecipesSnapshot = onSnapshot(savedRecipesQuery, (querySnapshot) => {
-    const temp:any[] = [];
-    querySnapshot.forEach((doc) => {
-        temp.push(doc.data());
-    });
-    setSavedRecipes(temp);
-  });
-
-  const numPostsQuery = query(collection(db, 'users/' + email + '/Recipes'), where("posted", "==", true));
-  const numPostsSnapshot = onSnapshot(numPostsQuery, (querySnapshot) => {
-    const temp:any[] = [];
-    querySnapshot.forEach((doc) => {
-        temp.push(doc.data());
-    });
-    setNumPosts(temp.length);
-  });
-
-  const profileSnapshot = onSnapshot(doc(db, 'users/', email), (doc) => {
-    setProfile(doc.data());
-  });
-  */
-
   useEffect(() => {
     const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
     const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {

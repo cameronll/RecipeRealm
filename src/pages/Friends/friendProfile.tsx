@@ -13,6 +13,7 @@ import {
   where,
   query,
   getCountFromServer,
+  onSnapshot,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -118,30 +119,25 @@ const FriendProfile: React.FC = (friend: any) => {
   }, []);
 
   useEffect(() => {
-    async function getRecipes(email:string) {
-      const querySnapshot = await getDocs(
-        collection(db, 'users/' + email + '/Recipes'),
-      );
-      const recipesData = querySnapshot.docs.map(doc => doc.data());
-      setRecipes(recipesData);
-    }
-    async function getNumPosts(email:string) {
-      const coll = collection(db, "posts");
-      const q = query(coll, where("email", "==", email));
-      const snapshot = await getCountFromServer(q);
-      console.log('count: ', snapshot.data().count);
-      setNumPosts(snapshot.data().count);
-    }
-    async function getProfile(email:string) {
-      const docRef = doc(db, 'users/', email);
-      const docSnap = await getDoc(docRef);
-      setProfile(docSnap.data());
-    }
-    console.log(email);
     if (email){
-      getNumPosts(email);
-      getProfile(email);
-      getRecipes(email);
+      const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+      const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
+        const temp:any[] = [];
+        var tempNum = 0;
+        querySnapshot.forEach((doc) => {
+            if (doc.data().posted === true){
+              tempNum++;
+            }
+            temp.push(doc.data());
+        });
+        console.log("recipes");
+        setNumPosts(tempNum);
+        setRecipes(temp);
+      });
+      const profileSnapshot = onSnapshot(doc(db, 'users/', email), (doc) => {
+        setProfile(doc.data());
+      });
+      console.log(email);
     }
   }, [email])
 

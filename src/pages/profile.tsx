@@ -12,6 +12,7 @@ import {
   query,
   orderBy,
   updateDoc,
+  onSnapshot,
 } from 'firebase/firestore';
 import {
   AuthCredential,
@@ -60,13 +61,13 @@ async function toDB(
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const auth = getAuth();
   const user = auth.currentUser;
-  const credential = EmailAuthProvider.credential(email, oldPassword);
-  if (user) {
-    reauthenticateWithCredential(user, credential).then(async () => {
-      if (newPassword) {
-        updatePassword(user, newPassword);
-      }
-    });
+  if (newPassword && oldPassword){
+    const credential = EmailAuthProvider.credential(email, oldPassword);
+    if (user) {
+      reauthenticateWithCredential(user, credential).then(async () => {
+      updatePassword(user, newPassword);
+      });
+    }
   }
   
   const docRef = doc(db, 'users/', email);
@@ -86,12 +87,9 @@ const Profile: React.FC = () => {
   const toast = useToast();
 
   useEffect(() => {
-    async function getProfile() {
-      const getUser = doc(db, 'users/', email);
-      const getProfile = await getDoc(getUser);
-      setProfile(getProfile.data());
-    }
-    getProfile();
+    const profileSnapshot = onSnapshot(doc(db, 'users/', email), (doc) => {
+      setProfile(doc.data());
+    });
     const username_from_storage: any =
       window.localStorage.getItem('NEWUSERNAME');
     const email_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');

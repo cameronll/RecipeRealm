@@ -8,6 +8,8 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  onSnapshot,
+  query,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -103,15 +105,16 @@ const Posts: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
-    async function getRecipes() {
-      const querySnapshot = await getDocs(
-        collection(db, 'users/' + email + '/Recipes'),
-      );
-      const recipesData = querySnapshot.docs.map(doc => doc.data());
-      console.log(recipesData);
-      setRecipes(recipesData);
-    }
-    getRecipes();
+    const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+    const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
+      const temp:any[] = [];
+      var tempNum = 0;
+      querySnapshot.forEach((doc) => {
+          temp.push(doc.data());
+      });
+      console.log("recipes");
+      setRecipes(temp);
+    });
     if (window.localStorage.getItem('TITLE')) {
       const title_store: any =
         window.localStorage.getItem('TITLE');
