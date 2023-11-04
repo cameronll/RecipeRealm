@@ -333,7 +333,7 @@ const Explore: React.FC = () => {
                                           mt={8}
                                           direction={'row'}
                                           spacing={4}>
-                                          <Link to="/Friends/FriendsProfile">
+                                          <Link to="/FriendsProfile">
                                             <Button
                                               flex={1}
                                               fontSize={'sm'}
@@ -344,7 +344,7 @@ const Explore: React.FC = () => {
                                               onClick={() => {
                                                 window.localStorage.setItem(
                                                   'USERNAME',
-                                                  JSON.stringify(post.username),
+                                                  JSON.stringify(profiles[getIndex(profiles, post.email)]?.username),
                                                 );
                                               }}>
                                               View Recipes

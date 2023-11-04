@@ -68,6 +68,7 @@ async function toDB(
       }
     });
   }
+  
   const docRef = doc(db, 'users/', email);
   await updateDoc(docRef, {
     username: newUsername,

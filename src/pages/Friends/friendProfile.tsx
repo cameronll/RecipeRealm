@@ -53,18 +53,6 @@ import {
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
-async function getEmail():Promise<string>{
-  const username = JSON.parse(localStorage.getItem('USERNAME') as string);
-  const queryUsers = await getDocs(collection(db, "users"));
-  const users:any = queryUsers.docs.map(doc => doc.data());
-  for (let i = 0; i < users.length; i++){
-    if (users.username == username){
-      console.log(users.email);
-      return users.email;
-    }
-  }
-  return "not found!"
-}
 const FriendProfile: React.FC = (friend: any) => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
@@ -75,17 +63,20 @@ const FriendProfile: React.FC = (friend: any) => {
   useEffect(() => {
     async function getEmail(){
       const username = JSON.parse(localStorage.getItem('USERNAME') as string);
+      console.log(username);
       const queryUsers = await getDocs(collection(db, "users"));
       const users:any = queryUsers.docs.map(doc => doc.data());
       for (let i = 0; i < users.length; i++){
-        if (users[i].username == username){
-          console.log(users[i].email);
+        console.log(users[i].username);
+        if (users[i].username.localeCompare(username) === 0){
           setEmail(users[i].email);
         }
       }
     }
     getEmail();
-    
+  }, []);
+
+  useEffect(() => {
     async function getRecipes(email:string) {
       const querySnapshot = await getDocs(
         collection(db, 'users/' + email + '/Recipes'),
@@ -107,33 +98,14 @@ const FriendProfile: React.FC = (friend: any) => {
       const docSnap = await getDoc(docRef);
       setProfile(docSnap.data());
     }
+    console.log(email);
     if (email){
       getNumPosts(email);
       getProfile(email);
       getRecipes(email);
     }
-  }, []);
+  }, [email])
 
-  /*
-  data that can be displayed: 
-  recipe.data.<recipe_name, difficulty, allergens, cooking_time, cost_per_serving, instructions, servings>
-  recipe.data.nutrients.<calories, cholesterol, 
-      dietary_fiber, protein, saturated_fat, sodium, sugars, total_carbohydrate, total_fat>
-  */
-
-  // example display
-  const recipesList = recipes.map(recipe => (
-    <div id="my-recipe-tiles" key={recipe.data.recipe_name}>
-      {[
-        'Name: ',
-        recipe.data.recipe_name,
-        ' Difficulty: ',
-        recipe.data.difficulty,
-        ' Calories: ',
-        recipe.data.nutrients.calories,
-      ]}
-    </div>
-  ));
 
   return (
     <>
