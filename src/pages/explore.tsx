@@ -12,6 +12,7 @@ import {
   updateDoc,
   setDoc,
   onSnapshot,
+  increment,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -59,7 +60,7 @@ import {
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
-import {collapseTextChangeRangesAcrossMultipleVersions} from 'typescript';
+import {collapseTextChangeRangesAcrossMultipleVersions, forEachChild} from 'typescript';
 import {AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 
@@ -194,11 +195,16 @@ const Explore: React.FC = () => {
     setClick(!click);
   }
 
-  /*
-  data that can be displayed:
-  post.username.<description, title, username, recipe_name>
-  post.username.date_time.toDate().toString()
-  */
+  const like = async (datetime:any) => {
+    const q = query(collection(db, "posts/"), where("date_time", "==", datetime));
+    const docs = await getDocs(q);
+    docs.forEach((doc) => {
+      updateDoc(doc.ref, {
+        likes: increment(1)
+      })
+    })
+  }
+
   return (
     <Box>
       <Navbar />
@@ -265,8 +271,10 @@ const Explore: React.FC = () => {
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
                     <Center>Image goes here</Center>
                     <Stack direction="row" spacing={4} align="stretch">
-                      <Button variant="link" colorScheme="red">
-                        <AiOutlineHeart style={{fontSize: '34px'}} />
+                      <div>Likes: {post.likes}</div>
+                      <Button variant="link" colorScheme="red" 
+                      onClick = {() => {like(post.date_time)}} >
+                        <AiOutlineHeart style={{fontSize: '34px'}}/>
                       </Button>
                       <Button variant="link" colorScheme="blue">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />

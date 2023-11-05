@@ -94,6 +94,7 @@ async function toDB(title: string, description: string, recipe: any) {
     title: title,
     description: description,
     recipe: recipe,
+    likes: 0
   });
 }
 const Posts: React.FC = () => {
