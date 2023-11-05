@@ -114,21 +114,23 @@ function getIndex(profiles: any[], email: string): number {
 }
 
 const Explore: React.FC = () => {
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // useState to create constants
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [following, setFollowing] = useState<any[]>([]);
-  const [click, setClick] = useState<any>(true);
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const [click, setClick] = useState<any>(false);
   const toast = useToast();
 
   useEffect(() => {
-    const followingUpdate = onSnapshot(doc(db, "users/", email), (doc) => {
+    onSnapshot(doc(db, "users/", email), (doc) => {
       const userFollowing = doc?.data()?.following;
       setFollowing(userFollowing);
     });
+  }, []);
 
+  useEffect(() => {
     const profilesQuery = query(collection(db, 'users'));
     onSnapshot(profilesQuery, (querySnapshot) => {
       const temp:any = [];
@@ -137,6 +139,7 @@ const Explore: React.FC = () => {
       })
       setProfiles(temp);
     })
+
     const postsQuery = query(
       collection(db, 'posts'),
       orderBy('date_time', 'desc'),
@@ -145,18 +148,15 @@ const Explore: React.FC = () => {
       const allTemp:any[] = [];
       const friendsTemp:any[] = [];
       querySnapshot.forEach((doc) => {
-          if (following.length != 0){
-            if (following.includes(doc.data().email)){
-              friendsTemp.push(doc.data())
-            }
+          if (following.includes(doc.data().email)){
+            friendsTemp.push(doc.data())
           }
         allTemp.push(doc.data());
       })
-      console.log("updating");
       setFriendsPosts(friendsTemp);
       setAllPosts(allTemp);
     })
-  }, [click]);
+  }, [following]);
 
 
   async function addFollowing(followingEmail: string) {
