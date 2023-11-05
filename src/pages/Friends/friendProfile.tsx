@@ -184,33 +184,6 @@ const FriendProfile: React.FC = (friend: any) => {
               objectFit={'cover'}
             />
           </Stack>
-          <Stack>
-            <Link to="/CreateRecipe">
-              <Button
-                w="200px"
-                rightIcon={<CgBowl />}
-                colorScheme="teal"
-                onClick={() => {
-                  window.localStorage.removeItem('RECIPENAME');
-                  window.localStorage.removeItem('COOKINGTIME');
-                  window.localStorage.removeItem('DIFFICULTY');
-                  window.localStorage.removeItem('APPLIANCES');
-                  window.localStorage.removeItem('COST');
-                  window.localStorage.removeItem('ALLERGENS');
-                  window.localStorage.removeItem('SERVINGS');
-                  window.localStorage.removeItem('INSTRUCTIONS');
-                  window.localStorage.removeItem('INGREDIENTSTRING');
-                  window.localStorage.removeItem('INGREDIENTCOUNT');
-                }}>
-                Create Recipe
-              </Button>
-            </Link>
-            <Link to="/Posts">
-              <Button w="200px" rightIcon={<BsWindow />} colorScheme="gray">
-                Create Post
-              </Button>
-            </Link>
-          </Stack>
         </HStack>
       </Container>
       <VStack
@@ -399,4 +372,3 @@ const FriendProfile: React.FC = (friend: any) => {
   );
 };
 export default FriendProfile;
-

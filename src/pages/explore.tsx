@@ -51,6 +51,11 @@ import {
   Badge,
   PopoverHeader,
   Spacer,
+  AccordionPanel,
+  AccordionIcon,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
@@ -113,6 +118,7 @@ const Explore: React.FC = () => {
   const [allPosts, setAllPosts] = useState<any[]>([]);
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
   const [click, setClick] = useState<any>(true);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
@@ -120,7 +126,7 @@ const Explore: React.FC = () => {
   useEffect(() => {
     const followingUpdate = onSnapshot(doc(db, "users/", email), (doc) => {
       const userFollowing = doc?.data()?.following;
-      localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
+      setFollowing(userFollowing);
     });
 
     const profilesQuery = query(collection(db, 'users'));
@@ -131,11 +137,6 @@ const Explore: React.FC = () => {
       })
       setProfiles(temp);
     })
-
-    const following: string[] = JSON.parse(
-      localStorage.getItem('FOLLOWING') as string,
-    );
-
     const postsQuery = query(
       collection(db, 'posts'),
       orderBy('date_time', 'desc'),
@@ -144,7 +145,7 @@ const Explore: React.FC = () => {
       const allTemp:any[] = [];
       const friendsTemp:any[] = [];
       querySnapshot.forEach((doc) => {
-          if (following?.length != 0){
+          if (following.length != 0){
             if (following.includes(doc.data().email)){
               friendsTemp.push(doc.data())
             }
@@ -159,10 +160,8 @@ const Explore: React.FC = () => {
 
 
   async function addFollowing(followingEmail: string) {
-    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
     if (!following.includes(followingEmail)) {
       following.push(followingEmail);
-      localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: following,
@@ -173,11 +172,9 @@ const Explore: React.FC = () => {
   }
 
   async function removeFollowing(followingEmail: string) {
-    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
     if (following.includes(followingEmail)) {
       let index = following.indexOf(followingEmail);
       following.splice(index, 1);
-      localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: following,
@@ -187,9 +184,6 @@ const Explore: React.FC = () => {
   const initRef = useRef<HTMLButtonElement | null>(null);
 
  function isFollowing (email: string):boolean {
-    const following: string[] = JSON.parse(
-      localStorage.getItem('FOLLOWING') as string,
-    );
     if (following.includes(email)) {
       return true;
     }
@@ -484,6 +478,93 @@ const Explore: React.FC = () => {
 
                       <Text fontSize={20}>Description:</Text>
                       <Text>{post.description}</Text>
+                      <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="#4fb9af"
+                      color="black"
+                      maxW="container.sm">
+                      <Text noOfLines={1} as="b">
+                        Difficulty: {post.recipe.data.difficulty}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Time: {post.recipe.data.cooking_time}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Servings: {post.recipe.data.servings}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Cost Per Serving: {post.recipe.data.cost_per_serving}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Cooking Applications: {post.recipe.data.cooking_applications}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Allergens: {post.recipe.data.allergens}
+                      </Text>
+                                            </Box>
+                    <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton bg="#4fb9af">
+                            <Box as="span" flex="1" textAlign="left">
+                              Nutrition Data
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                          <Box padding="4" color="black" maxW="container.sm">
+                            <Text noOfLines={1} as="b">
+                              Calories: {post.recipe.data.nutrients.calories}
+                            </Text>
+                            <Text as="b" noOfLines={1}>
+                              Protein: {post.recipe.data.nutrients.protein}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Carbs: {post.recipe.data.nutrients.total_carbohydrate}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Sugar: {post.recipe.data.nutrients.sugars}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Fat: {post.recipe.data.nutrients.total_fat}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Saturated Fat:{' '}
+                              {post.recipe.data.nutrients.saturated_fat}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Cholesterol: {post.recipe.data.nutrients.cholesterol}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Sodium: {post.recipe.data.nutrients.sodium}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Fiber: {post.recipe.data.nutrients.dietary_fiber}
+                            </Text>
+                          </Box>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
+                    <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton bg="#4fb9af">
+                            <Box as="span" flex="1" textAlign="left">
+                              Instructions:
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                          <Box padding="4" color="black" maxW="container.sm">
+                            <Text as="b">{post.recipe.data.instructions}</Text>
+                          </Box>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
                     </Box>
                   </Box>
                 </Container>
@@ -545,7 +626,7 @@ const Explore: React.FC = () => {
                         <Spacer />
                         <Text>{post?.date_time.toDate().toString()}</Text>
                       </Stack>
-
+                      
                       <Box
                         boxShadow="xs"
                         rounded="md"
@@ -723,6 +804,7 @@ const Explore: React.FC = () => {
                                               Follow
                                             </Button>}
                                             </div>
+                                            
                                           </Stack>
                                         </Box>
                                       </Box>
@@ -736,6 +818,93 @@ const Explore: React.FC = () => {
 
                         <Text fontSize={20}>Description:</Text>
                         <Text>{post.description}</Text>
+                        <Box
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg="#4fb9af"
+                      color="black"
+                      maxW="container.sm">
+                      <Text noOfLines={1} as="b">
+                        Difficulty: {post.recipe.data.difficulty}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Time: {post.recipe.data.cooking_time}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Servings: {post.recipe.data.servings}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Cost Per Serving: {post.recipe.data.cost_per_serving}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Cooking Applications: {post.recipe.data.cooking_applications}
+                      </Text>
+                      <Text noOfLines={1} as="b">
+                        Allergens: {post.recipe.data.allergens}
+                      </Text>
+                                            </Box>
+                    <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton bg="#4fb9af">
+                            <Box as="span" flex="1" textAlign="left">
+                              Nutrition Data
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                          <Box padding="4" color="black" maxW="container.sm">
+                            <Text noOfLines={1} as="b">
+                              Calories: {post.recipe.data.nutrients.calories}
+                            </Text>
+                            <Text as="b" noOfLines={1}>
+                              Protein: {post.recipe.data.nutrients.protein}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Carbs: {post.recipe.data.nutrients.total_carbohydrate}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Sugar: {post.recipe.data.nutrients.sugars}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Fat: {post.recipe.data.nutrients.total_fat}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Saturated Fat:{' '}
+                              {post.recipe.data.nutrients.saturated_fat}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Cholesterol: {post.recipe.data.nutrients.cholesterol}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Sodium: {post.recipe.data.nutrients.sodium}
+                            </Text>
+                            <Text noOfLines={1} as="b">
+                              Fiber: {post.recipe.data.nutrients.dietary_fiber}
+                            </Text>
+                          </Box>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
+                    <Accordion allowMultiple>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton bg="#4fb9af">
+                            <Box as="span" flex="1" textAlign="left">
+                              Instructions:
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                          <Box padding="4" color="black" maxW="container.sm">
+                            <Text as="b">{post.recipe.data.instructions}</Text>
+                          </Box>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
                       </Box>
                     </Box>
                   </Container>
