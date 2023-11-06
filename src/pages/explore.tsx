@@ -90,17 +90,20 @@ type Recipe = {
   nutrients: nutrition;
 };
 
-async function saveRecipe(recipe: Recipe, creatorEmail: string){
+async function saveRecipe(recipe: Recipe, creatorEmail: string) {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  const docRef = doc(db, "users", creatorEmail);
+  const docRef = doc(db, 'users', creatorEmail);
   const docSnap = await getDoc(docRef);
-  if (docSnap){
+  if (docSnap) {
     const username = docSnap.data()?.username;
-    await setDoc(doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name), {
-      // name in database: variable
-      data: recipe,
-      creator: username
-    });
+    await setDoc(
+      doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name),
+      {
+        // name in database: variable
+        data: recipe,
+        creator: username,
+      },
+    );
   }
 }
 
@@ -319,10 +322,10 @@ const Explore: React.FC = () => {
                   flexDirection="column"
                   padding={1}
                   rounded="lg"
-                  boxShadow="dark-lg">
+                  boxShadow="dark-lg"
+                  backgroundColor="rgba(0, 128, 128, 1)">
                   <Box
                     padding={4}
-                    boxShadow="xs"
                     rounded="md"
                     maxW="container.lg"
                     backgroundColor="rgba(0, 128, 128, 1)"
@@ -351,16 +354,19 @@ const Explore: React.FC = () => {
                       <Button variant="link" colorScheme="white">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
-                      <Button variant="link" colorScheme="white"
-                      onClick = {() => {
-                        toast({
-                          title: 'Recipe Saved.',
-                          description: "This recipe has been added to My Recipes.",
-                          status: 'success',
-                          duration: 3000,
-                          isClosable: true,
-                        });
-                        saveRecipe(post.recipe.data, post.email)
+                      <Button
+                        variant="link"
+                        colorScheme="white"
+                        onClick={() => {
+                          toast({
+                            title: 'Recipe Saved.',
+                            description:
+                              'This recipe has been added to My Recipes.',
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                          });
+                          saveRecipe(post.recipe.data, post.email);
                         }}>
                         <BsBookmarks style={{fontSize: '34px'}} />
                       </Button>
@@ -570,6 +576,7 @@ const Explore: React.FC = () => {
                 friendsPosts.map(post => (
                   <Container
                     shadow={1000}
+                    backgroundColor="rgba(0, 128, 128, 1)"
                     maxW="container.lg"
                     color="white"
                     minH="350"
@@ -580,7 +587,6 @@ const Explore: React.FC = () => {
                     boxShadow="dark-lg">
                     <Box
                       padding={4}
-                      boxShadow="xs"
                       rounded="md"
                       maxW="container.lg"
                       backgroundColor="rgba(0, 128, 128, 1)"
@@ -611,16 +617,19 @@ const Explore: React.FC = () => {
                         <Button variant="link" colorScheme="white">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
-                        <Button variant="link" colorScheme="white"
-                        onClick = {() => {
-                          toast({
-                            title: 'Recipe Saved.',
-                            description: "This recipe has been added to My Recipes.",
-                            status: 'success',
-                            duration: 3000,
-                            isClosable: true,
-                          });
-                          saveRecipe(post.recipe.data, post.email)
+                        <Button
+                          variant="link"
+                          colorScheme="white"
+                          onClick={() => {
+                            toast({
+                              title: 'Recipe Saved.',
+                              description:
+                                'This recipe has been added to My Recipes.',
+                              status: 'success',
+                              duration: 3000,
+                              isClosable: true,
+                            });
+                            saveRecipe(post.recipe.data, post.email);
                           }}>
                           <BsBookmarks style={{fontSize: '34px'}} />
                         </Button>
