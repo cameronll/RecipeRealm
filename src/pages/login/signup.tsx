@@ -148,12 +148,7 @@ const SignUp = () => {
                   colorScheme="teal"
                   type="submit"
                   size="lg"
-                  onClick={() => {
-                    
-
-                    
-                    
-                  }}>
+                 >
                     
                   Submit
                 </Button>
