@@ -1,5 +1,15 @@
 import React from 'react';
-import {Flex, Input, Button, Stack, ButtonGroup, Box} from '@chakra-ui/react';
+import {
+  Flex,
+  Input,
+  Button,
+  Stack,
+  ButtonGroup,
+  Box,
+  VStack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
@@ -11,8 +21,6 @@ import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link, useNavigate} from 'react-router-dom';
 import {useToast} from '@chakra-ui/react';
 import Footer from '../../components/Footer';
-
-
 
 function validateName(value: any) {
   let error;
@@ -34,10 +42,8 @@ async function uniqueUsername(email: string): Promise<boolean> {
   return true;
 }
 
-
-
 const SignUp = () => {
-  const navigate = useNavigate();//navigate to login
+  const navigate = useNavigate(); //navigate to login
   const toast = useToast();
   const following: string[] = [];
   const formik = useFormik({
@@ -91,18 +97,38 @@ const SignUp = () => {
   return (
     <>
       <Flex
-        minH="100vh"
-        align="center"
-        justify="center"
-        direction="column"
-        backgroundColor={'#008080'}>
-        <Box
-          boxShadow="dark-lg"
-          backgroundColor={'#C0C0C0'}
-          p={8}
-          borderWidth={2}
-          borderRadius={15}
-          bg="primary.50">
+        w={'full'}
+        h={'100'}
+        backgroundImage={
+          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+        }
+        backgroundSize={'cover'}
+        backgroundPosition={'center center'}
+        alignContent={'flex-end'}
+        backgroundColor="rgba(0, 128, 128, 0.7)"
+        marginBottom={10}>
+        <Flex
+          w={'full'}
+          h={'100'}
+          backgroundSize={'cover'}
+          backgroundPosition={'center center'}
+          alignContent={'flex-end'}
+          backgroundColor="rgba(0, 128, 128, 0.7)">
+          <VStack
+            w={'full'}
+            px={useBreakpointValue({base: 4, md: 8})}
+            // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
+          >
+            <Stack maxW={'2xl'} spacing={6}>
+              <Text textAlign="center" fontSize="6xl" as="b" color="white">
+                Sign up
+              </Text>
+            </Stack>
+          </VStack>
+        </Flex>
+      </Flex>
+      <Flex minH="100vh" align="center" justify="center" direction="column">
+        <Box boxShadow="dark-lg" p={8} borderRadius={15} bg="primary.50">
           <form onSubmit={formik.handleSubmit}>
             <FormControl isRequired>
               <FormLabel>Email address</FormLabel>
@@ -142,19 +168,29 @@ const SignUp = () => {
                 value={formik.values.password}
               />
               <ButtonGroup variant="outline" spacing="6">
-                
                 <Button
                   mt={4}
+                  variant="solid"
                   colorScheme="teal"
                   type="submit"
                   size="lg"
-                 >
-                    
+                  onClick={() => {
+                    navigate('/login');
+                    toast({
+                      title: 'Account created.',
+                      description: "We've created your recipe for you.",
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    });
+
+                    //navigate('/login');//navigate to login
+                  }}>
                   Submit
                 </Button>
-                
+
                 <Link to="/login">
-                  <Button mt={4} colorScheme="red" size="lg">
+                  <Button mt={4} colorScheme="red" size="lg" variant="solid">
                     Back
                   </Button>
                 </Link>

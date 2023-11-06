@@ -11,6 +11,7 @@ import {
   onSnapshot,
   query,
 } from 'firebase/firestore';
+import {useNavigate} from 'react-router-dom';
 import {
   browserLocalPersistence,
   getAuth,
@@ -18,6 +19,8 @@ import {
   setPersistence,
 } from 'firebase/auth';
 import Navbar from '../../components/Navbar';
+import {BsUpload} from 'react-icons/bs';
+import {useToast} from '@chakra-ui/react';
 import {
   Box,
   useColorModeValue,
@@ -38,6 +41,10 @@ import {
   FormHelperText,
   AbsoluteCenter,
   Select,
+  HStack,
+  Image,
+  VStack,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
 
@@ -104,12 +111,14 @@ async function toDB(title: string, description: string, recipe: any) {
   });
 }
 const Posts: React.FC = () => {
+  const toast = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [recipes, setRecipes] = useState<any[]>([]);
   const [recipeName, setRecipeName] = useState<any>();
   const [postRecipe, setPostRecipe] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
@@ -168,42 +177,70 @@ const Posts: React.FC = () => {
     console.log(recipe);
     toDB(title, description, recipe);
     console.log('Document created!');
+    navigate('/explore');
   };
 
   return (
     <>
       <Navbar />
-      <Heading w="100%" textAlign={'center'} fontWeight="normal">
-        Create Posts
-      </Heading>
-      <Center h="100%">
+      <Flex
+        w={'full'}
+        h={'100'}
+        backgroundImage={
+          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+        }
+        backgroundSize={'cover'}
+        backgroundPosition={'center center'}
+        alignContent={'flex-end'}
+        backgroundColor="rgba(0, 128, 128, 0.7)">
+        <Flex
+          w={'full'}
+          h={'100'}
+          backgroundSize={'cover'}
+          backgroundPosition={'center center'}
+          alignContent={'flex-end'}
+          backgroundColor="rgba(0, 128, 128, 0.7)">
+          <VStack
+            w={'full'}
+            px={useBreakpointValue({base: 4, md: 8})}
+            // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
+          >
+            <Stack maxW={'2xl'} spacing={6}>
+              <Text textAlign="center" fontSize="6xl" as="b" color="white">
+                Create Post
+              </Text>
+            </Stack>
+          </VStack>
+        </Flex>
+      </Flex>
+      {/* <Heading w="100%" textAlign={'center'} fontWeight="normal" marginTop={5}>
+        <Text marginTop={5} as="b" fontSize={80}>
+          Create Posts
+        </Text>
+      </Heading> */}
+      <Center minH="80vh">
         <Box
-          boxShadow="xs"
+          boxShadow="dark-lg"
           rounded="md"
           padding="4"
-          bg="gray.300"
           color="black"
           minW="container.sm">
           <FormControl mt={1}>
-            <FormLabel
-              fontSize="lg"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              Title
-            </FormLabel>
-            <Textarea
-              rows={3}
-              shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
-              onChange={handleTitleChange}
-              value={title}
-            />
+            <HStack>
+              <FormLabel
+                fontSize="lg"
+                fontWeight="md"
+                color="gray.700"
+                _dark={{
+                  color: 'gray.50',
+                }}>
+                Title
+              </FormLabel>
+              <Input
+                variant="flushed"
+                onChange={handleTitleChange}
+                value={title}></Input>
+            </HStack>
           </FormControl>
           <FormControl mt={1}>
             <FormLabel
@@ -225,26 +262,6 @@ const Posts: React.FC = () => {
               }}
               onChange={handleDescriptionChange}
               value={description}
-            />
-          </FormControl>
-          <FormControl mt={1}>
-            <FormLabel
-              fontSize="sm"
-              fontWeight="md"
-              color="gray.700"
-              _dark={{
-                color: 'gray.50',
-              }}>
-              Image
-            </FormLabel>
-            <Textarea
-              placeholder="Brody's Stuff"
-              rows={3}
-              shadow="sm"
-              focusBorderColor="brand.400"
-              fontSize={{
-                sm: 'sm',
-              }}
             />
           </FormControl>
           <FormControl mt={1}>
@@ -277,8 +294,45 @@ const Posts: React.FC = () => {
               *You can only choose from your recipe list
             </FormHelperText>
           </FormControl>
+          <FormControl mt={1}>
+            <FormLabel
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              _dark={{
+                color: 'gray.50',
+              }}>
+              Image
+            </FormLabel>
+            <Box>
+              <Image
+                boxSize="150px"
+                rounded={3}
+                src="default-image-icon-missing-picture-page-vector-40546530.jpg"
+                alt="Image Missing"
+                marginBottom={4}
+              />
+            </Box>
+            <Button size="md">
+              {' '}
+              <BsUpload />
+              <Text marginLeft={2}>File Upload</Text>
+            </Button>
+          </FormControl>
           <Flex justifyContent="right">
-            <Button colorScheme="green" onClick={handleSubmit} ml="auto">
+            <Button
+              colorScheme="teal"
+              onClick={() => {
+                handleSubmit();
+                toast({
+                  title: 'Recipe created.',
+                  description: "We've created your recipe for you.",
+                  status: 'success',
+                  duration: 3000,
+                  isClosable: true,
+                });
+              }}
+              ml="auto">
               Create Post
             </Button>
           </Flex>

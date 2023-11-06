@@ -11,6 +11,8 @@ import {
   Avatar,
   Text,
   Center,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react';
 //import Calendar from '../calendar';
 //import Recipes from '../myrecipes';
@@ -42,6 +44,8 @@ const googleSignIn = async () => {
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
   const navigate = useNavigate();
 
   const signIn = (e: React.FormEvent) => {
@@ -99,14 +103,30 @@ const Login = () => {
               mb={4}
             />
 
-            <Input
+            {/* <Input
               placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               variant="filled"
               type="password"
               mb={6}
-            />
+            /> */}
+            <InputGroup size="md">
+              <Input
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                variant="filled"
+                mb={6}
+                // pr="4.5rem"
+                type={show ? 'text' : 'password'}
+                placeholder="Enter password"
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={handleClick}>
+                  {show ? 'Hide' : 'Show'}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
 
             <Flex>
               <Link to="/Recipes">
