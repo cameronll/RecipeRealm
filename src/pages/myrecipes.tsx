@@ -331,7 +331,7 @@ const Recipes: React.FC = () => {
                                     Carbs:{' '}
                                     {recipe.data.nutrients.total_carbohydrate}g
                                   </Text>
-                                  <Text noOfLines={1}>
+                                  <Text noOfLines={1} style={{ paddingLeft: '20px' }}>
                                     Sugar: {recipe.data.nutrients.sugars}g
                                   </Text>
                                   <Text noOfLines={1}>
