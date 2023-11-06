@@ -10,6 +10,7 @@ import {
   Stack,
   Avatar,
   Text,
+  Center,
 } from '@chakra-ui/react';
 //import Calendar from '../calendar';
 //import Recipes from '../myrecipes';
@@ -21,11 +22,9 @@ import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
 //import GoogleButton from 'react-google-button'
 
-import {getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
 
 const provider = new GoogleAuthProvider();
-
-
 
 const googleSignIn = async () => {
   try {
@@ -58,7 +57,6 @@ const Login = () => {
       });
   };
 
-
   return (
     <>
       <LoginNavbar />
@@ -73,18 +71,25 @@ const Login = () => {
         }>
         <Box
           boxShadow="dark-lg"
-          backgroundColor={'#008080'}
+          backgroundColor="white"
           p={8}
           borderWidth={2}
           borderRadius={15}
           bg="primary.50">
-          <Image
-            borderRadius="30px"
-            src="logo192.png"
-            alt="Logo"
-            w={550}
-            mb={15}
-          />
+          <Center>
+            <Image
+              borderRadius="30px"
+              src="logo192.png"
+              alt="Logo"
+              w={300}
+              mb={15}
+            />
+          </Center>
+          <Center>
+            <Text as="b" fontSize={30} marginBottom={4}>
+              Login below to start your experience!
+            </Text>
+          </Center>
           <form onSubmit={signIn}>
             <Input
               placeholder="Username"
@@ -116,11 +121,11 @@ const Login = () => {
 
               <Link to="/signup">
                 <Button colorScheme="teal" size="lg">
-                  Sign Up!
+                  Sign up
                 </Button>
               </Link>
             </Flex>
-          </form>           
+          </form>
         </Box>
       </Flex>
       <Stack

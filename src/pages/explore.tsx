@@ -30,6 +30,7 @@ import {
   VStack,
   Flex,
   Stack,
+  Image,
   Text,
   useBreakpointValue,
   Center,
@@ -52,58 +53,15 @@ import {
   Badge,
   PopoverHeader,
   Spacer,
-  AccordionPanel,
-  AccordionIcon,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
-import {collapseTextChangeRangesAcrossMultipleVersions, forEachChild} from 'typescript';
+import {
+  collapseTextChangeRangesAcrossMultipleVersions,
+  forEachChild,
+} from 'typescript';
 import {AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
-
-// type that holds nutrition facts
-type nutrition = {
-  calories: number;
-  total_fat: number;
-  saturated_fat: number;
-  cholesterol: number;
-  sodium: number;
-  total_carbohydrate: number;
-  dietary_fiber: number;
-  sugars: number;
-  protein: number;
-};
-
-type Recipe = {
-  recipe_name: string;
-  servings: string;
-  allergens: string;
-  cooking_applications: string;
-  cooking_time: string;
-  cost_per_serving: string;
-  difficulty: string;
-  posted: boolean;
-  ingredients: string[];
-  instructions: string;
-  nutrients: nutrition;
-};
-
-async function saveRecipe(recipe: Recipe, creatorEmail: string){
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  const docRef = doc(db, "users", creatorEmail);
-  const docSnap = await getDoc(docRef);
-  if (docSnap){
-    const username = docSnap.data()?.username;
-    await setDoc(doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name), {
-      // name in database: variable
-      data: recipe,
-      creator: username
-    });
-  }
-}
 
 function getIndex(profiles: any[], email: string): number {
   for (let i = 0; i < profiles.length; i++) {
@@ -113,6 +71,15 @@ function getIndex(profiles: any[], email: string): number {
   }
   return -1;
 }
+const isFollowing = (email: string) => {
+  const following: string[] = JSON.parse(
+    localStorage.getItem('FOLLOWING') as string,
+  );
+  if (following.includes(email)) {
+    return true;
+  }
+  return false;
+};
 
 const Explore: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
@@ -125,7 +92,7 @@ const Explore: React.FC = () => {
   const toast = useToast();
 
   useEffect(() => {
-    onSnapshot(doc(db, "users/", email), (doc) => {
+    onSnapshot(doc(db, 'users/', email), doc => {
       const userFollowing = doc?.data()?.following;
       setFollowing(userFollowing);
     });
@@ -133,36 +100,78 @@ const Explore: React.FC = () => {
 
   useEffect(() => {
     const profilesQuery = query(collection(db, 'users'));
-    onSnapshot(profilesQuery, (querySnapshot) => {
-      const temp:any = [];
-      querySnapshot.forEach((doc) => {
+    onSnapshot(profilesQuery, querySnapshot => {
+      const temp: any = [];
+      querySnapshot.forEach(doc => {
         temp.push(doc.data());
-      })
+      });
       setProfiles(temp);
-    })
+    });
 
     const postsQuery = query(
       collection(db, 'posts'),
       orderBy('date_time', 'desc'),
     );
-    onSnapshot(postsQuery, (querySnapshot) => {
-      const allTemp:any[] = [];
-      const friendsTemp:any[] = [];
-      querySnapshot.forEach((doc) => {
-          if (following.includes(doc.data().email)){
-            friendsTemp.push(doc.data())
-          }
+    onSnapshot(postsQuery, querySnapshot => {
+      const allTemp: any[] = [];
+      const friendsTemp: any[] = [];
+      querySnapshot.forEach(doc => {
+        if (following.includes(doc.data().email)) {
+          friendsTemp.push(doc.data());
+        }
         allTemp.push(doc.data());
-      })
+      });
       setFriendsPosts(friendsTemp);
       setAllPosts(allTemp);
-    })
+    });
   }, [following]);
+  // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  // const toast = useToast();
 
+  useEffect(() => {
+    async function getData() {
+      const getUser = doc(db, 'users/', email);
+      const getUserData = await getDoc(getUser);
+      const userFollowing = getUserData?.data()?.following;
+      localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
+
+      const profilesQuery = query(collection(db, 'users'));
+      const profilesDocs = await getDocs(profilesQuery);
+      const profilesData = profilesDocs.docs.map(doc => doc.data());
+      setProfiles(profilesData);
+
+      const allPostsQuery = query(
+        collection(db, 'posts'),
+        orderBy('date_time', 'desc'),
+      );
+      const allPostsDocs = await getDocs(allPostsQuery);
+      const allPostsData = allPostsDocs.docs.map(doc => doc.data());
+      setAllPosts(allPostsData);
+
+      const following: string[] = JSON.parse(
+        localStorage.getItem('FOLLOWING') as string,
+      );
+      if (following[0]) {
+        const friendsPostsQuery = query(
+          collection(db, 'posts'),
+          where('email', 'in', following),
+          orderBy('date_time', 'desc'),
+        );
+        const friendsPostsDocs = await getDocs(friendsPostsQuery);
+        const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
+        setFriendsPosts(friendsPostsData);
+      } else {
+        setFriendsPosts([]);
+      }
+    }
+    getData();
+  }, []);
 
   async function addFollowing(followingEmail: string) {
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
     if (!following.includes(followingEmail)) {
       following.push(followingEmail);
+      localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: following,
@@ -173,9 +182,11 @@ const Explore: React.FC = () => {
   }
 
   async function removeFollowing(followingEmail: string) {
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
     if (following.includes(followingEmail)) {
       let index = following.indexOf(followingEmail);
       following.splice(index, 1);
+      localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: following,
@@ -184,26 +195,37 @@ const Explore: React.FC = () => {
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
- function isFollowing (email: string):boolean {
+  const isFollowing = (email: string) => {
+    const following: string[] = JSON.parse(
+      localStorage.getItem('FOLLOWING') as string,
+    );
     if (following.includes(email)) {
       return true;
     }
     return false;
   };
-
   const clicked = () => {
     setClick(!click);
-  }
+  };
 
-  const like = async (datetime:any) => {
-    const q = query(collection(db, "posts/"), where("date_time", "==", datetime));
+  const like = async (datetime: any) => {
+    const q = query(
+      collection(db, 'posts/'),
+      where('date_time', '==', datetime),
+    );
     const docs = await getDocs(q);
-    docs.forEach((doc) => {
+    docs.forEach(doc => {
       updateDoc(doc.ref, {
-        likes: increment(1)
-      })
-    })
-  }
+        likes: increment(1),
+      });
+    });
+  };
+
+  /*
+  data that can be displayed:
+  post.username.<description, title, username, recipe_name>
+  post.username.date_time.toDate().toString()
+  */
 
   return (
     <Box>
@@ -228,23 +250,24 @@ const Explore: React.FC = () => {
           <VStack
             w={'full'}
             px={useBreakpointValue({base: 4, md: 8})}
-            bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
+            // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
+          >
             <Stack maxW={'2xl'} spacing={6}>
-              <Text textAlign="center" fontSize="6xl" as="b">
+              <Text textAlign="center" fontSize="6xl" as="b" color="white">
                 Explore Page
               </Text>
             </Stack>
           </VStack>
         </Flex>
       </Flex>
-      <Tabs isFitted variant="enclosed">
+      <Tabs isFitted variant="enclosed" size="lg">
         <TabList mb="1em">
           <Tab>Explore</Tab>
           <Tab>Friends</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <VStack>
+            <VStack minH="100vh">
               {allPosts.map(post => (
                 <Container
                   shadow={1000}
@@ -258,7 +281,6 @@ const Explore: React.FC = () => {
                   boxShadow="dark-lg"
                   bgColor="black">
                   <Box
-                    border="1px solid black"
                     padding={4}
                     boxShadow="xs"
                     rounded="md"
@@ -269,27 +291,27 @@ const Explore: React.FC = () => {
                     display="flex"
                     flexDirection="column">
                     <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
-                    <Center>Image goes here</Center>
-                    <Stack direction="row" spacing={4} align="stretch">
-                      <div>Likes: {post.likes}</div>
-                      <Button variant="link" colorScheme="red" 
-                      onClick = {() => {like(post.date_time)}} >
-                        <AiOutlineHeart style={{fontSize: '34px'}}/>
+                    <Center>
+                      <Image
+                        borderRadius="30px"
+                        src="default-image-icon-missing-picture-page-vector-40546530.jpg"
+                        alt="Logo"
+                        w={300}
+                        mb={15}
+                      />
+                    </Center>
+                    <Stack
+                      direction="row"
+                      spacing={4}
+                      align="stretch"
+                      marginBottom={3}>
+                      <Button variant="link" colorScheme="white">
+                        <AiOutlineHeart style={{fontSize: '34px'}} />
                       </Button>
-                      <Button variant="link" colorScheme="blue">
+                      <Button variant="link" colorScheme="white">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
-                      <Button variant="link" colorScheme="green"
-                      onClick = {() => {
-                        toast({
-                          title: 'Recipe Saved.',
-                          description: "This recipe has been added to My Recipes.",
-                          status: 'success',
-                          duration: 3000,
-                          isClosable: true,
-                        });
-                        saveRecipe(post.recipe?.data, post.email)
-                        }}>
+                      <Button variant="link" colorScheme="white">
                         <BsBookmarks style={{fontSize: '34px'}} />
                       </Button>
                       <Spacer />
@@ -410,9 +432,8 @@ const Explore: React.FC = () => {
                                               View Recipes
                                             </Button>
                                           </Link>
-                                            <div>
-                                              {isFollowing(post.email) && 
-                                              <Button
+                                          {isFollowing(post.email) ? (
+                                            <Button
                                               flex={1}
                                               fontSize={'sm'}
                                               rounded={'full'}
@@ -437,13 +458,11 @@ const Explore: React.FC = () => {
                                                   isClosable: true,
                                                 });
                                                 removeFollowing(post.email);
-                                                clicked();
                                               }}>
                                               Unfollow
-                                            </Button>}
-
-                                            {!isFollowing(post.email) && 
-                                              <Button
+                                            </Button>
+                                          ) : (
+                                            <Button
                                               flex={1}
                                               fontSize={'sm'}
                                               rounded={'full'}
@@ -468,11 +487,10 @@ const Explore: React.FC = () => {
                                                   isClosable: true,
                                                 });
                                                 addFollowing(post.email);
-                                                clicked();
                                               }}>
                                               Follow
-                                            </Button>}
-                                            </div>
+                                            </Button>
+                                          )}
                                         </Stack>
                                       </Box>
                                     </Box>
@@ -486,93 +504,6 @@ const Explore: React.FC = () => {
 
                       <Text fontSize={20}>Description:</Text>
                       <Text>{post.description}</Text>
-                      <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="#4fb9af"
-                      color="black"
-                      maxW="container.sm">
-                      <Text noOfLines={1} as="b">
-                        Difficulty: {post.recipe.data.difficulty}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Time: {post.recipe.data.cooking_time}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Servings: {post.recipe.data.servings}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Cost Per Serving: {post.recipe.data.cost_per_serving}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Cooking Applications: {post.recipe.data.cooking_applications}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Allergens: {post.recipe.data.allergens}
-                      </Text>
-                                            </Box>
-                    <Accordion allowMultiple>
-                      <AccordionItem>
-                        <h2>
-                          <AccordionButton bg="#4fb9af">
-                            <Box as="span" flex="1" textAlign="left">
-                              Nutrition Data
-                            </Box>
-                            <AccordionIcon />
-                          </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                          <Box padding="4" color="black" maxW="container.sm">
-                            <Text noOfLines={1} as="b">
-                              Calories: {post.recipe.data.nutrients.calories}
-                            </Text>
-                            <Text as="b" noOfLines={1}>
-                              Protein: {post.recipe.data.nutrients.protein}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Carbs: {post.recipe.data.nutrients.total_carbohydrate}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Sugar: {post.recipe.data.nutrients.sugars}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Fat: {post.recipe.data.nutrients.total_fat}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Saturated Fat:{' '}
-                              {post.recipe.data.nutrients.saturated_fat}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Cholesterol: {post.recipe.data.nutrients.cholesterol}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Sodium: {post.recipe.data.nutrients.sodium}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Fiber: {post.recipe.data.nutrients.dietary_fiber}
-                            </Text>
-                          </Box>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </Accordion>
-                    <Accordion allowMultiple>
-                      <AccordionItem>
-                        <h2>
-                          <AccordionButton bg="#4fb9af">
-                            <Box as="span" flex="1" textAlign="left">
-                              Instructions:
-                            </Box>
-                            <AccordionIcon />
-                          </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                          <Box padding="4" color="black" maxW="container.sm">
-                            <Text as="b">{post.recipe.data.instructions}</Text>
-                          </Box>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </Accordion>
                     </Box>
                   </Box>
                 </Container>
@@ -582,7 +513,9 @@ const Explore: React.FC = () => {
           <TabPanel>
             <VStack>
               {friendsPosts.length === 0 ? (
-                <Heading textAlign="center">You have no friends</Heading>
+                <Heading textAlign="center" minH="100vh" fontSize={80}>
+                  You have no friends
+                </Heading>
               ) : (
                 friendsPosts.map(post => (
                   <Container
@@ -597,7 +530,6 @@ const Explore: React.FC = () => {
                     boxShadow="dark-lg"
                     bgColor="black">
                     <Box
-                      border="1px solid black"
                       padding={4}
                       boxShadow="xs"
                       rounded="md"
@@ -610,31 +542,33 @@ const Explore: React.FC = () => {
                       <div style={{flex: 1, fontSize: '24px'}}>
                         {post?.title}
                       </div>
-                      <Center>Image goes here</Center>
-                      <Stack direction="row" spacing={4} align="stretch">
-                        <Button variant="link" colorScheme="red">
+                      <Center>
+                        <Image
+                          borderRadius="30px"
+                          src="default-image-icon-missing-picture-page-vector-40546530.jpg"
+                          alt="Logo"
+                          w={300}
+                          mb={15}
+                        />
+                      </Center>
+                      <Stack
+                        direction="row"
+                        spacing={4}
+                        align="stretch"
+                        marginBottom={3}>
+                        <Button variant="link" colorScheme="white">
                           <AiOutlineHeart style={{fontSize: '34px'}} />
                         </Button>
-                        <Button variant="link" colorScheme="blue">
+                        <Button variant="link" colorScheme="white">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
-                        <Button variant="link" colorScheme="green"
-                        onClick = {() => {
-                          toast({
-                            title: 'Recipe Saved.',
-                            description: "This recipe has been added to My Recipes.",
-                            status: 'success',
-                            duration: 3000,
-                            isClosable: true,
-                          });
-                          saveRecipe(post.recipe?.data, post.email)
-                          }}>
+                        <Button variant="link" colorScheme="white">
                           <BsBookmarks style={{fontSize: '34px'}} />
                         </Button>
                         <Spacer />
                         <Text>{post?.date_time.toDate().toString()}</Text>
                       </Stack>
-                      
+
                       <Box
                         boxShadow="xs"
                         rounded="md"
@@ -749,70 +683,65 @@ const Explore: React.FC = () => {
                                                 View Recipes
                                               </Button>
                                             </Link>
-                                            <div>
-                                              {isFollowing(post.email) && 
+                                            {isFollowing(post.email) ? (
                                               <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              bg={'red.400'}
-                                              color={'white'}
-                                              boxShadow={
-                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-                                              }
-                                              _hover={{
-                                                bg: 'red.500',
-                                              }}
-                                              _focus={{
-                                                bg: 'red.500',
-                                              }}
-                                              onClick={() => {
-                                                toast({
-                                                  title: 'Unfollowed',
-                                                  description:
-                                                    'Removed from your friends',
-                                                  status: 'success',
-                                                  duration: 3000,
-                                                  isClosable: true,
-                                                });
-                                                removeFollowing(post.email);
-                                                clicked();
-                                              }}>
-                                              Unfollow
-                                            </Button>}
-
-                                            {!isFollowing(post.email) && 
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                bg={'red.400'}
+                                                color={'white'}
+                                                boxShadow={
+                                                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                                }
+                                                _hover={{
+                                                  bg: 'red.500',
+                                                }}
+                                                _focus={{
+                                                  bg: 'red.500',
+                                                }}
+                                                onClick={() => {
+                                                  toast({
+                                                    title: 'Unfollowed',
+                                                    description:
+                                                      'Removed from your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                  removeFollowing(post.email);
+                                                }}>
+                                                Unfollow
+                                              </Button>
+                                            ) : (
                                               <Button
-                                              flex={1}
-                                              fontSize={'sm'}
-                                              rounded={'full'}
-                                              bg={'green.400'}
-                                              color={'white'}
-                                              boxShadow={
-                                                '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-                                              }
-                                              _hover={{
-                                                bg: 'green.500',
-                                              }}
-                                              _focus={{
-                                                bg: 'green.500',
-                                              }}
-                                              onClick={() => {
-                                                toast({
-                                                  title: 'Followed',
-                                                  description:
-                                                    'Added to your friends',
-                                                  status: 'success',
-                                                  duration: 3000,
-                                                  isClosable: true,
-                                                });
-                                                addFollowing(post.email);
-                                                clicked();
-                                              }}>
-                                              Follow
-                                            </Button>}
-                                            </div>
-                                            
+                                                flex={1}
+                                                fontSize={'sm'}
+                                                rounded={'full'}
+                                                bg={'green.400'}
+                                                color={'white'}
+                                                boxShadow={
+                                                  '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                                                }
+                                                _hover={{
+                                                  bg: 'green.500',
+                                                }}
+                                                _focus={{
+                                                  bg: 'green.500',
+                                                }}
+                                                onClick={() => {
+                                                  toast({
+                                                    title: 'Followed',
+                                                    description:
+                                                      'Added to your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                  addFollowing(post.email);
+                                                }}>
+                                                Follow
+                                              </Button>
+                                            )}
                                           </Stack>
                                         </Box>
                                       </Box>
@@ -826,93 +755,6 @@ const Explore: React.FC = () => {
 
                         <Text fontSize={20}>Description:</Text>
                         <Text>{post.description}</Text>
-                        <Box
-                      boxShadow="xs"
-                      rounded="md"
-                      padding="4"
-                      bg="#4fb9af"
-                      color="black"
-                      maxW="container.sm">
-                      <Text noOfLines={1} as="b">
-                        Difficulty: {post.recipe.data.difficulty}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Time: {post.recipe.data.cooking_time}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Servings: {post.recipe.data.servings}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Cost Per Serving: {post.recipe.data.cost_per_serving}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Cooking Applications: {post.recipe.data.cooking_applications}
-                      </Text>
-                      <Text noOfLines={1} as="b">
-                        Allergens: {post.recipe.data.allergens}
-                      </Text>
-                                            </Box>
-                    <Accordion allowMultiple>
-                      <AccordionItem>
-                        <h2>
-                          <AccordionButton bg="#4fb9af">
-                            <Box as="span" flex="1" textAlign="left">
-                              Nutrition Data
-                            </Box>
-                            <AccordionIcon />
-                          </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                          <Box padding="4" color="black" maxW="container.sm">
-                            <Text noOfLines={1} as="b">
-                              Calories: {post.recipe.data.nutrients.calories}
-                            </Text>
-                            <Text as="b" noOfLines={1}>
-                              Protein: {post.recipe.data.nutrients.protein}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Carbs: {post.recipe.data.nutrients.total_carbohydrate}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Sugar: {post.recipe.data.nutrients.sugars}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Fat: {post.recipe.data.nutrients.total_fat}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Saturated Fat:{' '}
-                              {post.recipe.data.nutrients.saturated_fat}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Cholesterol: {post.recipe.data.nutrients.cholesterol}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Sodium: {post.recipe.data.nutrients.sodium}
-                            </Text>
-                            <Text noOfLines={1} as="b">
-                              Fiber: {post.recipe.data.nutrients.dietary_fiber}
-                            </Text>
-                          </Box>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </Accordion>
-                    <Accordion allowMultiple>
-                      <AccordionItem>
-                        <h2>
-                          <AccordionButton bg="#4fb9af">
-                            <Box as="span" flex="1" textAlign="left">
-                              Instructions:
-                            </Box>
-                            <AccordionIcon />
-                          </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                          <Box padding="4" color="black" maxW="container.sm">
-                            <Text as="b">{post.recipe.data.instructions}</Text>
-                          </Box>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </Accordion>
                       </Box>
                     </Box>
                   </Container>

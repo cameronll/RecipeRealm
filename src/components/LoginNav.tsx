@@ -67,7 +67,7 @@ const LoginNavbar: React.FC = () => {
               mb={15}
             />
             <Text alignItems={'center'}>
-              Login below to start your experience!
+              {/* Login below to start your experience! */}
             </Text>
           </HStack>
           <Flex alignItems={'center'}>

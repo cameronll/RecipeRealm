@@ -23,13 +23,13 @@ function validateName(value: any) {
   return error;
 }
 
-async function uniqueUsername(email: string):Promise<boolean>{
-  const queryUsernames = await getDocs(collection(db, "users"));
+async function uniqueUsername(email: string): Promise<boolean> {
+  const queryUsernames = await getDocs(collection(db, 'users'));
   const usernames = queryUsernames.docs.map(doc => doc.data().username);
-  if (usernames.includes(email)){
+  if (usernames.includes(email)) {
     return false;
   }
-  return true; 
+  return true;
 }
 
 const SignUp = () => {
@@ -43,7 +43,7 @@ const SignUp = () => {
       password: '',
     },
     onSubmit: async values => {
-      if (await uniqueUsername(values.username)){
+      if (await uniqueUsername(values.username)) {
         try {
           // Create a new user in Firebase authentication
           const userCredential = await createUserWithEmailAndPassword(

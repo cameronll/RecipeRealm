@@ -41,9 +41,9 @@ import {
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
 
-function getRecipeIndex(recipes: any[], recipe_name: string):number{
-  for (let i = 0; i < recipes.length; i++){
-    if (recipes[i]?.data.recipe_name === recipe_name){
+function getRecipeIndex(recipes: any[], recipe_name: string): number {
+  for (let i = 0; i < recipes.length; i++) {
+    if (recipes[i]?.data.recipe_name === recipe_name) {
       return i;
     }
   }
@@ -82,10 +82,16 @@ async function toDB(title: string, description: string, recipe: any) {
   const getUserData = await getDoc(getUser);
   const username = getUserData?.data()?.username;
   const date = new Date();
-  const recipeDoc = doc(db, 'users/', email, 'Recipes/', recipe.data.recipe_name)
+  const recipeDoc = doc(
+    db,
+    'users/',
+    email,
+    'Recipes/',
+    recipe.data.recipe_name,
+  );
   await updateDoc(recipeDoc, {
-    posted:true
-  })
+    posted: true,
+  });
   await addDoc(collection(db, 'posts'), {
     // name in database: variable
     email: email,
@@ -94,7 +100,7 @@ async function toDB(title: string, description: string, recipe: any) {
     title: title,
     description: description,
     recipe: recipe,
-    likes: 0
+    likes: 0,
   });
 }
 const Posts: React.FC = () => {
@@ -107,56 +113,61 @@ const Posts: React.FC = () => {
 
   useEffect(() => {
     const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
-    const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
-      const temp:any[] = [];
+    const recipesSnapshot = onSnapshot(recipesQuery, querySnapshot => {
+      const temp: any[] = [];
       var tempNum = 0;
-      querySnapshot.forEach((doc) => {
-          temp.push(doc.data());
+      querySnapshot.forEach(doc => {
+        temp.push(doc.data());
       });
-      console.log("recipes");
+      console.log('recipes');
       setRecipes(temp);
     });
     if (window.localStorage.getItem('TITLE')) {
-      const title_store: any =
-        window.localStorage.getItem('TITLE');
+      const title_store: any = window.localStorage.getItem('TITLE');
       setTitle(JSON.parse(title_store));
     }
     if (window.localStorage.getItem('DESCRIPTION')) {
-      const description_store: any =
-        window.localStorage.getItem('DESCRIPTION');
+      const description_store: any = window.localStorage.getItem('DESCRIPTION');
       setDescription(JSON.parse(description_store));
     }
     if (window.localStorage.getItem('RECIPE')) {
-      const recipe_store: any =
-        window.localStorage.getItem('RECIPE');
+      const recipe_store: any = window.localStorage.getItem('RECIPE');
       setPostRecipe(JSON.parse(recipe_store));
     }
   }, []);
 
-  const handleTitleChange = (e:any) => {
+  const handleTitleChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('TITLE', JSON.stringify(targ));
     setTitle(targ);
-  }
-  const handleDescriptionChange = (e:any) => {
+  };
+  const handleDescriptionChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('DESCRIPTION', JSON.stringify(targ));
     setDescription(targ);
-  }
+  };
 
-  const handleRecipeChange = (e:any) => {
+  const handleRecipeChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('RECIPE', JSON.stringify(targ));
     setRecipeName(targ);
-  }
+  };
 
   const handleSubmit = () => {
     const title = JSON.parse(localStorage.getItem('TITLE') as string);
-    const description = JSON.parse(localStorage.getItem('DESCRIPTION') as string);
-    const recipe = recipes[getRecipeIndex(recipes, JSON.parse(localStorage.getItem('RECIPE') as string))];
+    const description = JSON.parse(
+      localStorage.getItem('DESCRIPTION') as string,
+    );
+    const recipe =
+      recipes[
+        getRecipeIndex(
+          recipes,
+          JSON.parse(localStorage.getItem('RECIPE') as string),
+        )
+      ];
     console.log(recipe);
     toDB(title, description, recipe);
-    console.log("Document created!")
+    console.log('Document created!');
   };
 
   return (
@@ -170,12 +181,12 @@ const Posts: React.FC = () => {
           boxShadow="xs"
           rounded="md"
           padding="4"
-          bg="blue.400"
+          bg="gray.300"
           color="black"
           minW="container.sm">
           <FormControl mt={1}>
             <FormLabel
-              fontSize="sm"
+              fontSize="lg"
               fontWeight="md"
               color="gray.700"
               _dark={{
@@ -190,8 +201,8 @@ const Posts: React.FC = () => {
               fontSize={{
                 sm: 'sm',
               }}
-              onChange = {handleTitleChange}
-              value = {title}
+              onChange={handleTitleChange}
+              value={title}
             />
           </FormControl>
           <FormControl mt={1}>
@@ -212,8 +223,8 @@ const Posts: React.FC = () => {
               fontSize={{
                 sm: 'sm',
               }}
-              onChange = {handleDescriptionChange}
-              value = {description}
+              onChange={handleDescriptionChange}
+              value={description}
             />
           </FormControl>
           <FormControl mt={1}>
@@ -256,8 +267,8 @@ const Posts: React.FC = () => {
               size="sm"
               w="full"
               rounded="md"
-              onChange = {handleRecipeChange}
-              value = {recipeName}>
+              onChange={handleRecipeChange}
+              value={recipeName}>
               {recipes.map(recipe => (
                 <option>{recipe?.data.recipe_name}</option>
               ))}
@@ -266,13 +277,13 @@ const Posts: React.FC = () => {
               *You can only choose from your recipe list
             </FormHelperText>
           </FormControl>
+          <Flex justifyContent="right">
+            <Button colorScheme="green" onClick={handleSubmit} ml="auto">
+              Create Post
+            </Button>
+          </Flex>
         </Box>
       </Center>
-      <Box p={4}>
-        <Button colorScheme="teal" onClick={handleSubmit}>
-          Create
-        </Button>
-      </Box>
     </>
   );
 };

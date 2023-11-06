@@ -38,12 +38,17 @@ import {
   List,
   ListItem,
   ListIcon,
+  VStack,
+  Stack,
+  Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
 import {useToast} from '@chakra-ui/react';
 import React from 'react';
 import {MinusIcon} from '@chakra-ui/icons';
+import Navbar from '../../components/Navbar';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -683,26 +688,26 @@ const Form2 = () => {
       </Flex>
       <Flex>
         <Button
-          onClick={incrementCount}
-          colorScheme="green"
+          onClick={decrementCount}
+          colorScheme="red"
           variant="solid"
           mt={8}
           w="16rem"
           mr="5%"
           marginLeft="10%"
-          isDisabled={disableAdd()}>
-          Add Ingredient <IoIosAdd />
+          isDisabled={disableRemove()}>
+          Remove Ingredient <IoIosRemove />
         </Button>
         <Button
-          onClick={decrementCount}
-          colorScheme="red"
+          onClick={incrementCount}
+          colorScheme="green"
           variant="solid"
           mt={8}
           mr="5%"
           w="16rem"
           marginLeft="5%"
-          isDisabled={disableRemove()}>
-          Remove Ingredient <IoIosRemove />
+          isDisabled={disableAdd()}>
+          Add Ingredient <IoIosAdd />
         </Button>
       </Flex>
     </>
@@ -783,104 +788,139 @@ export default function Multistep() {
 
   return (
     <>
-      <Box
-        borderWidth="1px"
-        rounded="lg"
-        shadow="1px 1px 3px rgba(0,0,0,0.3)"
-        maxWidth={800}
-        p={6}
-        m="10px auto"
-        as="form">
-        <Progress
-          hasStripe
-          value={progress}
-          mb="5%"
-          mx="5%"
-          isAnimated></Progress>
-        {step === 1 ? <Form1 /> : step === 2 ? <Form2 /> : <Form3 />}
-        <ButtonGroup mt="5%" w="100%">
-          <Flex w="100%" justifyContent="space-between">
-            <Flex>
-              <Button
-                onClick={() => {
-                  setStep(step - 1);
-                  setProgress(progress - 33.33);
-                }}
-                isDisabled={step === 1}
-                colorScheme="teal"
-                variant="solid"
-                w="7rem"
-                mr="5%">
-                Back
-              </Button>
-              <Button
-                w="7rem"
-                isDisabled={step === 3}
-                onClick={() => {
-                  setStep(step + 1);
-                  if (step === 3) {
-                    setProgress(100);
-                  } else {
-                    setProgress(progress + 33.33);
-                  }
-                  console.log(window.localStorage.getItem('RECIPENAME'));
-                }}
-                colorScheme="teal"
-                variant="outline">
-                Next
-              </Button>
-            </Flex>
-            {step === 3 ? (
-              <Link to="../recipes">
+      <Navbar />
+      <Flex
+        w={'full'}
+        h={'100'}
+        backgroundImage={
+          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+        }
+        backgroundSize={'cover'}
+        backgroundPosition={'center center'}
+        alignContent={'flex-end'}
+        backgroundColor="rgba(0, 128, 128, 0.7)"
+        marginBottom={10}>
+        <Flex
+          w={'full'}
+          h={'100'}
+          backgroundSize={'cover'}
+          backgroundPosition={'center center'}
+          alignContent={'flex-end'}
+          backgroundColor="rgba(0, 128, 128, 0.7)">
+          <VStack
+            w={'full'}
+            px={useBreakpointValue({base: 4, md: 8})}
+            // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
+          >
+            <Stack maxW={'2xl'} spacing={6}>
+              <Text textAlign="center" fontSize="6xl" as="b" color="white">
+                Create My Recipe
+              </Text>
+            </Stack>
+          </VStack>
+        </Flex>
+      </Flex>
+      <Box>
+        <Box
+          borderWidth="1px"
+          rounded="lg"
+          shadow="1px 1px 3px rgba(0,0,0,0.3)"
+          maxWidth={800}
+          p={6}
+          m="10px auto"
+          as="form"
+          marginBottom={180}>
+          <Progress
+            hasStripe
+            value={progress}
+            mb="5%"
+            mx="5%"
+            isAnimated></Progress>
+          {step === 1 ? <Form1 /> : step === 2 ? <Form2 /> : <Form3 />}
+          <ButtonGroup mt="5%" w="100%">
+            <Flex w="100%" justifyContent="space-between">
+              <Flex>
+                <Button
+                  onClick={() => {
+                    setStep(step - 1);
+                    setProgress(progress - 33.33);
+                  }}
+                  isDisabled={step === 1}
+                  colorScheme="teal"
+                  variant="solid"
+                  w="7rem"
+                  mr="5%">
+                  Back
+                </Button>
                 <Button
                   w="7rem"
-                  colorScheme="red"
-                  variant="solid"
+                  isDisabled={step === 3}
                   onClick={() => {
-                    const instructionsStorage: any =
-                      window.localStorage.getItem('INSTRUCTIONS');
-                    const instructions = JSON.parse(instructionsStorage);
-                    toast({
-                      title: 'Recipe created.',
-                      description: "We've created your recipe for you.",
-                      status: 'success',
-                      duration: 3000,
-                      isClosable: true,
-                    });
-                    // TODO
-                    // replace hardcoded data with user inputted data from the form
-                    // replace hardcoded ingredients list with user inputted data
-
-                    // call to the DB with hardcoded data (for now)
-                    toDB(
-                      recipeName,
-                      servings,
-                      allergens,
-                      appliances,
-                      cookingTime,
-                      cost,
-                      difficulty,
-                      false,
-                      ingredients,
-                      instructions,
-                    );
-                    window.localStorage.removeItem('RECIPENAME');
-                    window.localStorage.removeItem('COOKINGTIME');
-                    window.localStorage.removeItem('DIFFICULTY');
-                    window.localStorage.removeItem('APPLIANCES');
-                    window.localStorage.removeItem('COST');
-                    window.localStorage.removeItem('ALLERGENS');
-                    window.localStorage.removeItem('SERVINGS');
-                    window.localStorage.removeItem('INSTRUCTIONS');
-                    window.localStorage.removeItem('INGREDIENTSTRING');
-                    window.localStorage.removeItem('INGREDIENTCOUNT');
-                  }}>
-                  Submit
+                    setStep(step + 1);
+                    if (step === 3) {
+                      setProgress(100);
+                    } else {
+                      setProgress(progress + 33.33);
+                    }
+                    console.log(window.localStorage.getItem('RECIPENAME'));
+                  }}
+                  colorScheme="teal"
+                  variant="outline">
+                  Next
                 </Button>
-              </Link>
-            ) : null}
-          </Flex>
-        </ButtonGroup>
+              </Flex>
+              {step === 3 ? (
+                <Link to="../recipes">
+                  <Button
+                    w="7rem"
+                    colorScheme="red"
+                    variant="solid"
+                    onClick={() => {
+                      const instructionsStorage: any =
+                        window.localStorage.getItem('INSTRUCTIONS');
+                      const instructions = JSON.parse(instructionsStorage);
+                      toast({
+                        title: 'Recipe created.',
+                        description: "We've created your recipe for you.",
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                      });
+                      // TODO
+                      // replace hardcoded data with user inputted data from the form
+                      // replace hardcoded ingredients list with user inputted data
+
+                      // call to the DB with hardcoded data (for now)
+                      toDB(
+                        recipeName,
+                        servings,
+                        allergens,
+                        appliances,
+                        cookingTime,
+                        cost,
+                        difficulty,
+                        false,
+                        ingredients,
+                        instructions,
+                      );
+                      window.localStorage.removeItem('RECIPENAME');
+                      window.localStorage.removeItem('COOKINGTIME');
+                      window.localStorage.removeItem('DIFFICULTY');
+                      window.localStorage.removeItem('APPLIANCES');
+                      window.localStorage.removeItem('COST');
+                      window.localStorage.removeItem('ALLERGENS');
+                      window.localStorage.removeItem('SERVINGS');
+                      window.localStorage.removeItem('INSTRUCTIONS');
+                      window.localStorage.removeItem('INGREDIENTSTRING');
+                      window.localStorage.removeItem('INGREDIENTCOUNT');
+                    }}>
+                    Submit
+                  </Button>
+                </Link>
+              ) : null}
+            </Flex>
+          </ButtonGroup>
+        </Box>
       </Box>
     </>
   );

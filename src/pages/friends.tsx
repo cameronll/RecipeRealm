@@ -118,15 +118,15 @@ const Friends: React.FC = () => {
         <VStack
           w={'full'}
           px={useBreakpointValue({base: 4, md: 8})}
-          bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
+          backgroundColor="rgba(0, 128, 128, 0.7)">
           <Stack maxW={'2xl'} spacing={6}>
-            <Text textAlign="center" fontSize="6xl" as="b">
+            <Text textAlign="center" fontSize="6xl" as="b" textColor="white">
               Friends Page
             </Text>
           </Stack>
         </VStack>
       </Flex>
-      <Center py={6}>
+      <Center py={6} minH="100vh">
         <Box
           maxW={'320px'}
           w={'full'}
