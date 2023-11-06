@@ -221,7 +221,7 @@ const Recipes: React.FC = () => {
             justifyContent: 'center',
           }}>
           <Tab>My Recipes</Tab>
-          <Tab>Saved Recieps</Tab>
+          <Tab>Saved Recipes</Tab>
           <Tab>My Posts</Tab>
           <Tab>My Friends</Tab>
         </TabList>
