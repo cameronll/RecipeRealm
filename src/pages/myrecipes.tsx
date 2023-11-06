@@ -406,7 +406,7 @@ const Recipes: React.FC = () => {
                   {recipes.length === 0 ? (
                     <Heading textAlign="center">You have 0 recipes</Heading>
                   ) : (
-                    recipes.map(recipe => (
+                    savedRecipes.map(recipe => (
                       <Container
                         boxShadow={'2xl'}
                         minW="sm"
