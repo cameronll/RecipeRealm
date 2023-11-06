@@ -322,34 +322,34 @@ const Recipes: React.FC = () => {
                                   color="black"
                                   maxW="container.sm">
                                   <Text noOfLines={1}>
-                                    Calories: {recipe.data.nutrients.calories}
+                                    Calories: {(recipe.data.nutrients.calories).toFixed(2)}
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Protein: {recipe.data.nutrients.protein}
+                                    Protein: {(recipe.data.nutrients.protein).toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
                                     Carbs:{' '}
-                                    {recipe.data.nutrients.total_carbohydrate}
+                                    {(recipe.data.nutrients.total_carbohydrate).toFixed(2)}g
+                                  </Text>
+                                  <Text noOfLines={1} style={{ paddingLeft: '20px' }}>
+                                    Sugar: {(recipe.data.nutrients.sugars).toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Sugar: {recipe.data.nutrients.sugars}
-                                  </Text>
-                                  <Text noOfLines={1}>
-                                    Fat: {recipe.data.nutrients.total_fat}
+                                    Fat: {(recipe.data.nutrients.total_fat).toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
                                     Saturated Fat:{' '}
-                                    {recipe.data.nutrients.saturated_fat}
+                                    {(recipe.data.nutrients.saturated_fat).toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
                                     Cholesterol:{' '}
-                                    {recipe.data.nutrients.cholesterol}
+                                    {(recipe.data.nutrients.cholesterol).toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Sodium: {recipe.data.nutrients.sodium}
+                                    Sodium: {(recipe.data.nutrients.sodium).toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Fiber: {recipe.data.nutrients.dietary_fiber}
+                                    Fiber: {(recipe.data.nutrients.dietary_fiber).toFixed(2)}g
                                   </Text>
                                 </Box>
                               </AccordionPanel>
@@ -496,9 +496,10 @@ const Recipes: React.FC = () => {
                                   </Text>
                                   <Text noOfLines={1}>
                                     Carbs:{' '}
-                                    {recipe.data.nutrients.total_carbohydrate}
+                                    {recipe.data.nutrients.total_carbohydrate}g                                 
+                                    
                                   </Text>
-                                  <Text noOfLines={1}>
+                                  <Text noOfLines={1} style={{ paddingLeft: '20px' }}>
                                     Sugar: {recipe.data.nutrients.sugars}
                                   </Text>
                                   <Text noOfLines={1}>

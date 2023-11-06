@@ -8,9 +8,11 @@ import {db} from '../../firebaseConfig';
 import {doc, getDocs, setDoc} from 'firebase/firestore';
 import {collection, addDoc, DocumentReference} from 'firebase/firestore';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {useToast} from '@chakra-ui/react';
 import Footer from '../../components/Footer';
+
+
 
 function validateName(value: any) {
   let error;
@@ -32,7 +34,10 @@ async function uniqueUsername(email: string): Promise<boolean> {
   return true;
 }
 
+
+
 const SignUp = () => {
+  const navigate = useNavigate();//navigate to login
   const toast = useToast();
   const following: string[] = [];
   const formik = useFormik({
@@ -122,6 +127,7 @@ const SignUp = () => {
                 value={formik.values.password}
               />
               <ButtonGroup variant="outline" spacing="6">
+                
                 <Button
                   mt={4}
                   colorScheme="teal"
@@ -135,9 +141,14 @@ const SignUp = () => {
                       duration: 3000,
                       isClosable: true,
                     });
+
+                    //navigate('/login');//navigate to login
+                    
                   }}>
+                    
                   Submit
                 </Button>
+                
                 <Link to="/login">
                   <Button mt={4} colorScheme="red" size="lg">
                     Back

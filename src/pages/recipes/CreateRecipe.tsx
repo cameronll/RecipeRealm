@@ -128,17 +128,15 @@ async function getIngredientNutrients(query: string): Promise<nutrition> {
     let nutrients: nutrition = {
       // since this data is now in a JSON object, the values can be accessed
       // with their keys like fields in a struct
-      calories: parseFloat(obj.foods[0].nf_calories.toFixed(2)),
-      total_fat: parseFloat(obj.foods[0].nf_total_fat.toFixed(2)),
-      saturated_fat: parseFloat(obj.foods[0].nf_saturated_fat.toFixed(2)),
-      cholesterol: parseFloat(obj.foods[0].nf_cholesterol.toFixed(2)),
-      sodium: parseFloat(obj.foods[0].nf_sodium.toFixed(2)),
-      total_carbohydrate: parseFloat(
-        obj.foods[0].nf_total_carbohydrate.toFixed(2),
-      ),
-      dietary_fiber: parseFloat(obj.foods[0].nf_dietary_fiber.toFixed(2)),
-      sugars: parseFloat(obj.foods[0].nf_sugars.toFixed(2)),
-      protein: parseFloat(obj.foods[0].nf_protein.toFixed(2)),
+      calories: parseFloat((obj.foods[0].nf_calories).toFixed(2)),
+      total_fat: parseFloat((obj.foods[0].nf_total_fat).toFixed(2)),
+      saturated_fat: parseFloat((obj.foods[0].nf_saturated_fat).toFixed(2)),
+      cholesterol: parseFloat((obj.foods[0].nf_cholesterol).toFixed(2)),
+      sodium: parseFloat((obj.foods[0].nf_sodium).toFixed(2)),
+      total_carbohydrate: parseFloat((obj.foods[0].nf_total_carbohydrate).toFixed(2)),
+      dietary_fiber: parseFloat((obj.foods[0].nf_dietary_fiber).toFixed(2)),
+      sugars: parseFloat((obj.foods[0].nf_sugars).toFixed(2)),
+      protein: parseFloat((obj.foods[0].nf_protein).toFixed(2)),
     };
     // return the nutrition information for this ONE ingredient
     return nutrients;
