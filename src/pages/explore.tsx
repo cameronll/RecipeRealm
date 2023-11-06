@@ -311,16 +311,15 @@ const Explore: React.FC = () => {
             <VStack minH="100vh">
               {allPosts.map(post => (
                 <Container
+                  // minH="100vh"
                   shadow={1000}
                   maxW="container.lg"
                   color="white"
-                  minH="350"
                   display="flex"
                   flexDirection="column"
                   padding={1}
                   rounded="lg"
-                  boxShadow="dark-lg"
-                  bgColor="black">
+                  boxShadow="dark-lg">
                   <Box
                     padding={4}
                     boxShadow="xs"
@@ -370,13 +369,13 @@ const Explore: React.FC = () => {
                     </Stack>
 
                     <Box
-                      boxShadow="xs"
+                      // boxShadow="xs"
                       rounded="md"
                       padding="4"
                       bg="teal"
-                      color="black"
                       maxW="container.lg"
-                      bgColor="#4fb9af">
+                      // bgColor="#4fb9af"
+                    >
                       <Flex>
                         <Text fontSize={18}>Posted by: </Text>
                         <Text fontSize={18} marginLeft={2}>
@@ -393,7 +392,7 @@ const Explore: React.FC = () => {
                                   marginLeft={2}
                                   colorScheme="whiteAlpha"
                                   variant="outline"
-                                  size="sm">
+                                  size="xs">
                                   {isOpen ? 'Close' : 'View'} Profile
                                 </Button>
                               </PopoverTrigger>
@@ -562,7 +561,7 @@ const Explore: React.FC = () => {
             </VStack>
           </TabPanel>
           <TabPanel>
-            <VStack>
+            <VStack minH="100vh">
               {friendsPosts.length === 0 ? (
                 <Heading textAlign="center" minH="100vh" fontSize={80}>
                   You have no friends
@@ -578,8 +577,7 @@ const Explore: React.FC = () => {
                     flexDirection="column"
                     padding={1}
                     rounded="lg"
-                    boxShadow="dark-lg"
-                    bgColor="black">
+                    boxShadow="dark-lg">
                     <Box
                       padding={4}
                       boxShadow="xs"
@@ -631,13 +629,13 @@ const Explore: React.FC = () => {
                       </Stack>
 
                       <Box
-                        boxShadow="xs"
+                        // boxShadow="xs"
                         rounded="md"
                         padding="4"
                         bg="teal"
-                        color="black"
                         maxW="container.lg"
-                        bgColor="#4fb9af">
+                        // bgColor="#4fb9af"
+                      >
                         <Flex>
                           <Text fontSize={18}>Posted by: </Text>
                           <Text fontSize={18} marginLeft={2}>
@@ -654,7 +652,7 @@ const Explore: React.FC = () => {
                                     marginLeft={2}
                                     colorScheme="whiteAlpha"
                                     variant="outline"
-                                    size="sm">
+                                    size="xs">
                                     {isOpen ? 'Close' : 'View'} Profile
                                   </Button>
                                 </PopoverTrigger>

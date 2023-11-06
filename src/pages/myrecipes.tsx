@@ -116,13 +116,13 @@ const Recipes: React.FC = () => {
         backgroundSize={'cover'}
         backgroundPosition={'center center'}
         alignContent={'flex-end'}
-        backgroundColor="rgba(0, 128, 128, 0.7)">
+        backgroundColor="rgba(0, 128, 128)">
         <VStack
           w={'full'}
           px={useBreakpointValue({base: 4, md: 8})}
           // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
         >
-          <Stack maxW={'2xl'} spacing={6}>
+          <Stack minW={'2xl'} spacing={6}>
             <Text textAlign="center" fontSize="6xl" as="b" color="white">
               {profile?.username}'s Page
             </Text>
@@ -138,62 +138,52 @@ const Recipes: React.FC = () => {
         justifyContent="center"
         alignItems="center">
         <HStack spacing="65px">
-          <Stack spacing={4}>
-            <Text
-              textTransform={'uppercase'}
-              color={'blue.400'}
-              fontWeight={600}
-              fontSize={'sm'}
-              bg={useColorModeValue('blue.50', 'blue.900')}
-              p={2}
-              alignSelf={'flex-start'}
-              rounded={'md'}>
-              {}
-            </Text>
-            <Heading>{profile?.username}'s Page</Heading>
-            <Text>{recipes.length} Recipes</Text>
-            <Text>{numPosts} Posts</Text>
-            <Text color={'black'} fontSize={'lg'}>
-              {profile?.biography}
-            </Text>
-          </Stack>
-          <Stack>
-            <Image
-              rounded={'md'}
-              alt={'feature image'}
-              src={
-                'https://i.ytimg.com/vi/3EDFSswI29c/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBZKEgwDw==&rs=AOn4CLDJAwWFyjufCBlFlIm1PDteqDDfCA'
-              }
-              objectFit={'cover'}
-            />
-          </Stack>
-          <Stack>
-            <Link to="/CreateRecipe">
-              <Button
-                w="200px"
-                rightIcon={<CgBowl />}
-                colorScheme="teal"
-                onClick={() => {
-                  window.localStorage.removeItem('RECIPENAME');
-                  window.localStorage.removeItem('COOKINGTIME');
-                  window.localStorage.removeItem('DIFFICULTY');
-                  window.localStorage.removeItem('APPLIANCES');
-                  window.localStorage.removeItem('COST');
-                  window.localStorage.removeItem('ALLERGENS');
-                  window.localStorage.removeItem('SERVINGS');
-                  window.localStorage.removeItem('INSTRUCTIONS');
-                  window.localStorage.removeItem('INGREDIENTSTRING');
-                  window.localStorage.removeItem('INGREDIENTCOUNT');
-                }}>
-                Create Recipe
-              </Button>
-            </Link>
-            <Link to="/Posts">
-              <Button w="200px" rightIcon={<BsWindow />} colorScheme="gray">
-                Create Post
-              </Button>
-            </Link>
-          </Stack>
+          <VStack>
+            <HStack spacing={4}>
+              <Avatar
+                size="2xl"
+                name="Segun Adebayo"
+                src={
+                  'https://i.ytimg.com/vi/3EDFSswI29c/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBZKEgwDw==&rs=AOn4CLDJAwWFyjufCBlFlIm1PDteqDDfCA'
+                }
+              />{' '}
+              <VStack marginLeft={10}>
+                <Heading>{profile?.username}'s Page</Heading>
+                <Text>{recipes.length} Recipes</Text>
+                <Text>{numPosts} Posts</Text>
+                <Text color={'black'} fontSize={'lg'}>
+                  {profile?.biography}
+                </Text>
+              </VStack>
+            </HStack>
+            <HStack marginTop={10}>
+              <Link to="/CreateRecipe">
+                <Button
+                  w="300px"
+                  rightIcon={<CgBowl />}
+                  colorScheme="teal"
+                  onClick={() => {
+                    window.localStorage.removeItem('RECIPENAME');
+                    window.localStorage.removeItem('COOKINGTIME');
+                    window.localStorage.removeItem('DIFFICULTY');
+                    window.localStorage.removeItem('APPLIANCES');
+                    window.localStorage.removeItem('COST');
+                    window.localStorage.removeItem('ALLERGENS');
+                    window.localStorage.removeItem('SERVINGS');
+                    window.localStorage.removeItem('INSTRUCTIONS');
+                    window.localStorage.removeItem('INGREDIENTSTRING');
+                    window.localStorage.removeItem('INGREDIENTCOUNT');
+                  }}>
+                  Create Recipe
+                </Button>
+              </Link>
+              <Link to="/Posts">
+                <Button w="300px" rightIcon={<BsWindow />} colorScheme="gray">
+                  Create Post
+                </Button>
+              </Link>
+            </HStack>
+          </VStack>
         </HStack>
       </Container>
       {/* <VStack
