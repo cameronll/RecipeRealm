@@ -66,6 +66,21 @@ const SignUp = () => {
           console.log('Document written with ID: ', docRef);
 
           // Additional actions upon successful signup (if needed)
+          toast({
+            title: 'Account created.',
+            description: "We've created your recipe for you.",
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+          toast({
+            title: 'Account created.',
+            description: "We've created your recipe for you.",
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+          navigate('/login');//navigate to login
         } catch (e) {
           console.log(e);
         }
@@ -134,15 +149,9 @@ const SignUp = () => {
                   type="submit"
                   size="lg"
                   onClick={() => {
-                    toast({
-                      title: 'Account created.',
-                      description: "We've created your recipe for you.",
-                      status: 'success',
-                      duration: 3000,
-                      isClosable: true,
-                    });
+                    
 
-                    //navigate('/login');//navigate to login
+                    
                     
                   }}>
                     
