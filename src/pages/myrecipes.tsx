@@ -322,7 +322,7 @@ const Recipes: React.FC = () => {
                                   color="black"
                                   maxW="container.sm">
                                   <Text noOfLines={1}>
-                                    Calories: {(recipe.data.nutrients.calories).toFixed(2)}
+                                    Calories: {(recipe.data.nutrients.calories).toFixed(2)}{' '}kCal
                                   </Text>
                                   <Text noOfLines={1}>
                                     Protein: {(recipe.data.nutrients.protein).toFixed(2)}g
