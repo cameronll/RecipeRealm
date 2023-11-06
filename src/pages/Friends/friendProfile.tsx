@@ -96,6 +96,7 @@ async function saveRecipe(recipe: Recipe, creatorEmail: string){
     });
   }
 }
+
 const FriendProfile: React.FC = (friend: any) => {
   const toast = useToast();
   const [recipes, setRecipes] = useState<any[]>([]);
