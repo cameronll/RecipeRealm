@@ -534,15 +534,28 @@ const Explore: React.FC = () => {
                                                 bg: 'green.500',
                                               }}
                                               onClick={() => {
-                                                toast({
-                                                  title: 'Followed',
-                                                  description:
-                                                    'Added to your friends',
-                                                  status: 'success',
-                                                  duration: 3000,
-                                                  isClosable: true,
-                                                });
-                                                addFollowing(post.email);
+                                                if (post.email === email){
+                                                  toast({
+                                                    title: 'Cannot Follow',
+                                                    description:
+                                                      'You can\'t follow yourself!',
+                                                    status: 'error',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                }
+                                                else{
+                                                  addFollowing(post.email);
+                                                  toast({
+                                                    title: 'Followed',
+                                                    description:
+                                                      'Added to your friends',
+                                                    status: 'success',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                  });
+                                                }
+                                                
                                               }}>
                                               Follow
                                             </Button>
