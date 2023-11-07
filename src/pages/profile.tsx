@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navbar from '../components/Navbar';
 import {db, storage } from '../firebaseConfig';
-import { ref, uploadBytes } from "firebase/storage";
+import { getBlob, getDownloadURL, getStream, ref, uploadBytes } from "firebase/storage";
 import {
   collection,
   addDoc,
@@ -14,6 +14,7 @@ import {
   orderBy,
   updateDoc,
   onSnapshot,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   AuthCredential,
@@ -78,12 +79,29 @@ async function toDB(
   });
 }
 
+async function uploadImage(file:any){
+  const storageRef = ref(storage, 'image');
+
+  // 'file' comes from the Blob or File API
+  uploadBytes(storageRef, file).then((snapshot) => {
+    console.log('Uploaded a blob or file!');
+});
+}
+
+/*
+function downloadImage(){
+  const storageRef = ref(storage, 'image');
+  const stream = getBlob(storageRef, 1000000000000);
+  console.log(stream);
+}
+*/
 const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [profile, setProfile] = useState<any>();
+  const [selectedImage, setSelectedImage] = useState<any>(null);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
 
@@ -94,6 +112,10 @@ const Profile: React.FC = () => {
     const username_from_storage: any =
       window.localStorage.getItem('NEWUSERNAME');
     const email_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
+
+    //const image = downloadImage();
+    //setSelectedImage(image);
+    //console.log(image);
 
     setNewUsername(JSON.parse(username_from_storage));
     setNewBiography(JSON.parse(email_from_storage));
@@ -123,8 +145,10 @@ const Profile: React.FC = () => {
 
   //Handle Delete
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     //TODO: Delete USer from database
+    await deleteDoc(doc(db, "users", email));
+    
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -175,23 +199,31 @@ const Profile: React.FC = () => {
 
             <Stack direction={['column', 'row']} spacing={36}>
               <Center>
-                <Avatar
-                  size="xl"
-                  src="https://i.ytimg.com/vi/WH7uKNQDzWI/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBYKEowDw==&rs=AOn4CLCPPCr7AOoCWseh5XdjlHeFmyc2rQ">
-                  <AvatarBadge
-                    as={IconButton}
-                    size="sm"
-                    rounded="full"
-                    top="-10px"
-                    colorScheme="red"
-                    aria-label="remove Image"
-                    icon={<SmallCloseIcon />}
+              {selectedImage && (
+                <div>
+                  <img
+                    alt="not found"
+                    width={"250px"}
+                    src={URL.createObjectURL(selectedImage)}
                   />
-                </Avatar>
+                  <br />
+                  <button onClick={() => setSelectedImage(null)}>Remove</button>
+                </div>
+              )}
               </Center>
               <Stack direction={['column', 'column']} spacing={6}>
                 <Center w="full">
-                  <Button w="full">Change Icon</Button>
+                  <input
+                    type="file"
+                    name="myImage"
+                    onChange={(event) => {
+                      if (event?.target?.files){
+                        console.log(event.target.files[0]);
+                        setSelectedImage(event.target.files[0]);
+                        uploadImage(event.target.files[0]);
+                      }
+                    }}
+                  />
                 </Center>
                 <Center>
                   <>
