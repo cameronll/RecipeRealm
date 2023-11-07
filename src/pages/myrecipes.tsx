@@ -14,6 +14,7 @@ import {
   query,
   getCountFromServer,
   onSnapshot,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -106,6 +107,19 @@ const Recipes: React.FC = () => {
     });
   }, []);
 
+  async function deleteMyRecipe(recipeName: string){
+    if (recipeName === null){
+      recipeName = 'null';
+    }
+    await deleteDoc(doc(db, "users/", email, "Recipes/", recipeName));
+  }
+
+  async function deleteSavedRecipe(recipeName: string){
+    if (recipeName === null){
+      recipeName = 'null';
+    }
+    await deleteDoc(doc(db, "users/", email, "SavedRecipes/", recipeName));
+  }
   // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
   // recipe.creator to get the username of who posted it
 
@@ -432,6 +446,7 @@ const Recipes: React.FC = () => {
                                 duration: 3000,
                                 isClosable: true,
                               });
+                              deleteMyRecipe(recipe.data.recipe_name);
                             }}>
                             Delete Recipe
                           </Button>
@@ -637,6 +652,7 @@ const Recipes: React.FC = () => {
                                 duration: 3000,
                                 isClosable: true,
                               });
+                              deleteSavedRecipe(recipe.data.recipe_name);
                             }}>
                             Delete Recipe
                           </Button>
