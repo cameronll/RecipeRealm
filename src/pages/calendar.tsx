@@ -19,31 +19,45 @@ import {
   Center,
   Image,
 } from '@chakra-ui/react';
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
-function getTodoList(date: {getDate: () => any}) {
-  const day = date.getDate();
-
-  switch (day) {
-    case 10:
-      return [
-        {time: '10:30 am', title: 'Meeting'},
-        {time: '12:00 pm', title: 'Lunch'},
-      ];
-    case 15:
-      return [
-        {time: '09:30 pm', title: 'Products Introduction Meeting'},
-        {time: '12:30 pm', title: 'Client entertaining'},
-        {time: '02:00 pm', title: 'Product design discussion'},
-        {time: '05:00 pm', title: 'Product test and acceptance'},
-        {time: '06:30 pm', title: 'Reporting'},
-        {time: '10:00 pm', title: 'Going home to walk the dog'},
-      ];
-    default:
-      return [];
+export default class App extends React.Component {
+  render() {
+    return (
+      <FullCalendar
+        plugins={[ dayGridPlugin ]}
+        initialView="dayGridMonth"
+        height="auto"
+      />
+    )
   }
 }
 
-const CalendarPage: React.FC = () => {
+// function getTodoList(date: {getDate: () => any}) {
+//   const day = date.getDate();
+
+//   switch (day) {
+//     case 10:
+//       return [
+//         {time: '10:30 am', title: 'Meeting'},
+//         {time: '12:00 pm', title: 'Lunch'},
+//       ];
+//     case 15:
+//       return [
+//         {time: '09:30 pm', title: 'Products Introduction Meeting'},
+//         {time: '12:30 pm', title: 'Client entertaining'},
+//         {time: '02:00 pm', title: 'Product design discussion'},
+//         {time: '05:00 pm', title: 'Product test and acceptance'},
+//         {time: '06:30 pm', title: 'Reporting'},
+//         {time: '10:00 pm', title: 'Going home to walk the dog'},
+//       ];
+//     default:
+//       return [];
+//   }
+// }
+
+//const CalendarPage: React.FC = () => {
   // function renderCell(date: any) {
   //   const list = getTodoList(date);
   //   const displayList = list.filter((item, index) => index < 2);
@@ -86,30 +100,30 @@ const CalendarPage: React.FC = () => {
   //   return null;
   // }
 
-  return (
-    <Box>
-      <Navbar />
-      <Flex
-        w={'full'}
-        h={'100'}
-        backgroundSize={'cover'}
-        backgroundPosition={'center center'}
-        alignContent={'flex-end'}
-        backgroundColor="rgba(0, 128, 128, 0.7)">
-        <VStack
-          w={'full'}
-          px={useBreakpointValue({base: 4, md: 8})}
-          bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
-          <Stack maxW={'2xl'} spacing={6}>
-            <Text textAlign="center" fontSize="6xl" as="b" textColor="white">
-              Calendar Page
-            </Text>
-          </Stack>
-        </VStack>
-      </Flex>
-      <Image src="https://i.etsystatic.com/18744872/r/il/89ee05/5410420625/il_794xN.5410420625_ltih.jpg"></Image>
-    </Box>
-  );
-};
+//   return (
+//     <Box>
+//       <Navbar />
+//       <Flex
+//         w={'full'}
+//         h={'100'}
+//         backgroundSize={'cover'}
+//         backgroundPosition={'center center'}
+//         alignContent={'flex-end'}
+//         backgroundColor="rgba(0, 128, 128, 0.7)">
+//         <VStack
+//           w={'full'}
+//           px={useBreakpointValue({base: 4, md: 8})}
+//           bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
+//           <Stack maxW={'2xl'} spacing={6}>
+//             <Text textAlign="center" fontSize="6xl" as="b">
+//               Calendar Page
+//             </Text>
+//           </Stack>
+//         </VStack>
+//       </Flex>
+//       <Image src="https://i.etsystatic.com/18744872/r/il/89ee05/5410420625/il_794xN.5410420625_ltih.jpg"></Image>
+//     </Box>
+//   );
+// };
 
-export default CalendarPage;
+// export default CalendarPage;
