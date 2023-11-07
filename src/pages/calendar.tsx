@@ -19,6 +19,7 @@ import {
   Center,
   Image,
   HStack,
+  border,
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -129,15 +130,24 @@ const CalendarPage: React.FC = () => {
           </Stack>
           </VStack>
       </Flex>
-      <VStack >
-        <FullCalendar
-          plugins={[ dayGridPlugin ]}
-          initialView="dayGridMonth"
-          aspectRatio={1}
-          handleWindowResize={true}
-          //height="auto"
-        />
-          </VStack>
+      <HStack height={'auto'} padding={'25px'}>
+        <Container w={"80%"}>
+          <FullCalendar
+            plugins={[ dayGridPlugin ]}
+            initialView="dayGridMonth"
+            aspectRatio={1}
+            handleWindowResize={true}
+            expandRows={true}
+            events={[
+              { title: 'event 1', date: '2023-11-01' },
+              { title: 'event 2', date: '2023-11-02' }
+            ]}
+          />
+        </Container>
+        <Container>
+          <Text>Still working on it</Text>
+        </Container>
+      </HStack>
     </>
   );
 };
