@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navbar from '../components/Navbar';
-import {db} from '../firebaseConfig';
+import {db, storage } from '../firebaseConfig';
+import { ref, uploadBytes } from "firebase/storage";
 import {
   collection,
   addDoc,

@@ -3,6 +3,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage, ref } from "firebase/storage";
 import firebase from 'firebase/compat/app';
 //import * as firebaseui from 'firebaseui'
 //import 'firebaseui/dist/firebaseui.css'
@@ -19,18 +20,9 @@ const firebaseConfig = {
     'databaseURL': ''
 };
 
-
-
-
-
-
 const app = initializeApp(firebaseConfig);
+const storage = getStorage();
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-
-
- 
-
-
-export { app, auth, db};
+export { app, auth, db, storage };

@@ -121,7 +121,7 @@ const FriendProfile: React.FC = (friend: any) => {
 
   useEffect(() => {
     if (email){
-      const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+      const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'), where ('posted', '==', true));
       const recipesSnapshot = onSnapshot(recipesQuery, (querySnapshot) => {
         const temp:any[] = [];
         var tempNum = 0;

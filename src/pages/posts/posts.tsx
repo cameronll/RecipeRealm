@@ -96,7 +96,7 @@ async function toDB(title: string, description: string, recipe: any) {
     'Recipes/',
     recipe.data.recipe_name,
   );
-  await updateDoc(recipeDoc, {
+  const updated = await updateDoc(recipeDoc, {
     posted: true,
   });
   await addDoc(collection(db, 'posts'), {
