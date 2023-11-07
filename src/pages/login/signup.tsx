@@ -79,13 +79,7 @@ const SignUp = () => {
             duration: 3000,
             isClosable: true,
           });
-          toast({
-            title: 'Account created.',
-            description: "We've created your recipe for you.",
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-          });
+         
           navigate('/login');//navigate to login
         } catch (e) {
           console.log(e);
@@ -174,18 +168,7 @@ const SignUp = () => {
                   colorScheme="teal"
                   type="submit"
                   size="lg"
-                  onClick={() => {
-                    navigate('/login');
-                    toast({
-                      title: 'Account created.',
-                      description: "We've created your recipe for you.",
-                      status: 'success',
-                      duration: 3000,
-                      isClosable: true,
-                    });
-
-                    //navigate('/login');//navigate to login
-                  }}>
+                  >
                   Submit
                 </Button>
 
