@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
-import {AiOutlineHeart} from 'react-icons/ai';
+import {AiFillPrinter, AiOutlineHeart} from 'react-icons/ai';
 import {CgBowl} from 'react-icons/cg';
 import {BsWindow, BsFillChatDotsFill, BsKanbanFill} from 'react-icons/bs';
 import {
@@ -44,6 +44,7 @@ import {
   FormHelperText,
   AbsoluteCenter,
   Select,
+  useToast,
   Icon,
   Image,
   StackDivider,
@@ -62,6 +63,7 @@ import {
 import {Link} from 'react-router-dom';
 
 const Recipes: React.FC = () => {
+  const toast = useToast();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [savedRecipes, setSavedRecipes] = useState<any[]>([]);
   const [numPosts, setNumPosts] = useState(0);
@@ -322,34 +324,56 @@ const Recipes: React.FC = () => {
                                   color="black"
                                   maxW="container.sm">
                                   <Text noOfLines={1}>
-                                    Calories: {(recipe.data.nutrients.calories).toFixed(2)}{' '}kCal
+                                    Calories:{' '}
+                                    {recipe.data.nutrients.calories.toFixed(2)}{' '}
+                                    kCal
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Protein: {(recipe.data.nutrients.protein).toFixed(2)}g
+                                    Protein:{' '}
+                                    {recipe.data.nutrients.protein.toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
                                     Carbs:{' '}
-                                    {(recipe.data.nutrients.total_carbohydrate).toFixed(2)}g
+                                    {recipe.data.nutrients.total_carbohydrate.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
-                                  <Text noOfLines={1} style={{ paddingLeft: '20px' }}>
-                                    Sugar: {(recipe.data.nutrients.sugars).toFixed(2)}g
+                                  <Text
+                                    noOfLines={1}
+                                    style={{paddingLeft: '20px'}}>
+                                    Sugar:{' '}
+                                    {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Fat: {(recipe.data.nutrients.total_fat).toFixed(2)}g
+                                    Fat:{' '}
+                                    {recipe.data.nutrients.total_fat.toFixed(2)}
+                                    g
                                   </Text>
                                   <Text noOfLines={1}>
                                     Saturated Fat:{' '}
-                                    {(recipe.data.nutrients.saturated_fat).toFixed(2)}g
+                                    {recipe.data.nutrients.saturated_fat.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
                                   <Text noOfLines={1}>
                                     Cholesterol:{' '}
-                                    {(recipe.data.nutrients.cholesterol).toFixed(2)}g
+                                    {recipe.data.nutrients.cholesterol.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Sodium: {(recipe.data.nutrients.sodium).toFixed(2)}g
+                                    Sodium:{' '}
+                                    {recipe.data.nutrients.sodium.toFixed(2)}g
                                   </Text>
                                   <Text noOfLines={1}>
-                                    Fiber: {(recipe.data.nutrients.dietary_fiber).toFixed(2)}g
+                                    Fiber:{' '}
+                                    {recipe.data.nutrients.dietary_fiber.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
                                 </Box>
                               </AccordionPanel>
@@ -376,6 +400,42 @@ const Recipes: React.FC = () => {
                             </AccordionItem>
                           </Accordion>
                         </VStack>
+                        <HStack align="right" marginTop={2}>
+                          <Button
+                            boxShadow="xs"
+                            rounded="md"
+                            variant="outline"
+                            padding="4"
+                            colorScheme="teal"
+                            color="teal"
+                            maxW="container.sm"
+                            onClick={() => {
+                              //Print Recipe
+                            }}>
+                            <AiFillPrinter />
+                            <Text marginLeft={2}>Print Recipe</Text>
+                          </Button>
+                          <Button
+                            marginLeft={130}
+                            boxShadow="xs"
+                            rounded="md"
+                            padding="4"
+                            bg="red"
+                            color="black"
+                            maxW="container.sm"
+                            onClick={() => {
+                              toast({
+                                title: 'Recipe Deleted',
+                                description:
+                                  'This recipe has removed from your recipe book.',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                              });
+                            }}>
+                            Delete Recipe
+                          </Button>
+                        </HStack>
                       </Container>
                     ))
                   )}
@@ -496,10 +556,11 @@ const Recipes: React.FC = () => {
                                   </Text>
                                   <Text noOfLines={1}>
                                     Carbs:{' '}
-                                    {recipe.data.nutrients.total_carbohydrate}g                                 
-                                    
+                                    {recipe.data.nutrients.total_carbohydrate}g
                                   </Text>
-                                  <Text noOfLines={1} style={{ paddingLeft: '20px' }}>
+                                  <Text
+                                    noOfLines={1}
+                                    style={{paddingLeft: '20px'}}>
                                     Sugar: {recipe.data.nutrients.sugars}
                                   </Text>
                                   <Text noOfLines={1}>
@@ -544,6 +605,42 @@ const Recipes: React.FC = () => {
                             </AccordionItem>
                           </Accordion>
                         </VStack>
+                        <HStack align="right" marginTop={2}>
+                          <Button
+                            boxShadow="xs"
+                            rounded="md"
+                            variant="outline"
+                            padding="4"
+                            colorScheme="teal"
+                            color="teal"
+                            maxW="container.sm"
+                            onClick={() => {
+                              //Print Recipe
+                            }}>
+                            <AiFillPrinter />
+                            <Text marginLeft={2}>Print Recipe</Text>
+                          </Button>
+                          <Button
+                            marginLeft={130}
+                            boxShadow="xs"
+                            rounded="md"
+                            padding="4"
+                            bg="red"
+                            color="black"
+                            maxW="container.sm"
+                            onClick={() => {
+                              toast({
+                                title: 'Recipe removed from saved.',
+                                description:
+                                  'This recipe has been removed from your saved recipe book.',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                              });
+                            }}>
+                            Delete Recipe
+                          </Button>
+                        </HStack>
                       </Container>
                     ))
                   )}
