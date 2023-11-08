@@ -105,6 +105,12 @@ const Recipes: React.FC = () => {
     const profileSnapshot = onSnapshot(doc(db, 'users/', email), doc => {
       setProfile(doc.data());
     });
+
+    return () => {
+      recipesSnapshot();
+      savedRecipesSnapshot();
+      profileSnapshot();
+    }
   }, []);
 
   async function deleteMyRecipe(recipeName: string){
