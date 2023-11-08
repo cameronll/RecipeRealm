@@ -136,15 +136,19 @@ const Explore: React.FC = () => {
   const toast = useToast();
 
   useEffect(() => {
-    onSnapshot(doc(db, 'users/', email), doc => {
+    const unmountFollowing = onSnapshot(doc(db, 'users/', email), doc => {
       const userFollowing = doc?.data()?.following;
       setFollowing(userFollowing);
     });
+
+    return () => {
+      unmountFollowing();
+    }
   }, []);
 
   useEffect(() => {
     const profilesQuery = query(collection(db, 'users'));
-    onSnapshot(profilesQuery, querySnapshot => {
+    const unmountProfiles = onSnapshot(profilesQuery, querySnapshot => {
       const temp: any = [];
       querySnapshot.forEach(doc => {
         temp.push(doc.data());
@@ -156,7 +160,7 @@ const Explore: React.FC = () => {
       collection(db, 'posts'),
       orderBy('date_time', 'desc'),
     );
-    onSnapshot(postsQuery, querySnapshot => {
+    const unmountPosts = onSnapshot(postsQuery, querySnapshot => {
       const allTemp: any[] = [];
       const friendsTemp: any[] = [];
       querySnapshot.forEach(doc => {
@@ -168,48 +172,14 @@ const Explore: React.FC = () => {
       setFriendsPosts(friendsTemp);
       setAllPosts(allTemp);
     });
+
+    return () => {
+      unmountProfiles();
+      unmountPosts();
+    }
   }, [following]);
   // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // const toast = useToast();
-
-  useEffect(() => {
-    async function getData() {
-      const getUser = doc(db, 'users/', email);
-      const getUserData = await getDoc(getUser);
-      const userFollowing = getUserData?.data()?.following;
-      localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
-
-      const profilesQuery = query(collection(db, 'users'));
-      const profilesDocs = await getDocs(profilesQuery);
-      const profilesData = profilesDocs.docs.map(doc => doc.data());
-      setProfiles(profilesData);
-
-      const allPostsQuery = query(
-        collection(db, 'posts'),
-        orderBy('date_time', 'desc'),
-      );
-      const allPostsDocs = await getDocs(allPostsQuery);
-      const allPostsData = allPostsDocs.docs.map(doc => doc.data());
-      setAllPosts(allPostsData);
-
-      const following: string[] = JSON.parse(
-        localStorage.getItem('FOLLOWING') as string,
-      );
-      if (following[0]) {
-        const friendsPostsQuery = query(
-          collection(db, 'posts'),
-          where('email', 'in', following),
-          orderBy('date_time', 'desc'),
-        );
-        const friendsPostsDocs = await getDocs(friendsPostsQuery);
-        const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
-        setFriendsPosts(friendsPostsData);
-      } else {
-        setFriendsPosts([]);
-      }
-    }
-    getData();
-  }, []);
 
   async function addFollowing(followingEmail: string) {
     let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
