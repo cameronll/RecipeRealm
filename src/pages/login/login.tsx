@@ -22,7 +22,7 @@ import {auth} from '../../firebaseConfig';
 import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
-//import GoogleButton from 'react-google-button'
+import GoogleButton from 'react-google-button'
 
 import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
 
@@ -133,8 +133,8 @@ const Login = () => {
                 <Button colorScheme="teal" size="lg" onClick={signIn}>
                   Login
                 </Button>
-
-                {/* <Button mt={4} colorScheme="red" size="lg"></Button> */}
+                
+                <GoogleButton onClick={googleSignIn} />
               </Link>
 
               <Spacer />

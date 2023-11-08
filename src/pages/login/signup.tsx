@@ -72,7 +72,7 @@ const SignUp = () => {
           console.log('Document written with ID: ', docRef);
 
           // Additional actions upon successful signup (if needed)
-          toast({
+          toast({//
             title: 'Account created.',
             description: "We've created your recipe for you.",
             status: 'success',
