@@ -13,6 +13,8 @@ import {
   setDoc,
   onSnapshot,
   increment,
+  arrayRemove,
+  arrayUnion,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -182,13 +184,10 @@ const Explore: React.FC = () => {
   // const toast = useToast();
 
   async function addFollowing(followingEmail: string) {
-    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
-    if (!following.includes(followingEmail)) {
-      following.push(followingEmail);
-      localStorage.setItem('FOLLOWING', JSON.stringify(following));
+    if (!following?.includes(followingEmail)) {
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
-        following: following,
+        following: arrayUnion(followingEmail),
       });
     } else {
       console.log('Already following');
@@ -196,30 +195,20 @@ const Explore: React.FC = () => {
   }
 
   async function removeFollowing(followingEmail: string) {
-    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
-    if (following.includes(followingEmail)) {
-      let index = following.indexOf(followingEmail);
-      following.splice(index, 1);
-      localStorage.setItem('FOLLOWING', JSON.stringify(following));
+    if (following?.includes(followingEmail)) {
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
-        following: following,
+        following: arrayRemove(followingEmail),
       });
     }
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
   const isFollowing = (email: string) => {
-    const following: string[] = JSON.parse(
-      localStorage.getItem('FOLLOWING') as string,
-    );
-    if (following.includes(email)) {
+    if (following?.includes(email)) {
       return true;
     }
     return false;
-  };
-  const clicked = () => {
-    setClick(!click);
   };
 
   const like = async (datetime: any) => {
