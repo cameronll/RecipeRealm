@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback, memo, useMemo} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
 import {BsFillChatDotsFill, BsBookmarks} from 'react-icons/bs';
 import {
@@ -13,8 +13,6 @@ import {
   setDoc,
   onSnapshot,
   increment,
-  arrayUnion,
-  arrayRemove,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -62,7 +60,7 @@ import {
   collapseTextChangeRangesAcrossMultipleVersions,
   forEachChild,
 } from 'typescript';
-import {AiFillHeart, AiOutlineHeart} from 'react-icons/ai';
+import {AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 
 // type that holds nutrition facts
@@ -117,6 +115,15 @@ function getIndex(profiles: any[], email: string): number {
   }
   return -1;
 }
+const isFollowing = (email: string) => {
+  const following: string[] = JSON.parse(
+    localStorage.getItem('FOLLOWING') as string,
+  );
+  if (following.includes(email)) {
+    return true;
+  }
+  return false;
+};
 
 const Explore: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
@@ -125,23 +132,19 @@ const Explore: React.FC = () => {
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [following, setFollowing] = useState<any[]>([]);
-  const [liked, setLiked] = useState<any>([]);
+  const [click, setClick] = useState<any>(false);
   const toast = useToast();
 
   useEffect(() => {
-    const unmountFollowing = onSnapshot(doc(db, 'users/', email), doc => {
+    onSnapshot(doc(db, 'users/', email), doc => {
       const userFollowing = doc?.data()?.following;
       setFollowing(userFollowing);
-      const userLiked = doc?.data()?.liked;
-      setLiked(userLiked);
     });
-
-    return () => {unmountFollowing();}
   }, []);
 
   useEffect(() => {
     const profilesQuery = query(collection(db, 'users'));
-    const unmountProfiles = onSnapshot(profilesQuery, querySnapshot => {
+    onSnapshot(profilesQuery, querySnapshot => {
       const temp: any = [];
       querySnapshot.forEach(doc => {
         temp.push(doc.data());
@@ -153,7 +156,7 @@ const Explore: React.FC = () => {
       collection(db, 'posts'),
       orderBy('date_time', 'desc'),
     );
-    const unmountPosts = onSnapshot(postsQuery, querySnapshot => {
+    onSnapshot(postsQuery, querySnapshot => {
       const allTemp: any[] = [];
       const friendsTemp: any[] = [];
       querySnapshot.forEach(doc => {
@@ -165,20 +168,57 @@ const Explore: React.FC = () => {
       setFriendsPosts(friendsTemp);
       setAllPosts(allTemp);
     });
-
-    return () => {
-      unmountProfiles();
-      unmountPosts();
-    }
   }, [following]);
   // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // const toast = useToast();
 
+  useEffect(() => {
+    async function getData() {
+      const getUser = doc(db, 'users/', email);
+      const getUserData = await getDoc(getUser);
+      const userFollowing = getUserData?.data()?.following;
+      localStorage.setItem('FOLLOWING', JSON.stringify(userFollowing));
+
+      const profilesQuery = query(collection(db, 'users'));
+      const profilesDocs = await getDocs(profilesQuery);
+      const profilesData = profilesDocs.docs.map(doc => doc.data());
+      setProfiles(profilesData);
+
+      const allPostsQuery = query(
+        collection(db, 'posts'),
+        orderBy('date_time', 'desc'),
+      );
+      const allPostsDocs = await getDocs(allPostsQuery);
+      const allPostsData = allPostsDocs.docs.map(doc => doc.data());
+      setAllPosts(allPostsData);
+
+      const following: string[] = JSON.parse(
+        localStorage.getItem('FOLLOWING') as string,
+      );
+      if (following[0]) {
+        const friendsPostsQuery = query(
+          collection(db, 'posts'),
+          where('email', 'in', following),
+          orderBy('date_time', 'desc'),
+        );
+        const friendsPostsDocs = await getDocs(friendsPostsQuery);
+        const friendsPostsData = friendsPostsDocs.docs.map(doc => doc.data());
+        setFriendsPosts(friendsPostsData);
+      } else {
+        setFriendsPosts([]);
+      }
+    }
+    getData();
+  }, []);
+
   async function addFollowing(followingEmail: string) {
-    if (!following?.includes(followingEmail)) {
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
+    if (!following.includes(followingEmail)) {
+      following.push(followingEmail);
+      localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
-        following: arrayUnion(followingEmail),
+        following: following,
       });
     } else {
       console.log('Already following');
@@ -186,36 +226,33 @@ const Explore: React.FC = () => {
   }
 
   async function removeFollowing(followingEmail: string) {
-    if (following?.includes(followingEmail)) {
+    let following = JSON.parse(localStorage.getItem('FOLLOWING') as string);
+    if (following.includes(followingEmail)) {
+      let index = following.indexOf(followingEmail);
+      following.splice(index, 1);
+      localStorage.setItem('FOLLOWING', JSON.stringify(following));
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
-        following: arrayRemove(followingEmail),
+        following: following,
       });
     }
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
   const isFollowing = (email: string) => {
-    if (following?.includes(email)) {
+    const following: string[] = JSON.parse(
+      localStorage.getItem('FOLLOWING') as string,
+    );
+    if (following.includes(email)) {
       return true;
     }
     return false;
   };
-
-  const isLiked = (datetime: any) => {
-    for (let i = 0; i < liked.length; i++){
-      if (liked[i].seconds === datetime.seconds){
-        return true;
-      }
-    }
-    return false;
-  }
+  const clicked = () => {
+    setClick(!click);
+  };
 
   const like = async (datetime: any) => {
-    const docRef = doc(db, "users/", email);
-    await updateDoc(docRef, {
-      liked: arrayUnion(datetime)
-    });
     const q = query(
       collection(db, 'posts/'),
       where('date_time', '==', datetime),
@@ -224,23 +261,6 @@ const Explore: React.FC = () => {
     docs.forEach(doc => {
       updateDoc(doc.ref, {
         likes: increment(1),
-      });
-    });
-  };
-
-  const unlike = async (datetime: any) => {
-    const docRef = doc(db, "users/", email);
-    await updateDoc(docRef, {
-      liked: arrayRemove(datetime)
-    });
-    const q = query(
-      collection(db, 'posts/'),
-      where('date_time', '==', datetime),
-    );
-    const docs = await getDocs(q);
-    docs.forEach(doc => {
-      updateDoc(doc.ref, {
-        likes: increment(-1),
       });
     });
   };
@@ -328,19 +348,9 @@ const Explore: React.FC = () => {
                       spacing={4}
                       align="stretch"
                       marginBottom={3}>
-                        {
-                        isLiked(post.date_time) ? (
-                          <Button variant="link" colorScheme="white"
-                          onClick = {() => unlike(post?.date_time)}>
-                          <AiFillHeart style={{fontSize: '34px'}} />
-                          </Button>
-                        ) : (
-                          <Button variant="link" colorScheme="white"
-                          onClick = {() => like(post?.date_time)}>
-                          <AiOutlineHeart style={{fontSize: '34px'}} />
-                          </Button>
-                        )
-                      }
+                      <Button variant="link" colorScheme="white">
+                        <AiOutlineHeart style={{fontSize: '34px'}} />
+                      </Button>
                       <Button variant="link" colorScheme="white">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
