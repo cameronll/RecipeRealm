@@ -1,7 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navbar from '../components/Navbar';
-import {db, storage } from '../firebaseConfig';
-import { getBlob, getDownloadURL, getStream, ref, uploadBytes } from "firebase/storage";
+import {db, storage} from '../firebaseConfig';
+import {
+  getBlob,
+  getDownloadURL,
+  getStream,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
 import {
   collection,
   addDoc,
@@ -79,13 +85,13 @@ async function toDB(
   });
 }
 
-async function uploadImage(file:any){
+async function uploadImage(file: any) {
   const storageRef = ref(storage, 'image');
 
   // 'file' comes from the Blob or File API
-  uploadBytes(storageRef, file).then((snapshot) => {
+  uploadBytes(storageRef, file).then(snapshot => {
     console.log('Uploaded a blob or file!');
-});
+  });
 }
 
 /*
@@ -147,8 +153,7 @@ const Profile: React.FC = () => {
 
   const handleDelete = async () => {
     //TODO: Delete USer from database
-    await deleteDoc(doc(db, "users", email));
-    
+    await deleteDoc(doc(db, 'users', email));
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -184,40 +189,41 @@ const Profile: React.FC = () => {
         <Stack
           spacing={4}
           w={'full'}
-          maxW={'md'}
+          maxW={'lg'}
           bg={useColorModeValue('white', 'gray.700')}
           rounded={'xl'}
           boxShadow={'lg'}
           p={6}
           my={12}>
           <Heading lineHeight={1.1} fontSize={{base: '2xl', sm: '3xl'}}>
-            User Profile Edit
-            <h1>{profile?.username}</h1>
+            Edit Profile
           </Heading>
           <FormControl id="userName">
             <FormLabel>User Icon</FormLabel>
 
             <Stack direction={['column', 'row']} spacing={36}>
               <Center>
-              {selectedImage && (
-                <div>
-                  <img
-                    alt="not found"
-                    width={"250px"}
-                    src={URL.createObjectURL(selectedImage)}
-                  />
-                  <br />
-                  <button onClick={() => setSelectedImage(null)}>Remove</button>
-                </div>
-              )}
+                {selectedImage && (
+                  <div>
+                    <img
+                      alt="not found"
+                      width={'250px'}
+                      src={URL.createObjectURL(selectedImage)}
+                    />
+                    <br />
+                    <button onClick={() => setSelectedImage(null)}>
+                      Remove
+                    </button>
+                  </div>
+                )}
               </Center>
               <Stack direction={['column', 'column']} spacing={6}>
                 <Center w="full">
                   <input
                     type="file"
                     name="myImage"
-                    onChange={(event) => {
-                      if (event?.target?.files){
+                    onChange={event => {
+                      if (event?.target?.files) {
                         console.log(event.target.files[0]);
                         setSelectedImage(event.target.files[0]);
                         uploadImage(event.target.files[0]);
@@ -268,6 +274,23 @@ const Profile: React.FC = () => {
               </Stack>
             </Stack>
           </FormControl>
+          <FormControl id="firstName" isRequired>
+            <FormLabel>First Name</FormLabel>
+            <Input
+              placeholder="First Name"
+              _placeholder={{color: 'gray.500'}}
+              type="text"
+            />
+          </FormControl>
+          <FormControl id="LastName" isRequired>
+            <FormLabel>Last Name</FormLabel>
+            <Input
+              placeholder="Last Name"
+              _placeholder={{color: 'gray.500'}}
+              type="text"
+            />
+          </FormControl>
+
           <FormControl id="userName" isRequired>
             <FormLabel>User name</FormLabel>
             <Input

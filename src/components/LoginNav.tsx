@@ -60,8 +60,9 @@ const LoginNavbar: React.FC = () => {
           />
           <HStack spacing={8} alignItems={'center'}>
             <Image
+              mt={15}
               borderRadius="30px"
-              src="logo192.png"
+              src="widthLogo.png"
               alt="Logo"
               w={100}
               mb={15}

@@ -40,8 +40,16 @@ import {
   Center,
   VStack,
   useBreakpointValue,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  TabPanels,
+  InputGroup,
+  InputLeftElement,
+  InputRightAddon,
 } from '@chakra-ui/react';
-import {SmallCloseIcon} from '@chakra-ui/icons';
+import {Search2Icon, SmallCloseIcon} from '@chakra-ui/icons';
 import Posts from './posts/posts';
 
 async function toDB(
@@ -126,8 +134,40 @@ const Friends: React.FC = () => {
           </Stack>
         </VStack>
       </Flex>
-      <Center py={6} minH="100vh">
-        <Box
+      <Center>
+        <InputGroup
+          borderRadius={5}
+          size="lg" // Change the size to "lg" for a larger input group
+          minH="50px" // Increase the minimum height as needed
+          marginBottom={3}
+          maxW="60%" // Increase the maximum width as needed
+          marginTop={3}
+          rounded="3xl"
+          bg="white">
+          <InputLeftElement children={<Search2Icon color="gray.600" />} />
+          <Input type="text" placeholder="Search..." rounded="lg" />
+          <InputRightAddon p={0} border="none" marginLeft={3}>
+            <Button colorScheme="teal" size="lg">
+              Search
+            </Button>
+          </InputRightAddon>
+        </InputGroup>
+      </Center>
+      <Box py={6} minH="100vh">
+        <Box alignSelf="center">
+          <Tabs isFitted variant="enclosed" size="lg">
+            <TabList>
+              <Tab>Find Friends</Tab>
+              <Tab>My Friends</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel></TabPanel>
+              <TabPanel></TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Box>
+
+        {/* <Box
           maxW={'320px'}
           w={'full'}
           bg={useColorModeValue('white', 'gray.900')}
@@ -219,8 +259,8 @@ const Friends: React.FC = () => {
               Follow
             </Button>
           </Stack>
-        </Box>
-      </Center>
+        </Box> */}
+      </Box>
     </>
   );
 };

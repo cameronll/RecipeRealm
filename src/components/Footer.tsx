@@ -60,9 +60,9 @@ export default function SmallWithLogoLeft() {
           <Stack>
             <Image
               borderRadius="30px"
-              src="logo192.png"
+              src="widthLogo.png"
               alt="Logo"
-              w={100}
+              w={150}
               mb={15}
             />
           </Stack>

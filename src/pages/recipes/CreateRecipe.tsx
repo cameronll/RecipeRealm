@@ -1,16 +1,7 @@
 import {useState, useEffect} from 'react';
 import {db} from '../../firebaseConfig';
 import {IoIosAdd, IoIosRemove} from 'react-icons/io';
-import {
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-} from 'firebase/firestore';
-import {getAuth, onAuthStateChanged} from 'firebase/auth';
-import {useFormik} from 'formik';
+import {doc, setDoc} from 'firebase/firestore';
 
 import {
   Progress,
@@ -42,6 +33,7 @@ import {
   Stack,
   Text,
   useBreakpointValue,
+  HStack,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
@@ -285,7 +277,7 @@ const Form1 = () => {
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
-        Recipe Creator
+        Add
       </Heading>
       <FormControl mt="2%">
         <FormLabel htmlFor="recipeName" fontWeight={'normal'}>
@@ -673,7 +665,8 @@ const Form2 = () => {
               rounded="md"
               value={ingredientMeasurement}
               onChange={handleIMeasurement}
-              isRequired={true}>
+              isRequired={false}>
+              <option> </option>
               <option> </option>
               <option>Ibs</option>
               <option>oz</option>
@@ -832,6 +825,7 @@ export default function Multistep() {
           marginBottom={180}>
           <Progress
             hasStripe
+            colorScheme="red"
             value={progress}
             mb="5%"
             mx="5%"
@@ -840,34 +834,43 @@ export default function Multistep() {
           <ButtonGroup mt="5%" w="100%">
             <Flex w="100%" justifyContent="space-between">
               <Flex>
-                <Button
-                  onClick={() => {
-                    setStep(step - 1);
-                    setProgress(progress - 33.33);
-                  }}
-                  isDisabled={step === 1}
-                  colorScheme="teal"
-                  variant="solid"
-                  w="7rem"
-                  mr="5%">
-                  Back
-                </Button>
-                <Button
-                  w="7rem"
-                  isDisabled={step === 3}
-                  onClick={() => {
-                    setStep(step + 1);
-                    if (step === 3) {
-                      setProgress(100);
-                    } else {
-                      setProgress(progress + 33.33);
-                    }
-                    console.log(window.localStorage.getItem('RECIPENAME'));
-                  }}
-                  colorScheme="teal"
-                  variant="outline">
-                  Next
-                </Button>
+                <VStack>
+                  <HStack>
+                    <Button
+                      onClick={() => {
+                        setStep(step - 1);
+                        setProgress(progress - 33.33);
+                      }}
+                      isDisabled={step === 1}
+                      colorScheme="teal"
+                      variant="solid"
+                      w="7rem"
+                      mr="5%">
+                      Back
+                    </Button>
+                    <Button
+                      w="7rem"
+                      isDisabled={step === 3}
+                      onClick={() => {
+                        setStep(step + 1);
+                        if (step === 3) {
+                          setProgress(100);
+                        } else {
+                          setProgress(progress + 33.33);
+                        }
+                        console.log(window.localStorage.getItem('RECIPENAME'));
+                      }}
+                      colorScheme="teal"
+                      variant="outline">
+                      Next
+                    </Button>
+                  </HStack>
+                  <Link to="/recipes">
+                    <Button colorScheme="red" alignSelf="right" w="auto">
+                      Return to Recipe Book
+                    </Button>
+                  </Link>
+                </VStack>
               </Flex>
               {step === 3 ? (
                 <Link to="../recipes">

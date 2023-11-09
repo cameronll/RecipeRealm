@@ -145,7 +145,7 @@ const Explore: React.FC = () => {
 
     return () => {
       unmountFollowing();
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -178,7 +178,7 @@ const Explore: React.FC = () => {
     return () => {
       unmountProfiles();
       unmountPosts();
-    }
+    };
   }, [following]);
   // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // const toast = useToast();
@@ -257,7 +257,7 @@ const Explore: React.FC = () => {
           >
             <Stack maxW={'2xl'} spacing={6}>
               <Text textAlign="center" fontSize="6xl" as="b" color="white">
-                Explore Page
+                Explore
               </Text>
             </Stack>
           </VStack>
@@ -265,8 +265,12 @@ const Explore: React.FC = () => {
       </Flex>
       <Tabs isFitted variant="enclosed" size="lg">
         <TabList mb="1em">
-          <Tab>Explore</Tab>
-          <Tab>Friends</Tab>
+          <Tab>
+            <Text as="b">Explore</Text>
+          </Tab>
+          <Tab>
+            <Text as="b">Friends</Text>
+          </Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -292,7 +296,9 @@ const Explore: React.FC = () => {
                     minH="350"
                     display="flex"
                     flexDirection="column">
-                    <div style={{flex: 1, fontSize: '24px'}}>{post?.title}</div>
+                    <div style={{flex: 1, fontSize: '24px'}}>
+                      {post?.recipe.data.recipe_name}
+                    </div>
                     <Center>
                       <Image
                         borderRadius="30px"
@@ -398,7 +404,9 @@ const Explore: React.FC = () => {
                                         />
                                         <Heading
                                           fontSize={'2xl'}
-                                          fontFamily={'body'}>
+                                          fontFamily={'body'}
+                                          textColor="white">
+                                          @
                                           {
                                             profiles[
                                               getIndex(profiles, post.email)
@@ -408,6 +416,16 @@ const Explore: React.FC = () => {
                                         <Text
                                           textAlign={'center'}
                                           as="b"
+                                          color="white"
+                                          px={3}>
+                                          {
+                                            profiles[
+                                              getIndex(profiles, post.email)
+                                            ]?.name
+                                          }
+                                        </Text>
+                                        <Text
+                                          textAlign={'center'}
                                           color="white"
                                           px={3}>
                                           <Text color="white">
@@ -425,6 +443,7 @@ const Explore: React.FC = () => {
                                           spacing={4}>
                                           <Link to="/FriendsProfile">
                                             <Button
+                                              variant="outline"
                                               flex={1}
                                               fontSize={'sm'}
                                               rounded={'full'}
@@ -444,7 +463,9 @@ const Explore: React.FC = () => {
                                                   ),
                                                 );
                                               }}>
-                                              View Recipes
+                                              <Text textColor="white">
+                                                View Recipes
+                                              </Text>
                                             </Button>
                                           </Link>
                                           {isFollowing(post.email) ? (
@@ -468,7 +489,7 @@ const Explore: React.FC = () => {
                                                   title: 'Unfollowed',
                                                   description:
                                                     'Removed from your friends',
-                                                  status: 'success',
+                                                  status: 'error',
                                                   duration: 3000,
                                                   isClosable: true,
                                                 });
@@ -493,17 +514,16 @@ const Explore: React.FC = () => {
                                                 bg: 'green.500',
                                               }}
                                               onClick={() => {
-                                                if (post.email === email){
+                                                if (post.email === email) {
                                                   toast({
                                                     title: 'Cannot Follow',
                                                     description:
-                                                      'You can\'t follow yourself!',
+                                                      "You can't follow yourself!",
                                                     status: 'error',
                                                     duration: 3000,
                                                     isClosable: true,
                                                   });
-                                                }
-                                                else{
+                                                } else {
                                                   addFollowing(post.email);
                                                   toast({
                                                     title: 'Followed',
@@ -514,7 +534,6 @@ const Explore: React.FC = () => {
                                                     isClosable: true,
                                                   });
                                                 }
-                                                
                                               }}>
                                               Follow
                                             </Button>
@@ -528,9 +547,16 @@ const Explore: React.FC = () => {
                             </>
                           )}
                         </Popover>
+                        <Button
+                          marginLeft={2}
+                          colorScheme="whiteAlpha"
+                          variant="outline"
+                          size="xs">
+                          View Recipe
+                        </Button>
                       </Flex>
 
-                      <Text fontSize={20}>Description:</Text>
+                      <Text fontSize={20}>Caption:</Text>
                       <Text>{post.description}</Text>
                     </Box>
                   </Box>
@@ -547,16 +573,16 @@ const Explore: React.FC = () => {
               ) : (
                 friendsPosts.map(post => (
                   <Container
+                    // minH="100vh"
                     shadow={1000}
-                    backgroundColor="rgba(0, 128, 128, 1)"
                     maxW="container.lg"
                     color="white"
-                    minH="350"
                     display="flex"
                     flexDirection="column"
                     padding={1}
                     rounded="lg"
-                    boxShadow="dark-lg">
+                    boxShadow="dark-lg"
+                    backgroundColor="rgba(0, 128, 128, 1)">
                     <Box
                       padding={4}
                       rounded="md"
@@ -567,7 +593,7 @@ const Explore: React.FC = () => {
                       display="flex"
                       flexDirection="column">
                       <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.title}
+                        {post?.recipe.data.recipe_name}
                       </div>
                       <Center>
                         <Image
@@ -674,7 +700,9 @@ const Explore: React.FC = () => {
                                           />
                                           <Heading
                                             fontSize={'2xl'}
-                                            fontFamily={'body'}>
+                                            fontFamily={'body'}
+                                            textColor="white">
+                                            @
                                             {
                                               profiles[
                                                 getIndex(profiles, post.email)
@@ -684,6 +712,16 @@ const Explore: React.FC = () => {
                                           <Text
                                             textAlign={'center'}
                                             as="b"
+                                            color="white"
+                                            px={3}>
+                                            {
+                                              profiles[
+                                                getIndex(profiles, post.email)
+                                              ]?.name
+                                            }
+                                          </Text>
+                                          <Text
+                                            textAlign={'center'}
                                             color="white"
                                             px={3}>
                                             <Text color="white">
@@ -701,6 +739,7 @@ const Explore: React.FC = () => {
                                             spacing={4}>
                                             <Link to="/FriendsProfile">
                                               <Button
+                                                variant="outline"
                                                 flex={1}
                                                 fontSize={'sm'}
                                                 rounded={'full'}
@@ -720,7 +759,9 @@ const Explore: React.FC = () => {
                                                     ),
                                                   );
                                                 }}>
-                                                View Recipes
+                                                <Text textColor="white">
+                                                  View Recipes
+                                                </Text>
                                               </Button>
                                             </Link>
                                             {isFollowing(post.email) ? (
@@ -744,7 +785,7 @@ const Explore: React.FC = () => {
                                                     title: 'Unfollowed',
                                                     description:
                                                       'Removed from your friends',
-                                                    status: 'success',
+                                                    status: 'error',
                                                     duration: 3000,
                                                     isClosable: true,
                                                   });
@@ -769,15 +810,26 @@ const Explore: React.FC = () => {
                                                   bg: 'green.500',
                                                 }}
                                                 onClick={() => {
-                                                  toast({
-                                                    title: 'Followed',
-                                                    description:
-                                                      'Added to your friends',
-                                                    status: 'success',
-                                                    duration: 3000,
-                                                    isClosable: true,
-                                                  });
-                                                  addFollowing(post.email);
+                                                  if (post.email === email) {
+                                                    toast({
+                                                      title: 'Cannot Follow',
+                                                      description:
+                                                        "You can't follow yourself!",
+                                                      status: 'error',
+                                                      duration: 3000,
+                                                      isClosable: true,
+                                                    });
+                                                  } else {
+                                                    addFollowing(post.email);
+                                                    toast({
+                                                      title: 'Followed',
+                                                      description:
+                                                        'Added to your friends',
+                                                      status: 'success',
+                                                      duration: 3000,
+                                                      isClosable: true,
+                                                    });
+                                                  }
                                                 }}>
                                                 Follow
                                               </Button>
@@ -791,9 +843,16 @@ const Explore: React.FC = () => {
                               </>
                             )}
                           </Popover>
+                          <Button
+                            marginLeft={2}
+                            colorScheme="whiteAlpha"
+                            variant="outline"
+                            size="xs">
+                            View Recipe
+                          </Button>
                         </Flex>
 
-                        <Text fontSize={20}>Description:</Text>
+                        <Text fontSize={20}>Caption:</Text>
                         <Text>{post.description}</Text>
                       </Box>
                     </Box>

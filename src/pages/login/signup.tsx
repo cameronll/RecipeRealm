@@ -9,6 +9,9 @@ import {
   VStack,
   Text,
   useBreakpointValue,
+  Spacer,
+  Image,
+  Center,
 } from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
@@ -72,15 +75,16 @@ const SignUp = () => {
           console.log('Document written with ID: ', docRef);
 
           // Additional actions upon successful signup (if needed)
-          toast({//
+          toast({
+            //
             title: 'Account created.',
             description: "We've created your recipe for you.",
             status: 'success',
             duration: 3000,
             isClosable: true,
           });
-         
-          navigate('/login');//navigate to login
+
+          navigate('/login'); //navigate to login
         } catch (e) {
           console.log(e);
         }
@@ -99,8 +103,7 @@ const SignUp = () => {
         backgroundSize={'cover'}
         backgroundPosition={'center center'}
         alignContent={'flex-end'}
-        backgroundColor="rgba(0, 128, 128, 0.7)"
-        marginBottom={10}>
+        backgroundColor="rgba(0, 128, 128, 0.7)">
         <Flex
           w={'full'}
           h={'100'}
@@ -121,8 +124,33 @@ const SignUp = () => {
           </VStack>
         </Flex>
       </Flex>
-      <Flex minH="100vh" align="center" justify="center" direction="column">
-        <Box boxShadow="dark-lg" p={8} borderRadius={15} bg="primary.50">
+      <Flex
+        minH="100vh"
+        align="center"
+        justify="center"
+        direction="column"
+        backgroundColor={'#D3D3D3'}
+        backgroundImage={
+          'url(https://hips.hearstapps.com/hmg-prod/images/wdy050113taco-01-1624540365.jpg)'
+        }>
+        <Box
+          boxShadow="dark-lg"
+          backgroundColor="white"
+          p={8}
+          borderWidth={2}
+          minWidth="650px"
+          maxWidth="650px"
+          borderRadius={15}
+          bg="primary.50">
+          <Center>
+            <Image
+              borderRadius="30px"
+              src="circleLogo.png"
+              alt="Logo"
+              w={350}
+              mb={15}
+            />
+          </Center>
           <form onSubmit={formik.handleSubmit}>
             <FormControl isRequired>
               <FormLabel>Email address</FormLabel>
@@ -135,11 +163,20 @@ const SignUp = () => {
               />
               <FormHelperText>We'll never share your email.</FormHelperText>
 
-              <FormLabel>Name</FormLabel>
+              <FormLabel>First Name</FormLabel>
               <Input
                 name="name"
                 id="name"
-                placeholder="name"
+                placeholder="First Name"
+                onChange={formik.handleChange}
+                value={formik.values.name}
+              />
+
+              <FormLabel>Last Name</FormLabel>
+              <Input
+                name="lastname"
+                id="lastname"
+                placeholder="Last Name"
                 onChange={formik.handleChange}
                 value={formik.values.name}
               />
@@ -161,23 +198,31 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 value={formik.values.password}
               />
-              <ButtonGroup variant="outline" spacing="6">
-                <Button
-                  mt={4}
-                  variant="solid"
-                  colorScheme="teal"
-                  type="submit"
-                  size="lg"
-                  >
-                  Submit
-                </Button>
-
-                <Link to="/login">
-                  <Button mt={4} colorScheme="red" size="lg" variant="solid">
-                    Back
+              <Flex>
+                <Box p="2">
+                  <Link to="/login">
+                    <Button
+                      mt={4}
+                      colorScheme="red"
+                      size="lg"
+                      variant="solid"
+                      marginRight={83}>
+                      Back
+                    </Button>
+                  </Link>
+                </Box>
+                <Spacer />
+                <Box p="2">
+                  <Button
+                    mt={4}
+                    variant="solid"
+                    colorScheme="teal"
+                    type="submit"
+                    size="lg">
+                    Submit
                   </Button>
-                </Link>
-              </ButtonGroup>
+                </Box>
+              </Flex>
             </FormControl>
           </form>
         </Box>

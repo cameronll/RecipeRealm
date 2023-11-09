@@ -14,7 +14,9 @@ import SignUp from './pages/login/signup';
 import CreateRecipe from './pages/recipes/CreateRecipe';
 import Explore from './pages/explore';
 import FriendProfile from './pages/Friends/friendProfile';
+import RecipeDetail from './pages/recipes/recipeDetail';
 //Theme
+import {extendTheme} from '@chakra-ui/react';
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -33,6 +35,7 @@ export const App = () => (
         <Route path="Signup" element={<SignUp />} />
         <Route path="Explore" element={<Explore />} />
         <Route path="CreateRecipe" element={<CreateRecipe />} />
+        <Route path="RecipeDetail" element={<RecipeDetail />} />
       </Routes>
       <Footer />
     </BrowserRouter>

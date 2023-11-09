@@ -27,7 +27,7 @@ interface NavLinkProps {
 const Links = [
   {text: 'Calendar', href: '/calendar'},
   {text: 'Profile', href: '/profile'},
-  {text: 'My Recipes', href: '/recipes'},
+  {text: 'Recipe Book', href: '/recipes'},
   {text: 'Explore', href: '/explore'},
   {text: 'My Friends', href: '/friends'},
 ];
@@ -68,8 +68,9 @@ const Navbar: React.FC = () => {
           />
           <HStack spacing={8} alignItems={'center'}>
             <Image
+              mt={15}
               borderRadius="30px"
-              src="logo192.png"
+              src="widthLogo.png"
               alt="Logo"
               w={100}
               mb={15}

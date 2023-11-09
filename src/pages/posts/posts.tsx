@@ -21,6 +21,7 @@ import {
 import Navbar from '../../components/Navbar';
 import {BsUpload} from 'react-icons/bs';
 import {useToast} from '@chakra-ui/react';
+import {Link} from 'react-router-dom';
 import {
   Box,
   useColorModeValue,
@@ -32,7 +33,6 @@ import {
   Input,
   Heading,
   Center,
-  Link,
   Badge,
   SimpleGrid,
   FormControl,
@@ -250,7 +250,7 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-              Description
+              Caption
             </FormLabel>
             <Textarea
               placeholder="Brody's Stuff"
@@ -319,6 +319,9 @@ const Posts: React.FC = () => {
               <Text marginLeft={2}>File Upload</Text>
             </Button>
           </FormControl>
+          <Link to="/recipes">
+            <Button colorScheme="red.500">Back</Button>
+          </Link>
           <Flex justifyContent="right">
             <Button
               colorScheme="teal"
