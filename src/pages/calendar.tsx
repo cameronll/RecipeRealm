@@ -21,8 +21,8 @@ import {
   HStack,
   border,
 } from '@chakra-ui/react';
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
 
 // export default class App extends React.Component {
 //   render() {
@@ -113,7 +113,6 @@ const CalendarPage: React.FC = () => {
       <Navbar />
       <Flex
         w={'full'}
-        
         h={'100'}
         backgroundSize={'cover'}
         backgroundPosition={'center center'}
@@ -122,25 +121,25 @@ const CalendarPage: React.FC = () => {
         <VStack
           w={'full'}
           px={useBreakpointValue({base: 4, md: 8})}
-          bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
+          backgroundColor="rgba(0, 128, 128, 0.7)">
           <Stack maxW={'2xl'} spacing={6}>
-            <Text textAlign="center" fontSize="6xl" as="b">
-              Calendar Page
+            <Text textAlign="center" fontSize="6xl" as="b" textColor="white">
+              Calendar
             </Text>
           </Stack>
-          </VStack>
+        </VStack>
       </Flex>
       <HStack height={'auto'} padding={'25px'}>
-        <Container w={"80%"}>
+        <Container w={'80%'}>
           <FullCalendar
-            plugins={[ dayGridPlugin ]}
+            plugins={[dayGridPlugin]}
             initialView="dayGridMonth"
             aspectRatio={1}
             handleWindowResize={true}
             expandRows={true}
             events={[
-              { title: 'event 1', date: '2023-11-01' },
-              { title: 'event 2', date: '2023-11-02' }
+              {title: 'event 1', date: '2023-11-01'},
+              {title: 'event 2', date: '2023-11-02'},
             ]}
           />
         </Container>

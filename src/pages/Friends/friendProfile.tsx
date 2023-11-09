@@ -212,33 +212,6 @@ const FriendProfile: React.FC = (friend: any) => {
                 </Text>
               </VStack>
             </HStack>
-            <HStack marginTop={10}>
-              <Link to="/CreateRecipe">
-                <Button
-                  w="300px"
-                  rightIcon={<CgBowl />}
-                  colorScheme="teal"
-                  onClick={() => {
-                    window.localStorage.removeItem('RECIPENAME');
-                    window.localStorage.removeItem('COOKINGTIME');
-                    window.localStorage.removeItem('DIFFICULTY');
-                    window.localStorage.removeItem('APPLIANCES');
-                    window.localStorage.removeItem('COST');
-                    window.localStorage.removeItem('ALLERGENS');
-                    window.localStorage.removeItem('SERVINGS');
-                    window.localStorage.removeItem('INSTRUCTIONS');
-                    window.localStorage.removeItem('INGREDIENTSTRING');
-                    window.localStorage.removeItem('INGREDIENTCOUNT');
-                  }}>
-                  Create Recipe
-                </Button>
-              </Link>
-              <Link to="/Posts">
-                <Button w="300px" rightIcon={<BsWindow />} colorScheme="gray">
-                  Create Post
-                </Button>
-              </Link>
-            </HStack>
           </VStack>
         </HStack>
       </Container>

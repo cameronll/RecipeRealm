@@ -35,22 +35,31 @@ import {
   IconButton,
   Box,
   Text,
-  Link,
   Badge,
   Center,
   VStack,
   useBreakpointValue,
   Tabs,
   TabList,
+  Image,
   Tab,
   TabPanel,
   TabPanels,
   InputGroup,
   InputLeftElement,
   InputRightAddon,
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Container,
 } from '@chakra-ui/react';
+import {BsPersonPlusFill} from 'react-icons/bs';
+import {Link} from 'react-router-dom';
 import {Search2Icon, SmallCloseIcon} from '@chakra-ui/icons';
 import Posts from './posts/posts';
+import {AiFillPrinter} from 'react-icons/ai';
 
 async function toDB(
   newBiography: string,
@@ -161,7 +170,92 @@ const Friends: React.FC = () => {
               <Tab>My Friends</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel></TabPanel>
+              <TabPanel>
+                {' '}
+                <VStack>
+                  <Container
+                    boxShadow={'2xl'}
+                    minW="xl"
+                    borderRadius="lg"
+                    overflow="hidden"
+                    justify-content="space-between"
+                    bg="teal"
+                    minH="auto"
+                    display="flex"
+                    flexDirection="column"
+                    rounded="md"
+                    padding={4}
+                    margin={4}
+                    marginRight={10}
+                    marginLeft={10}
+                    shadow={'dark-lg'}>
+                    <VStack align="2x1">
+                      <HStack>
+                        <Avatar
+                          size="2xl"
+                          name="Kola Tioluwani"
+                          src="https://bit.ly/tioluwani-kolawole"
+                        />
+                        <VStack marginLeft={10}>
+                          <Heading> User's Page</Heading>
+                          <Text>Uesr's Recipes</Text>
+                          <Text>User's Posts</Text>
+                          <Text color={'black'} fontSize={'lg'}>
+                            {profile?.biography}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      <Button
+                        variant="link"
+                        rounded="md"
+                        as="h3"
+                        size="lg"
+                        color="black"
+                        padding={1}>
+                        <Center>
+                          <Text as="b" fontSize="34px" textColor="white"></Text>
+                        </Center>
+                      </Button>
+
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="white"
+                        color="black"
+                        maxW="container.sm"></Box>
+                    </VStack>
+                    <HStack align="right" marginTop={2}>
+                      <Button
+                        boxShadow="xs"
+                        rounded="md"
+                        variant="outline"
+                        padding="4"
+                        colorScheme="teal"
+                        color="white"
+                        maxW="container.400"
+                        onClick={() => {
+                          //Print Recipe
+                        }}>
+                        <BsPersonPlusFill />
+                        <Text marginLeft={2}>Follow</Text>
+                      </Button>
+                      <Link to="/FriendsProfile">
+                        <Button
+                          variant="outline"
+                          flex={1}
+                          fontSize={'sm'}
+                          _focus={{
+                            bg: 'gray.200',
+                          }}
+                          onClick={() => {}}>
+                          <Text textColor="white">View Recipes</Text>
+                        </Button>
+                      </Link>
+                    </HStack>
+                  </Container>
+                </VStack>
+              </TabPanel>
               <TabPanel></TabPanel>
             </TabPanels>
           </Tabs>

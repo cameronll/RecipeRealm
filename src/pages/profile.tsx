@@ -183,13 +183,11 @@ const Profile: React.FC = () => {
       </Flex>
       <Flex
         minH={'100vh'}
-        align={'center'}
         justify={'center'}
         bg={useColorModeValue('gray.50', 'gray.800')}>
         <Stack
           spacing={4}
-          w={'full'}
-          maxW={'lg'}
+          w={'80%'}
           bg={useColorModeValue('white', 'gray.700')}
           rounded={'xl'}
           boxShadow={'lg'}
@@ -201,23 +199,29 @@ const Profile: React.FC = () => {
           <FormControl id="userName">
             <FormLabel>User Icon</FormLabel>
 
-            <Stack direction={['column', 'row']} spacing={36}>
-              <Center>
-                {selectedImage && (
-                  <div>
-                    <img
-                      alt="not found"
-                      width={'250px'}
-                      src={URL.createObjectURL(selectedImage)}
-                    />
-                    <br />
-                    <button onClick={() => setSelectedImage(null)}>
-                      Remove
-                    </button>
-                  </div>
-                )}
-              </Center>
-              <Stack direction={['column', 'column']} spacing={6}>
+            <Stack direction={['column', 'row']}>
+              <VStack>
+                <Center>
+                  <Avatar
+                    size="2xl"
+                    name="Kola Tioluwani"
+                    src="https://bit.ly/tioluwani-kolawole"
+                  />
+                  {selectedImage && (
+                    <div>
+                      <img
+                        alt="not found"
+                        width={'250px'}
+                        src={URL.createObjectURL(selectedImage)}
+                      />
+                      <br />
+                      <button onClick={() => setSelectedImage(null)}>
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </Center>
+
                 <Center w="full">
                   <input
                     type="file"
@@ -231,99 +235,103 @@ const Profile: React.FC = () => {
                     }}
                   />
                 </Center>
-                <Center>
-                  <>
-                    <Button colorScheme="red" onClick={onOpen}>
-                      Delete Acccount
-                    </Button>
+              </VStack>
+              <VStack alignSelf="end">
+                <Button alignSelf="end" colorScheme="red" onClick={onOpen}>
+                  Delete Acccount
+                </Button>
 
-                    <AlertDialog
-                      isOpen={isOpen}
-                      leastDestructiveRef={cancelRef}
-                      onClose={onClose}>
-                      <AlertDialogOverlay>
-                        <AlertDialogContent>
-                          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Delete Account
-                          </AlertDialogHeader>
+                <AlertDialog
+                  isOpen={isOpen}
+                  leastDestructiveRef={cancelRef}
+                  onClose={onClose}>
+                  <AlertDialogOverlay>
+                    <AlertDialogContent>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Delete Account
+                      </AlertDialogHeader>
 
-                          <AlertDialogBody>
-                            Are you sure? You can't undo this action afterwards.
-                          </AlertDialogBody>
+                      <AlertDialogBody>
+                        Are you sure? You can't undo this action afterwards.
+                      </AlertDialogBody>
 
-                          <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose}>
-                              Cancel
-                            </Button>
-                            <Link to="/login">
-                              <Button
-                                colorScheme="red"
-                                // onClick={() => {
-                                //   handleDelete();
-                                // }}
-                                ml={3}>
-                                Delete
-                              </Button>
-                            </Link>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialogOverlay>
-                    </AlertDialog>
-                  </>
-                </Center>
-              </Stack>
+                      <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={onClose}>
+                          Cancel
+                        </Button>
+                        <Link to="/login">
+                          <Button
+                            colorScheme="red"
+                            // onClick={() => {
+                            //   handleDelete();
+                            // }}
+                            ml={3}>
+                            Delete
+                          </Button>
+                        </Link>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
+              </VStack>
             </Stack>
           </FormControl>
-          <FormControl id="firstName" isRequired>
-            <FormLabel>First Name</FormLabel>
-            <Input
-              placeholder="First Name"
-              _placeholder={{color: 'gray.500'}}
-              type="text"
-            />
-          </FormControl>
-          <FormControl id="LastName" isRequired>
-            <FormLabel>Last Name</FormLabel>
-            <Input
-              placeholder="Last Name"
-              _placeholder={{color: 'gray.500'}}
-              type="text"
-            />
-          </FormControl>
-
-          <FormControl id="userName" isRequired>
-            <FormLabel>User name</FormLabel>
-            <Input
-              placeholder="UserName"
-              _placeholder={{color: 'gray.500'}}
-              type="text"
-              value={newUsername}
-              onChange={handleUsernameChange}
-            />
-          </FormControl>
-          <FormControl id="oldpassword" isRequired>
-            <FormLabel>Old Password</FormLabel>
-            <Input
-              placeholder="password"
-              _placeholder={{color: 'gray.500'}}
-              type="password"
-              value={oldPassword}
-              onChange={handleOldPasswordChange}
-            />
-          </FormControl>
-          <FormControl id="newpassword" isRequired>
-            <FormLabel>New Password</FormLabel>
-            <Input
-              placeholder="password"
-              _placeholder={{color: 'gray.500'}}
-              type="password"
-              value={newPassword}
-              onChange={handlePasswordChange}
-            />
-          </FormControl>
+          <HStack>
+            <VStack w="full">
+              <FormControl id="firstName" isRequired>
+                <FormLabel>First Name</FormLabel>
+                <Input
+                  placeholder="First Name"
+                  _placeholder={{color: 'gray.500'}}
+                  type="text"
+                />
+              </FormControl>
+              <FormControl id="LastName" isRequired>
+                <FormLabel>Last Name</FormLabel>
+                <Input
+                  placeholder="Last Name"
+                  _placeholder={{color: 'gray.500'}}
+                  type="text"
+                />
+              </FormControl>
+            </VStack>
+            <VStack w="full">
+              <FormControl id="userName" isRequired>
+                <FormLabel>User name</FormLabel>
+                <Input
+                  placeholder="UserName"
+                  _placeholder={{color: 'gray.500'}}
+                  type="text"
+                  value={newUsername}
+                  onChange={handleUsernameChange}
+                />
+              </FormControl>
+              <FormControl id="oldpassword" isRequired>
+                <FormLabel>Old Password</FormLabel>
+                <Input
+                  placeholder="password"
+                  _placeholder={{color: 'gray.500'}}
+                  type="password"
+                  value={oldPassword}
+                  onChange={handleOldPasswordChange}
+                />
+              </FormControl>
+              <FormControl id="newpassword" isRequired>
+                <FormLabel>New Password</FormLabel>
+                <Input
+                  placeholder="password"
+                  _placeholder={{color: 'gray.500'}}
+                  type="password"
+                  value={newPassword}
+                  onChange={handlePasswordChange}
+                />
+              </FormControl>
+            </VStack>
+          </HStack>
           <FormControl id="biography" isRequired>
             <FormLabel>Biography</FormLabel>
             <Input
+              minH={100}
               placeholder="tell us about yourself"
               _placeholder={{color: 'gray.500'}}
               type="biography"
