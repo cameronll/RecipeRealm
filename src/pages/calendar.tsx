@@ -1,5 +1,5 @@
 import React from 'react';
-import {Calendar, Whisper, Popover, Badge} from 'rsuite';
+import {Whisper, Popover, Badge} from 'rsuite';
 import Navbar from '../components/Navbar';
 import {
   Box,
@@ -20,9 +20,20 @@ import {
   Image,
   HStack,
   border,
+  Input,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import { Calendar } from '@fullcalendar/core';
+import interactionPlugin from '@fullcalendar/interaction';
 
 // export default class App extends React.Component {
 //   render() {
@@ -108,6 +119,44 @@ const CalendarPage: React.FC = () => {
     return null;
   }
 
+  function ScheduleRecipe() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const btnRef = React.useRef()
+  
+    return (
+      <>
+        <Button alignSelf={'right'} /*ref={btnRef}*/ colorScheme='teal' onClick={onOpen}>
+          Schedule Recipe
+        </Button>
+        <Drawer
+          isOpen={isOpen}
+          placement='right'
+          onClose={onClose}
+          size={'sm'}
+          // finalFocusRef={btnRef}
+        >
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Create your account</DrawerHeader>
+  
+            <DrawerBody>
+              <Input placeholder='Type here...' />
+            </DrawerBody>
+  
+            <DrawerFooter>
+              <Button variant='outline' mr={3} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme='blue'>Save</Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </>
+    )
+  }
+  //ScheduleRecipe()
+
   return (
     <>
       <Navbar />
@@ -130,21 +179,31 @@ const CalendarPage: React.FC = () => {
         </VStack>
       </Flex>
       <HStack height={'auto'} padding={'25px'}>
-        <Container w={'80%'}>
-          <FullCalendar
-            plugins={[dayGridPlugin]}
-            initialView="dayGridMonth"
-            aspectRatio={1}
-            handleWindowResize={true}
-            expandRows={true}
-            events={[
-              {title: 'event 1', date: '2023-11-01'},
-              {title: 'event 2', date: '2023-11-02'},
-            ]}
-          />
-        </Container>
-        <Container>
-          <Text>Still working on it</Text>
+        <VStack w={'50%'} align={'left'}>
+          <Container>
+            <FullCalendar
+              plugins={[interactionPlugin, dayGridPlugin]}
+              initialView="dayGridMonth"
+              selectable={true}
+              aspectRatio={.9}
+              handleWindowResize={true}
+              expandRows={true}
+              dayMaxEvents={true}
+              events={[
+                {title: 'event 1', date: '2023-11-01'},
+                {title: 'event 2', date: '2023-11-01'},
+                {title: 'event 3', date: '2023-11-01'},
+              ]}
+            />
+          </Container>
+          <Container>
+            {ScheduleRecipe()}
+          </Container>
+        </VStack>
+        <Container textAlign={"center"}>
+          <Text>
+            Select Day to View Meal Plan Info
+          </Text>
         </Container>
       </HStack>
     </>
