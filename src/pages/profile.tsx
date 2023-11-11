@@ -107,12 +107,12 @@ const Profile: React.FC = () => {
   async function uploadImage(file: any) {
     const storageRef = ref(storage, (email + 'Profile'));
     // 'file' comes from the Blob or File API
-    uploadBytes(storageRef, file);
-    
-    const userRef = doc(db, 'users/', email);
-    await updateDoc(userRef, {
-      profilePic: (email + 'Profile')
+    uploadBytes(storageRef, file).then(async snapshot => {
+      const userRef = doc(db, 'users/', email);
+      await updateDoc(userRef, {
+      profilePic: await getDownloadURL(snapshot.ref)
     }); 
+    });
   }
 
   useEffect(() => {

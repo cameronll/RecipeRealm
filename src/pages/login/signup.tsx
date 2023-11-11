@@ -49,13 +49,15 @@ const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
   const toast = useToast();
   const following: string[] = [];
+  const profilePic = 'https://firebasestorage.googleapis.com' +
+  '/v0/b/reciperealm-cbc4f.appspot.com/o/default.jpeg?alt=media&token=e68e229a-2860-495a-8ced-8480f6c79b7f'
   const formik = useFormik({
     initialValues: {
       email: '',
       username: '',
       name: '',
       password: '',
-      profilePic: 'default.jpeg'
+      profilePic: profilePic
     },
     onSubmit: async values => {
       if (await uniqueUsername(values.username)) {

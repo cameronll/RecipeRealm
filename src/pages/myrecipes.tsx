@@ -108,12 +108,7 @@ const Recipes: React.FC = () => {
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
 
-  useEffect(() => {
-    // on mount, get the download url from database and set the url to selectedFile
-    if (profile){
-      getDownloadURL(ref(storage, profile.profilePic)).then((url) => setSelectedFile(url));
-    }
-  }, [profile])
+
   // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
   // recipe.creator to get the username of who posted it
 
@@ -154,7 +149,7 @@ const Recipes: React.FC = () => {
                 size="2xl"
                 name={profile?.name}
                 src={
-                  selectedFile
+                  profile?.profilePic
                 }
               />{' '}
               <VStack marginLeft={10}>

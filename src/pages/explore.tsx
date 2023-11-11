@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react';
-import {db} from '../firebaseConfig';
+import {db, storage} from '../firebaseConfig';
 import {useDocument, useCollection, useCollectionData, useDocumentData} from 'react-firebase-hooks/firestore';
 import {BsFillChatDotsFill, BsBookmarks, BsFillBookmarksFill} from 'react-icons/bs';
 import {
@@ -66,6 +66,7 @@ import {
 } from 'typescript';
 import {AiFillHeart, AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -435,7 +436,7 @@ const Explore: React.FC = () => {
                                         <Avatar
                                           size={'xl'}
                                           src={
-                                            'https://i.ytimg.com/vi/WH7uKNQDzWI/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBYKEowDw==&rs=AOn4CLCPPCr7AOoCWseh5XdjlHeFmyc2rQ'
+                                            "default-image-icon-missing-picture-page-vector-40546530.jpg"
                                           }
                                           mb={4}
                                           pos={'relative'}
