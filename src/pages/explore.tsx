@@ -325,7 +325,11 @@ const Explore: React.FC = () => {
                     <Center>
                       <Image
                         borderRadius="30px"
-                        src="default-image-icon-missing-picture-page-vector-40546530.jpg"
+                        src={
+                          profiles[
+                            getIndex(profiles, post.email)
+                          ]?.profilePic
+                        }
                         alt="Logo"
                         w={300}
                         mb={15}
@@ -759,7 +763,9 @@ const Explore: React.FC = () => {
                                           <Avatar
                                             size={'xl'}
                                             src={
-                                              'https://i.ytimg.com/vi/WH7uKNQDzWI/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBYKEowDw==&rs=AOn4CLCPPCr7AOoCWseh5XdjlHeFmyc2rQ'
+                                              profiles[
+                                                getIndex(profiles, post.email)
+                                              ]?.profilePic
                                             }
                                             mb={4}
                                             pos={'relative'}
