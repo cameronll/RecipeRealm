@@ -1,5 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
+import {useDocument, useCollection} from 'react-firebase-hooks/firestore';
 import {BsFillChatDotsFill, BsBookmarks} from 'react-icons/bs';
 import {
   collection,
@@ -15,6 +16,7 @@ import {
   increment,
   arrayRemove,
   arrayUnion,
+  deleteDoc,
 } from 'firebase/firestore';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
 import Footer from '../components/Footer';
@@ -62,7 +64,7 @@ import {
   collapseTextChangeRangesAcrossMultipleVersions,
   forEachChild,
 } from 'typescript';
-import {AiOutlineHeart} from 'react-icons/ai';
+import {AiFillHeart, AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 
 // type that holds nutrition facts
@@ -117,15 +119,6 @@ function getIndex(profiles: any[], email: string): number {
   }
   return -1;
 }
-const isFollowing = (email: string) => {
-  const following: string[] = JSON.parse(
-    localStorage.getItem('FOLLOWING') as string,
-  );
-  if (following.includes(email)) {
-    return true;
-  }
-  return false;
-};
 
 const Explore: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
@@ -134,21 +127,21 @@ const Explore: React.FC = () => {
   const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [following, setFollowing] = useState<any[]>([]);
-  const [click, setClick] = useState<any>(false);
+  const [liked, setLiked] = useState<any[]>([]);
   const toast = useToast();
 
   useEffect(() => {
+    console.clear();
     const unmountFollowing = onSnapshot(doc(db, 'users/', email), doc => {
       const userFollowing = doc?.data()?.following;
       setFollowing(userFollowing);
+      localStorage.setItem("FOLLOWING", JSON.stringify(userFollowing));
+
+      const userLiked = doc?.data()?.liked;
+      setLiked(userLiked);
+      localStorage.setItem("LIKED", JSON.stringify(userLiked));
     });
 
-    return () => {
-      unmountFollowing();
-    };
-  }, []);
-
-  useEffect(() => {
     const profilesQuery = query(collection(db, 'users'));
     const unmountProfiles = onSnapshot(profilesQuery, querySnapshot => {
       const temp: any = [];
@@ -158,33 +151,39 @@ const Explore: React.FC = () => {
       setProfiles(temp);
     });
 
+    return () => {
+      unmountFollowing();
+      unmountProfiles();
+    }
+  }, [])
+  // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  // const toast = useToast();
+
+  useEffect(() => {
     const postsQuery = query(
       collection(db, 'posts'),
       orderBy('date_time', 'desc'),
     );
-    const unmountPosts = onSnapshot(postsQuery, querySnapshot => {
+    async function getPosts(){
+      const querySnapshot = await getDocs(postsQuery);
       const allTemp: any[] = [];
       const friendsTemp: any[] = [];
       querySnapshot.forEach(doc => {
-        if (following.includes(doc.data().email)) {
-          friendsTemp.push(doc.data());
+        if (JSON.parse(localStorage.getItem('FOLLOWING') as string).length !== 0){
+          if (JSON.parse(localStorage.getItem('FOLLOWING') as string).includes(doc.data().email)) {
+            friendsTemp.push(doc.data());
+          }
         }
         allTemp.push(doc.data());
       });
       setFriendsPosts(friendsTemp);
       setAllPosts(allTemp);
-    });
-
-    return () => {
-      unmountProfiles();
-      unmountPosts();
-    };
-  }, [following]);
-  // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  // const toast = useToast();
+    }
+    getPosts();
+  }, [following])
 
   async function addFollowing(followingEmail: string) {
-    if (!following?.includes(followingEmail)) {
+    if (!JSON.parse(localStorage.getItem('FOLLOWING') as string)?.includes(followingEmail)) {
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: arrayUnion(followingEmail),
@@ -195,7 +194,7 @@ const Explore: React.FC = () => {
   }
 
   async function removeFollowing(followingEmail: string) {
-    if (following?.includes(followingEmail)) {
+    if (JSON.parse(localStorage.getItem('FOLLOWING') as string).includes(followingEmail)) {
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: arrayRemove(followingEmail),
@@ -204,14 +203,28 @@ const Explore: React.FC = () => {
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
-  const isFollowing = (email: string) => {
-    if (following?.includes(email)) {
+  const isFollowing = (followingEmail: string) => {
+    if (JSON.parse(localStorage.getItem('FOLLOWING') as string).includes(followingEmail)) {
       return true;
     }
     return false;
   };
 
+  const isLiked = (datetime: any) => {
+    const liked = JSON.parse(localStorage.getItem('LIKED') as string);
+    for (let i = 0; i < liked.length; i++){
+      if (liked[i].seconds === datetime.seconds){
+        return true;
+      }
+    }
+    return false;
+  }
+
   const like = async (datetime: any) => {
+    const docRef = doc(db, "users/", email);
+    await updateDoc(docRef, {
+      liked: arrayUnion(datetime)
+    });
     const q = query(
       collection(db, 'posts/'),
       where('date_time', '==', datetime),
@@ -220,6 +233,23 @@ const Explore: React.FC = () => {
     docs.forEach(doc => {
       updateDoc(doc.ref, {
         likes: increment(1),
+      });
+    });
+  };
+
+  const unlike = async (datetime: any) => {
+    const docRef = doc(db, "users/", email);
+    await updateDoc(docRef, {
+      liked: arrayRemove(datetime)
+    });
+    const q = query(
+      collection(db, 'posts/'),
+      where('date_time', '==', datetime),
+    );
+    const docs = await getDocs(q);
+    docs.forEach(doc => {
+      updateDoc(doc.ref, {
+        likes: increment(-1),
       });
     });
   };
@@ -275,7 +305,7 @@ const Explore: React.FC = () => {
         <TabPanels>
           <TabPanel>
             <VStack minH="100vh">
-              {allPosts.map(post => (
+              {allPosts && allPosts.map(post => (
                 <Container
                   // minH="100vh"
                   shadow={1000}
@@ -313,9 +343,19 @@ const Explore: React.FC = () => {
                       spacing={4}
                       align="stretch"
                       marginBottom={3}>
-                      <Button variant="link" colorScheme="white">
-                        <AiOutlineHeart style={{fontSize: '34px'}} />
-                      </Button>
+                      {
+                        isLiked(post.date_time) ? (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => unlike(post?.date_time)}>
+                          <AiFillHeart style={{fontSize: '34px'}} />
+                          </Button>
+                        ) : (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => like(post?.date_time)}>
+                          <AiOutlineHeart style={{fontSize: '34px'}} />
+                          </Button>
+                        )
+                      }
                       <Button variant="link" colorScheme="white">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
@@ -571,7 +611,7 @@ const Explore: React.FC = () => {
                   You have no friends
                 </Heading>
               ) : (
-                friendsPosts.map(post => (
+                friendsPosts && friendsPosts.map(post => (
                   <Container
                     // minH="100vh"
                     shadow={1000}
@@ -609,9 +649,19 @@ const Explore: React.FC = () => {
                         spacing={4}
                         align="stretch"
                         marginBottom={3}>
-                        <Button variant="link" colorScheme="white">
+                        {
+                        isLiked(post.date_time) ? (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => unlike(post?.date_time)}>
+                          <AiFillHeart style={{fontSize: '34px'}} />
+                          </Button>
+                        ) : (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => like(post?.date_time)}>
                           <AiOutlineHeart style={{fontSize: '34px'}} />
-                        </Button>
+                          </Button>
+                        )
+                      }
                         <Button variant="link" colorScheme="white">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
