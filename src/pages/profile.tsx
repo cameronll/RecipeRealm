@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navbar from '../components/Navbar';
 import {db, storage} from '../firebaseConfig';
+import {useDownloadURL, useUploadFile} from 'react-firebase-hooks/storage';
 import {
   getBlob,
   getDownloadURL,
@@ -89,23 +90,6 @@ async function toDB(
     name: newName
   });
 }
-
-async function uploadImage(file: any) {
-  const storageRef = ref(storage, 'image');
-
-  // 'file' comes from the Blob or File API
-  uploadBytes(storageRef, file).then(snapshot => {
-    console.log('Uploaded a blob or file!');
-  });
-}
-
-/*
-function downloadImage(){
-  const storageRef = ref(storage, 'image');
-  const stream = getBlob(storageRef, 1000000000000);
-  console.log(stream);
-}
-*/
 const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
@@ -113,11 +97,22 @@ const Profile: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [oldPassword, setOldPassword] = useState('');
-  const [selectedImage, setSelectedImage] = useState<any>(null);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
-
   const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
+
+  const [selectedFile, setSelectedFile] = useState<any>();
+
+  async function uploadImage(file: any) {
+    const storageRef = ref(storage, (email + 'Profile'));
+    // 'file' comes from the Blob or File API
+    uploadBytes(storageRef, file);
+    
+    const userRef = doc(db, 'users/', email);
+    await updateDoc(userRef, {
+      profilePic: (email + 'Profile')
+    }); 
+  }
 
   useEffect(() => {
     const username_from_storage: any = window.localStorage.getItem('NEWUSERNAME');
@@ -125,15 +120,16 @@ const Profile: React.FC = () => {
     const firstName_from_storage: any = window.localStorage.getItem('NEWFIRSTNAME');
     const lastName_from_storage: any = window.localStorage.getItem('NEWLASTNAME');
 
-    //const image = downloadImage();
-    //setSelectedImage(image);
-    //console.log(image);
-
     setNewUsername(JSON.parse(username_from_storage));
     setNewBiography(JSON.parse(bio_from_storage));
     setFirstName(JSON.parse(firstName_from_storage));
     setLastName(JSON.parse(lastName_from_storage));
-  }, []);
+
+    // on mount, get the download url from database and set the url to selectedFile
+    if (profile){
+      getDownloadURL(ref(storage, profile.profilePic)).then((url) => setSelectedFile(url));
+    }
+  }, [profile]);
 
   const handleUsernameChange = (e: any) => {
     const name = e.target.value;
@@ -222,20 +218,15 @@ const Profile: React.FC = () => {
             <Stack direction={['column', 'row']}>
               <VStack>
                 <Center>
-                  <Avatar
-                    size="2xl"
-                    name="Kola Tioluwani"
-                    src="https://bit.ly/tioluwani-kolawole"
-                  />
-                  {selectedImage && (
+                  {selectedFile && (
                     <div>
                       <img
                         alt="not found"
                         width={'250px'}
-                        src={URL.createObjectURL(selectedImage)}
+                        src={selectedFile}
                       />
                       <br />
-                      <button onClick={() => setSelectedImage(null)}>
+                      <button onClick={() => setSelectedFile(undefined)}>
                         Remove
                       </button>
                     </div>
@@ -248,8 +239,9 @@ const Profile: React.FC = () => {
                     name="myImage"
                     onChange={event => {
                       if (event?.target?.files) {
-                        console.log(event.target.files[0]);
-                        setSelectedImage(event.target.files[0]);
+                        // when the file is chosen, change it into a url and make it the selected file
+                        setSelectedFile(URL.createObjectURL(event.target.files[0]));
+                        // upload the image to storage
                         uploadImage(event.target.files[0]);
                       }
                     }}

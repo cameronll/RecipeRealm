@@ -156,14 +156,14 @@ const Explore: React.FC = () => {
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
-  const isFollowing = (followingEmail: string) => {
+  function isFollowing(followingEmail: string){
     if (following?.includes(followingEmail)) {
       return true;
     }
     return false;
   };
 
-  const isLiked = (datetime: any) => {
+  function isLiked(datetime: any){
     for (let i = 0; i < liked?.length; i++){
       if (liked[i].seconds === datetime.seconds){
         return true;
@@ -172,7 +172,7 @@ const Explore: React.FC = () => {
     return false;
   }
 
-  const like = async (datetime: any) => {
+  async function like(datetime: any){
     const docRef = doc(db, "users/", email);
     await updateDoc(docRef, {
       liked: arrayUnion(datetime)
@@ -189,7 +189,7 @@ const Explore: React.FC = () => {
     });
   };
 
-  const unlike = async (datetime: any) => {
+  async function unlike(datetime:any){
     const docRef = doc(db, "users/", email);
     await updateDoc(docRef, {
       liked: arrayRemove(datetime)
