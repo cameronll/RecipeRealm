@@ -81,7 +81,7 @@ const Recipes: React.FC = () => {
   const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
   const [recipes, recipesLoading, recipesError] = useCollectionData(recipesQuery);
 
-  const savedRecipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+  const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
   const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
 
   const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
@@ -480,7 +480,7 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {recipes?.length === 0 ? (
+                  {savedRecipes?.length === 0 ? (
                     <Heading textAlign="center">You have 0 recipes</Heading>
                   ) : (
                     savedRecipes && savedRecipes.map(recipe => (
