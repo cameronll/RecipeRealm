@@ -92,8 +92,6 @@ const Recipes: React.FC = () => {
 
   const numPosts = posts?.length;
 
-  const [selectedFile, setSelectedFile] = useState('');
-
   async function deleteMyRecipe(recipeName: string) {
     if (recipeName === null) {
       recipeName = 'null';

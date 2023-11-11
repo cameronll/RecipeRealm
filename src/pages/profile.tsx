@@ -104,17 +104,6 @@ const Profile: React.FC = () => {
 
   const [selectedFile, setSelectedFile] = useState<any>();
 
-  async function uploadImage(file: any) {
-    const storageRef = ref(storage, (email + 'Profile'));
-    // 'file' comes from the Blob or File API
-    uploadBytes(storageRef, file).then(async snapshot => {
-      const userRef = doc(db, 'users/', email);
-      await updateDoc(userRef, {
-      profilePic: await getDownloadURL(snapshot.ref)
-    }); 
-    });
-  }
-
   useEffect(() => {
     const username_from_storage: any = window.localStorage.getItem('NEWUSERNAME');
     const bio_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
@@ -131,6 +120,17 @@ const Profile: React.FC = () => {
       getDownloadURL(ref(storage, profile.profilePic)).then((url) => setSelectedFile(url));
     }
   }, [profile]);
+
+  async function uploadImage(file: any) {
+    const storageRef = ref(storage, (email + 'Profile'));
+    // 'file' comes from the Blob or File API
+    uploadBytes(storageRef, file).then(async snapshot => {
+      const userRef = doc(db, 'users/', email);
+      await updateDoc(userRef, {
+      profilePic: await getDownloadURL(snapshot.ref)
+    }); 
+    });
+  }
 
   const handleUsernameChange = (e: any) => {
     const name = e.target.value;
