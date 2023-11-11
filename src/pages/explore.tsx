@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef} from 'react';
 import {db} from '../firebaseConfig';
-import {useDocument, useCollection} from 'react-firebase-hooks/firestore';
-import {BsFillChatDotsFill, BsBookmarks} from 'react-icons/bs';
+import {useDocument, useCollection, useCollectionData, useDocumentData} from 'react-firebase-hooks/firestore';
+import {BsFillChatDotsFill, BsBookmarks, BsFillBookmarksFill} from 'react-icons/bs';
 import {
   collection,
   doc,
@@ -94,96 +94,49 @@ type Recipe = {
   nutrients: nutrition;
 };
 
-async function saveRecipe(recipe: Recipe, creatorEmail: string) {
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  const docRef = doc(db, 'users', creatorEmail);
-  const docSnap = await getDoc(docRef);
-  if (docSnap) {
-    const username = docSnap.data()?.username;
-    await setDoc(
-      doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name),
-      {
-        // name in database: variable
-        data: recipe,
-        creator: username,
-      },
-    );
-  }
-}
-
-function getIndex(profiles: any[], email: string): number {
-  for (let i = 0; i < profiles.length; i++) {
-    if (profiles[i].email === email) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 const Explore: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // useState to create constants
-  const [allPosts, setAllPosts] = useState<any[]>([]);
-  const [friendsPosts, setFriendsPosts] = useState<any[]>([]);
-  const [profiles, setProfiles] = useState<any[]>([]);
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
+
   const toast = useToast();
 
-  useEffect(() => {
-    console.clear();
-    const unmountFollowing = onSnapshot(doc(db, 'users/', email), doc => {
-      const userFollowing = doc?.data()?.following;
-      setFollowing(userFollowing);
-      localStorage.setItem("FOLLOWING", JSON.stringify(userFollowing));
+  const userQuery = doc(db, 'users/', email);
+  const [user, userLoading, userError] = useDocumentData(userQuery);
 
-      const userLiked = doc?.data()?.liked;
-      setLiked(userLiked);
-      localStorage.setItem("LIKED", JSON.stringify(userLiked));
-    });
+  const allPostsQuery = query(collection(db, 'posts'),orderBy('date_time', 'desc'));
+  const [allPosts, allPostsLoading, allPostsError] = useCollectionData(allPostsQuery);
 
-    const profilesQuery = query(collection(db, 'users'));
-    const unmountProfiles = onSnapshot(profilesQuery, querySnapshot => {
-      const temp: any = [];
-      querySnapshot.forEach(doc => {
-        temp.push(doc.data());
-      });
-      setProfiles(temp);
-    });
+  const profilesQuery = query(collection(db, 'users'));
+  const [profiles, profileLoading, profilesError] = useCollectionData(profilesQuery);
 
-    return () => {
-      unmountFollowing();
-      unmountProfiles();
-    }
-  }, [])
-  // const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  // const toast = useToast();
+  const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
+  const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
 
   useEffect(() => {
-    const postsQuery = query(
-      collection(db, 'posts'),
-      orderBy('date_time', 'desc'),
-    );
-    async function getPosts(){
-      const querySnapshot = await getDocs(postsQuery);
-      const allTemp: any[] = [];
-      const friendsTemp: any[] = [];
-      querySnapshot.forEach(doc => {
-        if (JSON.parse(localStorage.getItem('FOLLOWING') as string).length !== 0){
-          if (JSON.parse(localStorage.getItem('FOLLOWING') as string).includes(doc.data().email)) {
-            friendsTemp.push(doc.data());
-          }
-        }
-        allTemp.push(doc.data());
-      });
-      setFriendsPosts(friendsTemp);
-      setAllPosts(allTemp);
+    setFollowing(user?.following);
+    setLiked(user?.liked);
+  }, [user])
+
+  var friendsPostsQuery: any;
+  if (following){
+    if (following.length !== 0){
+      friendsPostsQuery = query(collection(db, 'posts'), 
+      where("email", "in", following), 
+      orderBy('date_time', 'desc'));
     }
-    getPosts();
-  }, [following])
+  }
+  else{
+    friendsPostsQuery = query(collection(db, 'posts'), 
+      where("email", "==", "gibberish8239283989122389783"), 
+      orderBy('date_time', 'desc'));
+  }
+  const [friendsPosts, friendsPostsLoading, friendsPostsError] = useCollectionData(friendsPostsQuery);
+
 
   async function addFollowing(followingEmail: string) {
-    if (!JSON.parse(localStorage.getItem('FOLLOWING') as string)?.includes(followingEmail)) {
+    if (!isFollowing(followingEmail)) {
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: arrayUnion(followingEmail),
@@ -194,7 +147,7 @@ const Explore: React.FC = () => {
   }
 
   async function removeFollowing(followingEmail: string) {
-    if (JSON.parse(localStorage.getItem('FOLLOWING') as string).includes(followingEmail)) {
+    if (isFollowing(followingEmail)) {
       const getUser = doc(db, 'users/', email);
       await updateDoc(getUser, {
         following: arrayRemove(followingEmail),
@@ -204,15 +157,14 @@ const Explore: React.FC = () => {
   const initRef = useRef<HTMLButtonElement | null>(null);
 
   const isFollowing = (followingEmail: string) => {
-    if (JSON.parse(localStorage.getItem('FOLLOWING') as string).includes(followingEmail)) {
+    if (following?.includes(followingEmail)) {
       return true;
     }
     return false;
   };
 
   const isLiked = (datetime: any) => {
-    const liked = JSON.parse(localStorage.getItem('LIKED') as string);
-    for (let i = 0; i < liked.length; i++){
+    for (let i = 0; i < liked?.length; i++){
       if (liked[i].seconds === datetime.seconds){
         return true;
       }
@@ -253,6 +205,46 @@ const Explore: React.FC = () => {
       });
     });
   };
+
+  function isSaved(recipe: Recipe){
+    if (savedRecipes){
+      for (let i = 0; i < savedRecipes.length; i++){
+        if (savedRecipes[i].data.recipe_name === recipe.recipe_name){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  async function saveRecipe(recipe: Recipe, creatorEmail: string) {
+    const docRef = doc(db, 'users', creatorEmail);
+    const docSnap = await getDoc(docRef);
+    if (docSnap) {
+      const username = docSnap.data()?.username;
+      await setDoc(
+        doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name),
+        {
+          // name in database: variable
+          data: recipe,
+          creator: username,
+        },
+      );
+    }
+  }
+
+  async function unsaveRecipe(recipe: Recipe){
+    await deleteDoc(doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name));
+  }
+  
+  function getIndex(profiles: any[], email: string): number {
+    for (let i = 0; i < profiles?.length; i++) {
+      if (profiles[i].email === email) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   /*
   data that can be displayed:
@@ -305,7 +297,7 @@ const Explore: React.FC = () => {
         <TabPanels>
           <TabPanel>
             <VStack minH="100vh">
-              {allPosts && allPosts.map(post => (
+              {allPosts && profiles && savedRecipes && allPosts.map(post => (
                 <Container
                   // minH="100vh"
                   shadow={1000}
@@ -359,22 +351,39 @@ const Explore: React.FC = () => {
                       <Button variant="link" colorScheme="white">
                         <BsFillChatDotsFill style={{fontSize: '34px'}} />
                       </Button>
-                      <Button
-                        variant="link"
-                        colorScheme="white"
-                        onClick={() => {
-                          toast({
-                            title: 'Recipe Saved.',
-                            description:
-                              'This recipe has been added to My Recipes.',
-                            status: 'success',
-                            duration: 3000,
-                            isClosable: true,
-                          });
-                          saveRecipe(post.recipe.data, post.email);
-                        }}>
-                        <BsBookmarks style={{fontSize: '34px'}} />
-                      </Button>
+                      {
+                        isSaved(post.recipe.data) ? (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => {
+                            toast({
+                              title: 'Unsaved',
+                              description:
+                                'Recipe removed from your saved recipe book',
+                              status: 'error',
+                              duration: 3000,
+                              isClosable: true,
+                            });
+                            unsaveRecipe(post.recipe.data)
+                          }}>
+                          <BsFillBookmarksFill style={{fontSize: '34px'}} />
+                          </Button>
+                        ) : (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => {
+                            toast({
+                              title: 'Saved!',
+                              description:
+                                'Recipe added to your saved recipe book',
+                              status: 'success',
+                              duration: 3000,
+                              isClosable: true,
+                            });
+                            saveRecipe(post.recipe.data, post.email)
+                          }}>
+                          <BsBookmarks style={{fontSize: '34px'}} />
+                          </Button>
+                        )
+                      }
                       <Spacer />
                       <Text>{post?.date_time.toDate().toString()}</Text>
                     </Stack>
@@ -606,12 +615,12 @@ const Explore: React.FC = () => {
           </TabPanel>
           <TabPanel>
             <VStack minH="100vh">
-              {friendsPosts.length === 0 ? (
+              {friendsPosts?.length === 0 ? (
                 <Heading textAlign="center" minH="100vh" fontSize={80}>
                   You have no friends
                 </Heading>
               ) : (
-                friendsPosts && friendsPosts.map(post => (
+                friendsPosts && profiles && savedRecipes && friendsPosts.map(post => (
                   <Container
                     // minH="100vh"
                     shadow={1000}
@@ -665,22 +674,39 @@ const Explore: React.FC = () => {
                         <Button variant="link" colorScheme="white">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
-                        <Button
-                          variant="link"
-                          colorScheme="white"
-                          onClick={() => {
+                        {
+                        isSaved(post.recipe.data) ? (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => {
                             toast({
-                              title: 'Recipe Saved.',
+                              title: 'Unsaved',
                               description:
-                                'This recipe has been added to My Recipes.',
+                                'Recipe removed from your saved recipe book',
+                              status: 'error',
+                              duration: 3000,
+                              isClosable: true,
+                            });
+                            unsaveRecipe(post.recipe.data)
+                          }}>
+                          <BsFillBookmarksFill style={{fontSize: '34px'}} />
+                          </Button>
+                        ) : (
+                          <Button variant="link" colorScheme="white"
+                          onClick = {() => {
+                            toast({
+                              title: 'Saved!',
+                              description:
+                                'Recipe added to your saved recipe book',
                               status: 'success',
                               duration: 3000,
                               isClosable: true,
                             });
-                            saveRecipe(post.recipe.data, post.email);
+                            saveRecipe(post.recipe.data, post.email)
                           }}>
                           <BsBookmarks style={{fontSize: '34px'}} />
-                        </Button>
+                          </Button>
+                        )
+                      }
                         <Spacer />
                         <Text>{post?.date_time.toDate().toString()}</Text>
                       </Stack>

@@ -72,56 +72,24 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
+import { useCollection, useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore';
 
 const Recipes: React.FC = () => {
   const toast = useToast();
-  const [recipes, setRecipes] = useState<any[]>([]);
-  const [savedRecipes, setSavedRecipes] = useState<any[]>([]);
-  const [numPosts, setNumPosts] = useState(0);
-  const [profile, setProfile] = useState<any>();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
-  useEffect(() => {
-    const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
-    const recipesSnapshot = onSnapshot(recipesQuery, querySnapshot => {
-      const temp: any[] = [];
-      var tempNum = 0;
-      querySnapshot.forEach(doc => {
-        if (doc.data().posted === true) {
-          tempNum++;
-        }
-        temp.push(doc.data());
-      });
-      console.log('recipes');
-      setNumPosts(tempNum);
-      setRecipes(temp);
-    });
+  const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+  const [recipes, recipesLoading, recipesError] = useCollectionData(recipesQuery);
 
-    const savedRecipesQuery = query(
-      collection(db, 'users/' + email + '/SavedRecipes'),
-    );
-    const savedRecipesSnapshot = onSnapshot(
-      savedRecipesQuery,
-      querySnapshot => {
-        const temp: any[] = [];
-        querySnapshot.forEach(doc => {
-          temp.push(doc.data());
-        });
-        setSavedRecipes(temp);
-        console.log('saved recipes');
-      },
-    );
+  const savedRecipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+  const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
 
-    const profileSnapshot = onSnapshot(doc(db, 'users/', email), doc => {
-      setProfile(doc.data());
-    });
+  const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
 
-    return () => {
-      recipesSnapshot();
-      savedRecipesSnapshot();
-      profileSnapshot();
-    };
-  }, []);
+  const postsQuery = query(collection(db, 'posts'), where('email', '==', email));
+  const [posts, postsLoading, postsError] = useCollectionData(postsQuery);
+
+  const numPosts = posts?.length;
 
   async function deleteMyRecipe(recipeName: string) {
     if (recipeName === null) {
@@ -181,7 +149,7 @@ const Recipes: React.FC = () => {
               />{' '}
               <VStack marginLeft={10}>
                 <Heading>{profile?.name}'s Page</Heading>
-                <Text>{recipes.length} Recipes</Text>
+                <Text>{recipes?.length} Recipes</Text>
                 <Text>{numPosts} Posts</Text>
                 <Text color={'black'} fontSize={'lg'}>
                   {profile?.biography}
@@ -274,10 +242,10 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {recipes.length === 0 ? (
+                  {recipes?.length === 0 ? (
                     <Heading textAlign="center">You have 0 recipes</Heading>
                   ) : (
-                    recipes.map(recipe => (
+                    recipes && recipes.map(recipe => (
                       <Container
                         boxShadow={'2xl'}
                         minW="sm"
@@ -483,14 +451,14 @@ const Recipes: React.FC = () => {
                             maxW="container.sm"
                             onClick={() => {
                               toast({
-                                title: 'Recipe removed from saved.',
+                                title: 'Recipe deleted.',
                                 description:
-                                  'This recipe has been removed from your saved recipe book.',
+                                  'This recipe has been removed from your recipe book.',
                                 status: 'success',
                                 duration: 3000,
                                 isClosable: true,
                               });
-                              deleteSavedRecipe(recipe.data.recipe_name);
+                              deleteMyRecipe(recipe.data.recipe_name);
                             }}>
                             <Text textColor="white">Delete Recipe</Text>
                           </Button>
@@ -512,10 +480,10 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {recipes.length === 0 ? (
+                  {recipes?.length === 0 ? (
                     <Heading textAlign="center">You have 0 recipes</Heading>
                   ) : (
-                    savedRecipes.map(recipe => (
+                    savedRecipes && savedRecipes.map(recipe => (
                       <Container
                         boxShadow={'2xl'}
                         minW="sm"
