@@ -59,10 +59,13 @@ import {
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link} from 'react-router-dom';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
 
 async function toDB(
   newBiography: string,
   newUsername: string,
+  newFirstName: string,
+  newLastName: string,
   newPassword: string,
   oldPassword: string,
 ) {
@@ -78,10 +81,12 @@ async function toDB(
     }
   }
 
+  const newName = newFirstName + " " + newLastName;
   const docRef = doc(db, 'users/', email);
   await updateDoc(docRef, {
     username: newUsername,
     biography: newBiography,
+    name: newName
   });
 }
 
@@ -105,26 +110,29 @@ const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [oldPassword, setOldPassword] = useState('');
-  const [profile, setProfile] = useState<any>();
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
 
+  const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
+
   useEffect(() => {
-    const profileSnapshot = onSnapshot(doc(db, 'users/', email), doc => {
-      setProfile(doc.data());
-    });
-    const username_from_storage: any =
-      window.localStorage.getItem('NEWUSERNAME');
-    const email_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
+    const username_from_storage: any = window.localStorage.getItem('NEWUSERNAME');
+    const bio_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
+    const firstName_from_storage: any = window.localStorage.getItem('NEWFIRSTNAME');
+    const lastName_from_storage: any = window.localStorage.getItem('NEWLASTNAME');
 
     //const image = downloadImage();
     //setSelectedImage(image);
     //console.log(image);
 
     setNewUsername(JSON.parse(username_from_storage));
-    setNewBiography(JSON.parse(email_from_storage));
+    setNewBiography(JSON.parse(bio_from_storage));
+    setFirstName(JSON.parse(firstName_from_storage));
+    setLastName(JSON.parse(lastName_from_storage));
   }, []);
 
   const handleUsernameChange = (e: any) => {
@@ -138,6 +146,18 @@ const Profile: React.FC = () => {
     window.localStorage.setItem('NEWBIOGRAPHY', JSON.stringify(name));
     setNewBiography(name);
   };
+
+  const handleFirstNameChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('NEWFIRSTNAME', JSON.stringify(targ));
+    setFirstName(targ);
+  }
+
+  const handleLastNameChange = (e: any) => {
+    const targ = e.target.value;
+    window.localStorage.setItem('NEWLASTNAME', JSON.stringify(targ));
+    setLastName(targ);
+  }
 
   const handleOldPasswordChange = (e: any) => {
     const name = e.target.value;
@@ -284,6 +304,8 @@ const Profile: React.FC = () => {
                   placeholder="First Name"
                   _placeholder={{color: 'gray.500'}}
                   type="text"
+                  value={firstName}
+                  onChange={handleFirstNameChange}
                 />
               </FormControl>
               <FormControl id="LastName" isRequired>
@@ -292,6 +314,8 @@ const Profile: React.FC = () => {
                   placeholder="Last Name"
                   _placeholder={{color: 'gray.500'}}
                   type="text"
+                  value={lastName}
+                  onChange={handleLastNameChange}
                 />
               </FormControl>
             </VStack>
@@ -369,8 +393,14 @@ const Profile: React.FC = () => {
                   setOldPassword('');
                   setNewPassword('');
                   setNewBiography('');
+                  setFirstName('');
+                  setLastName('');
+                  localStorage.removeItem('FIRSTNAME');
+                  localStorage.removeItem('LASTNAME');
+                  localStorage.removeItem('NEWUSERNAME');
+                  localStorage.removeItem('NEWBIOGRAPHY');
                 }
-                toDB(newBiography, newUsername, newPassword, oldPassword);
+                toDB(newBiography, newUsername, firstName, lastName, newPassword, oldPassword);
               }}>
               Apply
             </Button>
