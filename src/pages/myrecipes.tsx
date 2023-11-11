@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {db} from '../firebaseConfig';
+import {db, storage} from '../firebaseConfig';
 import {AiFillPrinter, AiOutlineHeart} from 'react-icons/ai';
 import {FiBookOpen} from 'react-icons/fi';
 import {CgBowl} from 'react-icons/cg';
@@ -73,6 +73,7 @@ import {
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 import { useCollection, useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 const Recipes: React.FC = () => {
   const toast = useToast();
@@ -91,6 +92,8 @@ const Recipes: React.FC = () => {
 
   const numPosts = posts?.length;
 
+  const [selectedFile, setSelectedFile] = useState('');
+
   async function deleteMyRecipe(recipeName: string) {
     if (recipeName === null) {
       recipeName = 'null';
@@ -104,6 +107,13 @@ const Recipes: React.FC = () => {
     }
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
+
+  useEffect(() => {
+    // on mount, get the download url from database and set the url to selectedFile
+    if (profile){
+      getDownloadURL(ref(storage, profile.profilePic)).then((url) => setSelectedFile(url));
+    }
+  }, [profile])
   // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
   // recipe.creator to get the username of who posted it
 
@@ -142,9 +152,9 @@ const Recipes: React.FC = () => {
             <HStack spacing={4}>
               <Avatar
                 size="2xl"
-                name="Segun Adebayo"
+                name={profile?.name}
                 src={
-                  'https://i.ytimg.com/vi/3EDFSswI29c/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBZKEgwDw==&rs=AOn4CLDJAwWFyjufCBlFlIm1PDteqDDfCA'
+                  selectedFile
                 }
               />{' '}
               <VStack marginLeft={10}>
