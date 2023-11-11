@@ -55,6 +55,7 @@ const SignUp = () => {
       username: '',
       name: '',
       password: '',
+      profilePic: 'default.jpeg'
     },
     onSubmit: async values => {
       if (await uniqueUsername(values.username)) {

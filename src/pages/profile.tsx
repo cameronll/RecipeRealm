@@ -61,6 +61,7 @@ import {
 import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link} from 'react-router-dom';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { FirebaseError } from 'firebase/app';
 
 async function toDB(
   newBiography: string,
@@ -220,8 +221,8 @@ const Profile: React.FC = () => {
                 <Center>
                   {selectedFile && (
                     <div>
-                      <img
-                        alt="not found"
+                      <Avatar
+                        name={profile?.name}
                         width={'250px'}
                         src={selectedFile}
                       />
