@@ -68,6 +68,7 @@ import {AiFillHeart, AiOutlineHeart} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 import { getDownloadURL, ref } from 'firebase/storage';
 
+
 // type that holds nutrition facts
 type nutrition = {
   calories: number;
@@ -326,11 +327,9 @@ const Explore: React.FC = () => {
                       <Image
                         borderRadius="30px"
                         src={
-                          profiles[
-                            getIndex(profiles, post.email)
-                          ]?.profilePic
+                          post.pic
                         }
-                        alt="Logo"
+                        alt="No Image"
                         w={300}
                         mb={15}
                       />
@@ -655,11 +654,9 @@ const Explore: React.FC = () => {
                         <Image
                           borderRadius="30px"
                           src={
-                            profiles[
-                              getIndex(profiles, post.email)
-                            ]?.profilePic
+                            post.pic
                           }
-                          alt="Logo"
+                          alt="No Image"
                           w={300}
                           mb={15}
                         />

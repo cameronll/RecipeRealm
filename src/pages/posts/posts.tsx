@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {db} from '../../firebaseConfig';
+import {db, storage} from '../../firebaseConfig';
 import {
   collection,
   addDoc,
@@ -47,6 +47,7 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
+import { ref, uploadBytes } from 'firebase/storage';
 
 function getRecipeIndex(recipes: any[], recipe_name: string): number {
   for (let i = 0; i < recipes.length; i++) {
@@ -83,7 +84,7 @@ type recipe = {
   nutrients: nutrition;
 };
 
-async function toDB(title: string, description: string, recipe: any) {
+async function toDB(title: string, description: string, recipe: any, pic: string) {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const getUser = doc(db, 'users/', email);
   const getUserData = await getDoc(getUser);
@@ -108,6 +109,7 @@ async function toDB(title: string, description: string, recipe: any) {
     description: description,
     recipe: recipe,
     likes: 0,
+    pic: pic
   });
 }
 const Posts: React.FC = () => {
@@ -117,6 +119,9 @@ const Posts: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [recipeName, setRecipeName] = useState<any>();
   const [postRecipe, setPostRecipe] = useState<any>();
+  const [selectedFile, setSelectedFile] = useState<any>();
+  const [fileLink, setFileLink] = useState<any>();
+
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const navigate = useNavigate();
 
@@ -143,7 +148,16 @@ const Posts: React.FC = () => {
       const recipe_store: any = window.localStorage.getItem('RECIPE');
       setPostRecipe(JSON.parse(recipe_store));
     }
+    
   }, []);
+
+  async function uploadImage(file: any) {
+    const storageRef = ref(storage, Math.random().toString(16).slice(2));
+    // 'file' comes from the Blob or File API
+    uploadBytes(storageRef, file).then(async snapshot => {
+      setFileLink(snapshot.ref)
+    });
+  }
 
   const handleTitleChange = (e: any) => {
     const targ = e.target.value;
@@ -175,7 +189,7 @@ const Posts: React.FC = () => {
         )
       ];
     console.log(recipe);
-    toDB(title, description, recipe);
+    toDB(title, description, recipe, selectedFile);
     console.log('Document created!');
     navigate('/explore');
   };
@@ -305,19 +319,34 @@ const Posts: React.FC = () => {
               Image
             </FormLabel>
             <Box>
-              <Image
-                boxSize="150px"
-                rounded={3}
-                src="default-image-icon-missing-picture-page-vector-40546530.jpg"
-                alt="Image Missing"
-                marginBottom={4}
-              />
+            <Center>
+                  {selectedFile && (
+                    <div>
+                      <Image
+                        alt="No Image"
+                        width='250px'
+                        src={selectedFile}
+                      />
+                      <br />
+                      <button onClick={() => setSelectedFile(undefined)}>
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </Center>
             </Box>
-            <Button size="md">
-              {' '}
-              <BsUpload />
-              <Text marginLeft={2}>File Upload</Text>
-            </Button>
+              <input
+                type="file"
+                name="myImage"
+                onChange={event => {
+                  if (event?.target?.files) {
+                    // when the file is chosen, change it into a url and make it the selected file
+                    setSelectedFile(URL.createObjectURL(event.target.files[0]));
+                    // upload the image to storage
+                    uploadImage(event.target.files[0]);
+                  }
+                }}
+              />
           </FormControl>
           <Link to="/recipes">
             <Button colorScheme="red.500">Back</Button>
