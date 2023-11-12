@@ -47,7 +47,7 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
-import { ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 function getRecipeIndex(recipes: any[], recipe_name: string): number {
   for (let i = 0; i < recipes.length; i++) {
@@ -155,7 +155,7 @@ const Posts: React.FC = () => {
     const storageRef = ref(storage, Math.random().toString(16).slice(2));
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then(async snapshot => {
-      setFileLink(snapshot.ref)
+      setFileLink(await getDownloadURL(snapshot.ref))
     });
   }
 
@@ -188,8 +188,7 @@ const Posts: React.FC = () => {
           JSON.parse(localStorage.getItem('RECIPE') as string),
         )
       ];
-    console.log(recipe);
-    toDB(title, description, recipe, selectedFile);
+    toDB(title, description, recipe, fileLink as string);
     console.log('Document created!');
     navigate('/explore');
   };
