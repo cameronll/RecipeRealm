@@ -289,7 +289,7 @@ const CalendarPage: React.FC = () => {
               plugins={[interactionPlugin, dayGridPlugin]}
               initialView="dayGridMonth"
               selectable={true}
-              aspectRatio={.9}
+              aspectRatio={.95}
               handleWindowResize={true}
               expandRows={true}
               dayMaxEvents={true}
