@@ -221,8 +221,8 @@ const Profile: React.FC = () => {
                 <Center>
                   {selectedFile && (
                     <div>
-                      <Avatar
-                        name={profile?.name}
+                      <img
+                        alt="No Image"
                         width={'250px'}
                         src={selectedFile}
                       />
