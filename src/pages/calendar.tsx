@@ -299,6 +299,21 @@ const CalendarPage: React.FC = () => {
               initialView="dayGridMonth"
               selectable={true}
               aspectRatio={.85}
+              selectAllow={function(selectInfo){
+                console.log(selectInfo)
+                console.log(selectInfo.start.getDay())
+                //var oneDay = 24 * 60 * 60 * 1000;
+                var startDay = selectInfo.start.getDay();
+                var endDay = selectInfo.end.getDay() - 1/*oneDay*/;
+                var count = endDay - startDay;
+                //  starts at 0, so add to start at 1
+                var dayCount = (count + 1);
+                if(dayCount == 1){
+                    return true;
+                }else{
+                    return false;
+                }
+              }}
               handleWindowResize={true}
               expandRows={true}
               dayMaxEvents={true}
