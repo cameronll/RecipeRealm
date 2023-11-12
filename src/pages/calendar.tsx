@@ -219,30 +219,38 @@ const CalendarPage: React.FC = () => {
           isOpen={isOpen}
           placement='right'
           onClose={onClose}
-          size={'sm'}
+          size={'md'}
           // finalFocusRef={btnRef}
         >
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Schedule a recipe for a specific time!</DrawerHeader>
+            <DrawerHeader 
+            bg={'teal'} 
+            paddingTop={'40px'} 
+            paddingBottom={'40px'}
+            fontSize={'30px'}
+            textAlign={'center'}
+            color={'white'}>
+              Choose when to schedule your meal!
+            </DrawerHeader>
 
-            <DrawerBody>
-              <Text padding={'15px'}>Pick a date:</Text>
-              <Input placeholder='Enter date here...' onChange={handleDateChange}/>
-              <Text padding={'15px'}>Choose the recipe:</Text>
+            <DrawerBody paddingTop={'20px'}>
+              <Text padding={'20px'} fontSize={'20px'} fontWeight={'600'}>Enter a date (include dashes when entering time):</Text>
+              <Input outlineColor={'teal'} placeholder='YYYY-MM-DD' onChange={handleDateChange}/>
+              <Text padding={'25px'} fontSize={'20px'} fontWeight={'600'}>Choose the recipe:</Text>
               <Select
-               size={'md'}
+               size={'lg'}
                value={recipeName}
+               outlineColor={'teal'}
+               placeholder='Click to select...'
                onChange={handleRecipeChange}>
-                {/* {savedRecipes?.map(recipe => (
-                  <option>{recipe.data.recipe_name}</option>
-                ))} */}
-                {/* This block belowwwww*/}
                 {recipes?.map(recipe => (
                   <option>{recipe?.data.recipe_name}</option>
                 ))}
-                {/*This block right here Brody^^^^^^*/}
+                {savedRecipes?.map(recipe => (
+                  <option>{recipe.data.recipe_name}</option>
+                ))}
               </Select>
             </DrawerBody>
   
@@ -252,7 +260,8 @@ const CalendarPage: React.FC = () => {
               </Button>
               <Button colorScheme='green'
               onClick = {() => handleSubmit(recipeName, date)}>
-                Save</Button>
+                Schedule
+              </Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
@@ -289,7 +298,7 @@ const CalendarPage: React.FC = () => {
               plugins={[interactionPlugin, dayGridPlugin]}
               initialView="dayGridMonth"
               selectable={true}
-              aspectRatio={.95}
+              aspectRatio={.85}
               handleWindowResize={true}
               expandRows={true}
               dayMaxEvents={true}
@@ -300,7 +309,12 @@ const CalendarPage: React.FC = () => {
             {ScheduleRecipe()}
           </Container>
         </VStack>
-        <Container textAlign={"center"}>
+        <Container 
+        centerContent={true} 
+        border={'solid'} 
+        borderColor={'teal'}
+        height={'650px'}
+        w={'600px'}>
           <Text>
             Select Day to View Meal Plan Info
           </Text>
