@@ -29,16 +29,26 @@ import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
 const provider = new GoogleAuthProvider();
 
 const googleSignIn = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
+  signInWithPopup(auth, provider)
+  .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    //const credential = GoogleAuthProvider.credentialFromResult(result);
+    //const token = credential.accessToken;
+    // The signed-in user info.
     const user = result.user;
-    console.log(user);
-    // Redirect or perform actions after successful login
-    // e.g., redirect to a profile page
-  } catch (error) {
-    console.error(error);
-    // Handle errors
-  }
+    // IdP data available using getAdditionalUserInfo(result)
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+  });
+  
 };
 
 const Login = () => {
@@ -134,8 +144,9 @@ const Login = () => {
                   Login
                 </Button>
 
-                <GoogleButton onClick={googleSignIn} />
+                
               </Link>
+              <GoogleButton onClick={googleSignIn} />
 
               <Spacer />
 
@@ -155,19 +166,9 @@ const Login = () => {
         spacing={{base: 8, md: 10}}
         align={'center'}
         direction={'column'}>
-        <Text
-          fontSize={{base: 'xl', md: '2xl'}}
-          textAlign={'center'}
-          maxW={'3xl'}>
-          "I love Jane"
-        </Text>
+        
         <Box textAlign={'center'}>
-          <Avatar
-            src={
-              'https://i.ytimg.com/vi/WH7uKNQDzWI/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBYKEowDw==&rs=AOn4CLCPPCr7AOoCWseh5XdjlHeFmyc2rQ'
-            }
-            mb={2}
-          />
+          
         </Box>
       </Stack>
     </>
