@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {db, storage} from '../firebaseConfig';
 import {Whisper, Popover, Badge} from 'rsuite';
 import {
@@ -96,6 +96,8 @@ const CalendarPage: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
   const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
+  const [recipes, setRecipes] = useState<any[]>([]);
+
 
   function renderCell(date: any) {
     const list = getTodoList(date);
@@ -162,9 +164,14 @@ const CalendarPage: React.FC = () => {
               <Input placeholder='Enter date here...' />
               <Text padding={'15px'}>Choose the recipe:</Text>
               <Select size={'md'}>
-                <option value='Food 1'>Food 1</option>
-                <option value='Food 2'>Food 2</option>
-                {/* make a function that spits out <option/>s of all the save recipes from the user */}
+                {savedRecipes?.map(recipe => (
+                  <option>{recipe.data.recipe_name}</option>
+                ))}
+                {/* This block belowwwww*/}
+                {recipes.map(recipe => (
+                  <option>{recipe?.data.recipe_name}</option>
+                ))}
+                {/*This block right here Brody^^^^^^*/}
               </Select>
             </DrawerBody>
   
