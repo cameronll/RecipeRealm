@@ -13,6 +13,8 @@ import {
   getCountFromServer,
   onSnapshot,
   deleteDoc,
+  updateDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 import Navbar from '../components/Navbar';
 import {
@@ -49,7 +51,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore';
 
 // export default class App extends React.Component {
 //   render() {
@@ -68,6 +70,46 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 //     )
 //   }//export default Calendar;
 // }
+type nutrition = {
+  calories: number;
+  total_fat: number;
+  saturated_fat: number;
+  cholesterol: number;
+  sodium: number;
+  total_carbohydrate: number;
+  dietary_fiber: number;
+  sugars: number;
+  protein: number;
+};
+
+type recipe = {
+  recipe_name: string;
+  servings: string;
+  allergens: string;
+  cooking_applications: string;
+  cooking_time: string;
+  cost_per_serving: string;
+  difficulty: string;
+  posted: boolean;
+  ingredients: string[];
+  instructions: string;
+  nutrients: nutrition;
+};
+
+type event = {
+  recipe: recipe
+  date: string
+  title: string
+};
+
+function getRecipeIndex(recipes: any[], recipe_name: string): number {
+  for (let i = 0; i < recipes.length; i++) {
+    if (recipes[i]?.data.recipe_name === recipe_name) {
+      return i;
+    }
+  }
+  return -1;
+}
 
 function getTodoList(date: {getDate: () => any}) {
   const day = date.getDate();
@@ -96,8 +138,15 @@ const CalendarPage: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
   const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
-  const [recipes, setRecipes] = useState<any[]>([]);
 
+  const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
+  const [recipes, recipesLoading, recipesError] = useCollectionData(recipesQuery);
+
+  const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
+
+  const [date, setDate] = useState('');
+  const [recipeName, setRecipeName] = useState<any>();
+  const [events, setEvents] = useState<any>([]);
 
   function renderCell(date: any) {
     const list = getTodoList(date);
@@ -124,24 +173,43 @@ const CalendarPage: React.FC = () => {
         </li>
       );
     }
-
     return null;
   }
 
   function getSavedRecipes(){
-    
-
     return(
       <option></option>
     )
   }
 
+  const handleRecipeChange = (e: any) => {
+    const targ = e.target.value;
+    setRecipeName(targ);
+  };
+
+  const handleDateChange = (e: any) => {
+    const targ = e.target.value;
+    setDate(targ);
+  };
+
+  const handleSubmit = async (recipe_name: string, date: string) => {
+    if (recipes){
+      const newEvent:event = {
+        recipe: recipes[getRecipeIndex(recipes, recipe_name)].data,
+        date: date,
+        title: recipe_name
+      }
+      const docRef = doc(db, 'users', email)
+      await updateDoc(docRef, {
+        events: arrayUnion(newEvent)
+      });
+    }
+  };
+
   function ScheduleRecipe() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
 
-
-  
     return (
       <>
         <Button alignSelf={'right'} /*ref={btnRef}*/ colorScheme='teal' onClick={onOpen}>
@@ -161,14 +229,17 @@ const CalendarPage: React.FC = () => {
 
             <DrawerBody>
               <Text padding={'15px'}>Pick a date:</Text>
-              <Input placeholder='Enter date here...' />
+              <Input placeholder='Enter date here...' onChange={handleDateChange}/>
               <Text padding={'15px'}>Choose the recipe:</Text>
-              <Select size={'md'}>
-                {savedRecipes?.map(recipe => (
+              <Select
+               size={'md'}
+               value={recipeName}
+               onChange={handleRecipeChange}>
+                {/* {savedRecipes?.map(recipe => (
                   <option>{recipe.data.recipe_name}</option>
-                ))}
+                ))} */}
                 {/* This block belowwwww*/}
-                {recipes.map(recipe => (
+                {recipes?.map(recipe => (
                   <option>{recipe?.data.recipe_name}</option>
                 ))}
                 {/*This block right here Brody^^^^^^*/}
@@ -179,7 +250,9 @@ const CalendarPage: React.FC = () => {
               <Button variant='outline' mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme='green'>Save</Button>
+              <Button colorScheme='green'
+              onClick = {() => handleSubmit(recipeName, date)}>
+                Save</Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
@@ -220,11 +293,7 @@ const CalendarPage: React.FC = () => {
               handleWindowResize={true}
               expandRows={true}
               dayMaxEvents={true}
-              events={[
-                {title: 'event 1', date: '2023-11-01'},
-                {title: 'event 2', date: '2023-11-01'},
-                {title: 'event 3', date: '2023-11-01'},
-              ]}
+              events={profile?.events}
             />
           </Container>
           <Container>
