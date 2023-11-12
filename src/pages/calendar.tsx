@@ -1,5 +1,19 @@
 import React from 'react';
+import {db, storage} from '../firebaseConfig';
 import {Whisper, Popover, Badge} from 'rsuite';
+import {
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  where,
+  query,
+  getCountFromServer,
+  onSnapshot,
+  deleteDoc,
+} from 'firebase/firestore';
 import Navbar from '../components/Navbar';
 import {
   Box,
@@ -29,11 +43,13 @@ import {
   DrawerContent,
   DrawerCloseButton,
   useDisclosure,
+  Select,
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 // export default class App extends React.Component {
 //   render() {
@@ -77,6 +93,10 @@ function getTodoList(date: {getDate: () => any}) {
 }
 
 const CalendarPage: React.FC = () => {
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const savedRecipesQuery = query(collection(db, 'users/' + email + '/SavedRecipes'));
+  const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
+
   function renderCell(date: any) {
     const list = getTodoList(date);
     const displayList = list.filter((item, index) => index < 2);
@@ -101,27 +121,24 @@ const CalendarPage: React.FC = () => {
           </Whisper>
         </li>
       );
-
-      return (
-        <>
-          {/* <ul className="calendar-todo-list">
-            {displayList.map((item, index) => (
-              <li key={index}>
-                <Badge /> <b>{item.time}</b> - {item.title}
-              </li>
-            ))}
-            {moreCount ? moreItem : null}
-          </ul> */}
-        </>
-      );
     }
 
     return null;
   }
 
+  function getSavedRecipes(){
+    
+
+    return(
+      <option></option>
+    )
+  }
+
   function ScheduleRecipe() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
+
+
   
     return (
       <>
@@ -138,17 +155,24 @@ const CalendarPage: React.FC = () => {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Create your account</DrawerHeader>
-  
+            <DrawerHeader>Schedule a recipe for a specific time!</DrawerHeader>
+
             <DrawerBody>
-              <Input placeholder='Type here...' />
+              <Text padding={'15px'}>Pick a date:</Text>
+              <Input placeholder='Enter date here...' />
+              <Text padding={'15px'}>Choose the recipe:</Text>
+              <Select size={'md'}>
+                <option value='Food 1'>Food 1</option>
+                <option value='Food 2'>Food 2</option>
+                {/* make a function that spits out <option/>s of all the save recipes from the user */}
+              </Select>
             </DrawerBody>
   
             <DrawerFooter>
               <Button variant='outline' mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme='blue'>Save</Button>
+              <Button colorScheme='green'>Save</Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
