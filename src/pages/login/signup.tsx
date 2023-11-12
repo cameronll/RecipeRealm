@@ -58,7 +58,6 @@ const SignUp = () => {
       firstname: '',
       lastname: '',
       password: '',
-      profilePic: profilePic
     },
     onSubmit: async values => {
       if (await uniqueUsername(values.username)) {
@@ -76,6 +75,7 @@ const SignUp = () => {
             name: name,
             username: values.username,
             following: following,
+            profilePic: profilePic
           });
           console.log('Document written with ID: ', docRef);
 
@@ -170,8 +170,8 @@ const SignUp = () => {
 
               <FormLabel>First Name</FormLabel>
               <Input
-                name="name"
-                id="name"
+                name="firstname"
+                id="firstname"
                 placeholder="First Name"
                 onChange={formik.handleChange}
                 value={formik.values.firstname}
