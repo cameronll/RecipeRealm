@@ -55,8 +55,8 @@ const SignUp = () => {
     initialValues: {
       email: '',
       username: '',
-      name: '',
-      
+      firstname: '',
+      lastname: '',
       password: '',
       profilePic: profilePic
     },
@@ -70,9 +70,10 @@ const SignUp = () => {
             values.password,
           );
 
+          const name = values.firstname + " " + values.lastname;
           const docRef = await setDoc(doc(db, 'users', values.email), {
             email: values.email,
-            name: values.name,
+            name: name,
             username: values.username,
             following: following,
           });
@@ -173,7 +174,7 @@ const SignUp = () => {
                 id="name"
                 placeholder="First Name"
                 onChange={formik.handleChange}
-                value={formik.values.name}
+                value={formik.values.firstname}
               />
 
               <FormLabel>Last Name</FormLabel>
@@ -182,7 +183,7 @@ const SignUp = () => {
                 id="lastname"
                 placeholder="Last Name"
                 onChange={formik.handleChange}
-                value={formik.values.name}
+                value={formik.values.lastname}
               />
 
               <FormLabel>Username</FormLabel>
