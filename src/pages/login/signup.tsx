@@ -56,6 +56,7 @@ const SignUp = () => {
       email: '',
       username: '',
       name: '',
+      
       password: '',
       profilePic: profilePic
     },
