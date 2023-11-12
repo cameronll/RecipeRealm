@@ -63,34 +63,6 @@ import {Link} from 'react-router-dom';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { FirebaseError } from 'firebase/app';
 
-async function toDB(
-  newBiography: string,
-  newUsername: string,
-  newFirstName: string,
-  newLastName: string,
-  newPassword: string,
-  oldPassword: string,
-) {
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  const auth = getAuth();
-  const user = auth.currentUser;
-  if (newPassword && oldPassword) {
-    const credential = EmailAuthProvider.credential(email, oldPassword);
-    if (user) {
-      reauthenticateWithCredential(user, credential).then(async () => {
-        updatePassword(user, newPassword);
-      });
-    }
-  }
-
-  const newName = newFirstName + " " + newLastName;
-  const docRef = doc(db, 'users/', email);
-  await updateDoc(docRef, {
-    username: newUsername,
-    biography: newBiography,
-    name: newName
-  });
-}
 const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
@@ -176,6 +148,48 @@ const Profile: React.FC = () => {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
 
+  async function toDB(
+    newBiography: string,
+    newUsername: string,
+    newFirstName: string,
+    newLastName: string,
+    newPassword: string,
+    oldPassword: string,
+  ) {
+    const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (newPassword && oldPassword) {
+      const credential = EmailAuthProvider.credential(email, oldPassword);
+      if (user) {
+        reauthenticateWithCredential(user, credential).then(async () => {
+          updatePassword(user, newPassword);
+        });
+      }
+    }
+  
+
+    if (newBiography === null){
+      newBiography = profile?.biography
+    }
+    if (newUsername === null){
+      newUsername = profile?.username
+    }
+
+    var newName:string = '';
+    if (newFirstName === null || newLastName === null){
+      newName = profile?.name;
+    }
+    else {
+      newName = newFirstName + " " + newLastName;
+    }
+    const docRef = doc(db, 'users/', email);
+    await updateDoc(docRef, {
+      username: newUsername,
+      biography: newBiography,
+      name: newName
+    });
+  }
   return (
     <>
       <Navbar />
