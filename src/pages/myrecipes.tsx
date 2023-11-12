@@ -269,8 +269,8 @@ const Recipes: React.FC = () => {
                           <Center>
                             <Image
                               borderRadius="30px"
-                              src="default-image-icon-missing-picture-page-vector-40546530.jpg"
-                              alt="Logo"
+                              src={recipe.data.pic}
+                              alt="No Picture"
                               w={300}
                               mb={15}
                             />
@@ -507,8 +507,8 @@ const Recipes: React.FC = () => {
                           <Center>
                             <Image
                               borderRadius="30px"
-                              src="default-image-icon-missing-picture-page-vector-40546530.jpg"
-                              alt="Logo"
+                              src={recipe.data.pic}
+                              alt="No Picture"
                               w={300}
                               mb={15}
                             />
@@ -711,8 +711,8 @@ const Recipes: React.FC = () => {
                 <Center>
                   <Image
                     borderRadius="30px"
-                    src="default-image-icon-missing-picture-page-vector-40546530.jpg"
-                    alt="Logo"
+                    src={"default-image-icon-missing-picture-page-vector-40546530.jpg"}
+                    alt="No Picture"
                     w={300}
                     mb={15}
                   />

@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {db} from '../../firebaseConfig';
+import {db, storage} from '../../firebaseConfig';
 import {IoIosAdd, IoIosRemove} from 'react-icons/io';
 import {doc, setDoc} from 'firebase/firestore';
 
@@ -14,6 +14,7 @@ import {
   GridItem,
   FormLabel,
   Input,
+  Image,
   Select,
   SimpleGrid,
   InputLeftAddon,
@@ -34,6 +35,7 @@ import {
   Text,
   useBreakpointValue,
   HStack,
+  Center,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
@@ -41,6 +43,7 @@ import {useToast} from '@chakra-ui/react';
 import React from 'react';
 import {MinusIcon} from '@chakra-ui/icons';
 import Navbar from '../../components/Navbar';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -67,6 +70,7 @@ type recipe = {
   ingredients: string[];
   instructions: string;
   nutrients: nutrition;
+  pic: string
 };
 /* 
   function to get nutrition data from Nutritionix API
@@ -217,6 +221,7 @@ async function toDB(
   posted: boolean,
   ingredients: string[],
   instructions: string,
+  file: string
 ) {
   // if there is a user logged in...
   // store the currently logged in user's email in email
@@ -235,6 +240,7 @@ async function toDB(
     ingredients: ingredients,
     instructions: instructions,
     nutrients: nutrients,
+    pic: file,
   };
   // call to add a document to the database, uses <email> to get to the actively logged in user's recipes
   // creates a document with name: <recipe_name>
@@ -709,6 +715,8 @@ const Form2 = () => {
 
 const Form3 = () => {
   const [instructions, setInstructions] = useState('');
+  const [selectedFile, setSelectedFile] = useState<any>();  
+  const [fileLink, setFileLink] = useState('');
 
   useEffect(() => {
     const instructions_storage: any =
@@ -721,6 +729,15 @@ const Form3 = () => {
     window.localStorage.setItem('INSTRUCTIONS', JSON.stringify(targ));
     setInstructions(targ);
   };
+
+  async function uploadImage(file: any) {
+    const storageRef = ref(storage, Math.random().toString(16).slice(2));
+    // 'file' comes from the Blob or File API
+    uploadBytes(storageRef, file).then(async snapshot => {
+      setFileLink(await getDownloadURL(snapshot.ref))
+    });
+    localStorage.setItem('FILE', JSON.stringify(fileLink));
+  }
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal">
@@ -751,6 +768,33 @@ const Form3 = () => {
           <FormHelperText>
             Instructions on how to make the recipe
           </FormHelperText>
+          <Box>
+              {selectedFile && (
+                <div>
+                  <Image
+                    alt="No Image"
+                    width='250px'
+                    src={selectedFile}
+                  />
+                  <br />
+                  <button onClick={() => setSelectedFile(undefined)}>
+                    Remove
+                  </button>
+                </div>
+              )}
+            </Box>
+          <input
+                type="file"
+                name="myImage"
+                onChange={event => {
+                  if (event?.target?.files) {
+                    // when the file is chosen, change it into a url and make it the selected file
+                    setSelectedFile(URL.createObjectURL(event.target.files[0]));
+                    // upload the image to storage
+                    uploadImage(event.target.files[0]);
+                  }
+                }}
+              />
         </FormControl>
       </SimpleGrid>
     </>
@@ -778,6 +822,8 @@ export default function Multistep() {
   const ingredientsStorage: any =
     window.localStorage.getItem('INGREDIENTSTRING');
   const ingredients = JSON.parse(ingredientsStorage);
+  const fileStorage: any = window.localStorage.getItem('FILE');
+  const file = JSON.parse(fileStorage);
 
   return (
     <>
@@ -905,6 +951,7 @@ export default function Multistep() {
                         false,
                         ingredients,
                         instructions,
+                        file
                       );
                       window.localStorage.removeItem('RECIPENAME');
                       window.localStorage.removeItem('COOKINGTIME');
@@ -916,6 +963,7 @@ export default function Multistep() {
                       window.localStorage.removeItem('INSTRUCTIONS');
                       window.localStorage.removeItem('INGREDIENTSTRING');
                       window.localStorage.removeItem('INGREDIENTCOUNT');
+                      window.localStorage.removeItem('FILE');
                     }}>
                     Submit
                   </Button>
