@@ -194,8 +194,12 @@ const CalendarPage: React.FC = () => {
 
   const handleSubmit = async (recipe_name: string, date: string) => {
     if (recipes){
+      var index = getRecipeIndex(recipes, recipe_name);
+      if (index == -1){
+        index = getRecipeIndex(savedRecipes, recipe_name);
+      }
       const newEvent:event = {
-        recipe: recipes[getRecipeIndex(recipes, recipe_name)].data,
+        recipe: recipes[index].data,
         date: date,
         title: recipe_name
       }
