@@ -104,7 +104,7 @@ type event = {
 
 function getRecipeIndex(recipes: any[], recipe_name: string): number {
   for (let i = 0; i < recipes.length; i++) {
-    if (recipes[i]?.data.recipe_name === recipe_name) {
+    if (recipes[i]?.data.recipe_name.localeCompare(recipe_name) === 0) {
       return i;
     }
   }
@@ -193,20 +193,31 @@ const CalendarPage: React.FC = () => {
   };
 
   const handleSubmit = async (recipe_name: string, date: string) => {
-    if (recipes){
+    if (recipes && savedRecipes){
       var index = getRecipeIndex(recipes, recipe_name);
-      if (index == -1){
+      if (index === -1){
         index = getRecipeIndex(savedRecipes, recipe_name);
+        const newEvent:event = {
+          recipe: savedRecipes[index].data,
+          date: date,
+          title: recipe_name
+        }
+        const docRef = doc(db, 'users', email)
+        await updateDoc(docRef, {
+          events: arrayUnion(newEvent)
+        });
       }
-      const newEvent:event = {
-        recipe: recipes[index].data,
-        date: date,
-        title: recipe_name
+      else{
+        const newEvent:event = {
+          recipe: recipes[index].data,
+          date: date,
+          title: recipe_name
+        }
+        const docRef = doc(db, 'users', email)
+        await updateDoc(docRef, {
+          events: arrayUnion(newEvent)
+        });
       }
-      const docRef = doc(db, 'users', email)
-      await updateDoc(docRef, {
-        events: arrayUnion(newEvent)
-      });
     }
   };
 
