@@ -176,12 +176,6 @@ const CalendarPage: React.FC = () => {
     return null;
   }
 
-  function getSavedRecipes(){
-    return(
-      <option></option>
-    )
-  }
-
   const handleRecipeChange = (e: any) => {
     const targ = e.target.value;
     setRecipeName(targ);
@@ -251,8 +245,10 @@ const CalendarPage: React.FC = () => {
             </DrawerHeader>
 
             <DrawerBody paddingTop={'20px'}>
-              <Text padding={'20px'} fontSize={'20px'} fontWeight={'600'}>Enter a date (include dashes when entering time):</Text>
-              <Input outlineColor={'teal'} placeholder='YYYY-MM-DD' onChange={handleDateChange}/>
+              <Text padding={'20px'} fontSize={'20px'} fontWeight={'600'}>
+                Enter a date: <br/>(include dashes when entering date, <br/>include "T" when specifying time of day)
+              </Text>
+              <Input outlineColor={'teal'} placeholder='yyyy-mm-ddThh:mm:ss' onChange={handleDateChange}/>
               <Text padding={'25px'} fontSize={'20px'} fontWeight={'600'}>Choose the recipe:</Text>
               <Select
                size={'lg'}
@@ -283,7 +279,10 @@ const CalendarPage: React.FC = () => {
       </>
     )
   }
-  //ScheduleRecipe()
+
+  function displayScheduledMeals(){
+    
+  }
 
   return (
     <>
@@ -307,23 +306,22 @@ const CalendarPage: React.FC = () => {
         </VStack>
       </Flex>
       <HStack height={'auto'} padding={'25px'}>
-        <VStack w={'50%'} align={'left'}>
-          <Container>
+        <VStack w={'900px'} align={'left'}>
+          <Container w={'750px'}>
             <FullCalendar
               plugins={[interactionPlugin, dayGridPlugin]}
               initialView="dayGridMonth"
               selectable={true}
-              aspectRatio={.85}
+              aspectRatio={.8}
+              dateClick={function(info){
+                console.log(info)
+              }}
               selectAllow={function(selectInfo){
-                console.log(selectInfo)
-                console.log(selectInfo.start.getDay())
-                //var oneDay = 24 * 60 * 60 * 1000;
-                var startDay = selectInfo.start.getDay();
-                var endDay = selectInfo.end.getDay() - 1/*oneDay*/;
-                var count = endDay - startDay;
-                //  starts at 0, so add to start at 1
-                var dayCount = (count + 1);
-                if(dayCount == 1){
+                var startDate = selectInfo.start.getDate()
+                var endDate = selectInfo.end.getDate() - 1
+                var startMonth = selectInfo.start.getMonth()
+                var endMonth = selectInfo.end.getMonth()
+                if(startDate == endDate && startMonth == endMonth){
                     return true;
                 }else{
                     return false;
@@ -333,6 +331,8 @@ const CalendarPage: React.FC = () => {
               expandRows={true}
               dayMaxEvents={true}
               events={profile?.events}
+              eventDisplay='list-item'
+              eventBackgroundColor='teal'
             />
           </Container>
           <Container>
