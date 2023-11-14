@@ -46,12 +46,21 @@ import {
   DrawerCloseButton,
   useDisclosure,
   Select,
+  SimpleGrid,
+  Heading,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore';
+import { AiFillPrinter } from 'react-icons/ai';
+import { render } from '@testing-library/react';
 
 // export default class App extends React.Component {
 //   render() {
@@ -176,12 +185,6 @@ const CalendarPage: React.FC = () => {
     return null;
   }
 
-  function getSavedRecipes(){
-    return(
-      <option></option>
-    )
-  }
-
   const handleRecipeChange = (e: any) => {
     const targ = e.target.value;
     setRecipeName(targ);
@@ -251,8 +254,10 @@ const CalendarPage: React.FC = () => {
             </DrawerHeader>
 
             <DrawerBody paddingTop={'20px'}>
-              <Text padding={'20px'} fontSize={'20px'} fontWeight={'600'}>Enter a date (include dashes when entering time):</Text>
-              <Input outlineColor={'teal'} placeholder='YYYY-MM-DD' onChange={handleDateChange}/>
+              <Text padding={'20px'} fontSize={'20px'} fontWeight={'600'}>
+                Enter a date: <br/>(include dashes when entering date, <br/>include "T" when specifying time of day)
+              </Text>
+              <Input outlineColor={'teal'} placeholder='yyyy-mm-ddThh:mm:ss' onChange={handleDateChange}/>
               <Text padding={'25px'} fontSize={'20px'} fontWeight={'600'}>Choose the recipe:</Text>
               <Select
                size={'lg'}
@@ -283,7 +288,256 @@ const CalendarPage: React.FC = () => {
       </>
     )
   }
-  //ScheduleRecipe()
+  var stuff = '';
+  function displayScheduledMeals(dateClicked: Object){
+    //const toast = useToast();
+    async function deleteMyRecipe(recipeName: string) {
+      if (recipeName === null) {
+        recipeName = 'null';
+      }
+      await deleteDoc(doc(db, 'users/', email, 'Recipes/', recipeName));
+    }
+    stuff = 'Hello'
+
+    // return(
+    //   <VStack spacing={10}>
+    //           <Box>
+    //             <SimpleGrid
+    //               columns={3}
+    //               padding={9}
+    //               alignContent="center"
+    //               display="flex"
+    //               justifyContent="center"
+    //               alignItems="center">
+    //               {recipes?.length === 0 ? (
+    //                 <Heading textAlign="center">You have 0 recipes</Heading>
+    //               ) : (
+    //                 recipes && recipes.map(recipe => (
+    //                   <Container
+    //                     boxShadow={'2xl'}
+    //                     minW="sm"
+    //                     borderRadius="lg"
+    //                     overflow="hidden"
+    //                     justify-content="space-between"
+    //                     bg="teal"
+    //                     minH="350"
+    //                     display="flex"
+    //                     flexDirection="column"
+    //                     rounded="md"
+    //                     padding={4}
+    //                     margin={4}
+    //                     marginRight={10}
+    //                     marginLeft={10}
+    //                     shadow={'dark-lg'}>
+    //                     <VStack align="2x1">
+    //                       <Center>
+    //                         <Image
+    //                           borderRadius="30px"
+    //                           src={recipe.data.pic}
+    //                           alt="No Picture"
+    //                           w={300}
+    //                           mb={15}
+    //                         />
+    //                       </Center>
+
+    //                       <Button
+    //                         variant="link"
+    //                         rounded="md"
+    //                         as="h3"
+    //                         size="lg"
+    //                         color="black"
+    //                         padding={1}>
+    //                         <Center>
+    //                           <Text as="b" fontSize="34px" textColor="white">
+    //                             {recipe.data.recipe_name}
+    //                           </Text>
+    //                         </Center>
+    //                       </Button>
+    //                       {/* <Stack direction="row" spacing={4} align="stretch">
+    //                   <Button variant="link" colorScheme="red">
+    //                     <AiOutlineHeart style={{fontSize: '34px'}} />
+    //                   </Button>
+    //                   <Button variant="link" colorScheme="green">
+    //                     <BsFillChatDotsFill style={{fontSize: '34px'}} />
+    //                   </Button>
+    //                 </Stack> */}
+
+    //                       <Box
+    //                         boxShadow="xs"
+    //                         rounded="md"
+    //                         padding="4"
+    //                         bg="white"
+    //                         color="black"
+    //                         maxW="container.sm">
+    //                         <Text noOfLines={1}>
+    //                           Difficulty: {recipe.data.difficulty}
+    //                         </Text>
+    //                         <Text noOfLines={1}>
+    //                           Time: {recipe.data.cooking_time}
+    //                         </Text>
+    //                         <Text noOfLines={1}>
+    //                           Servings: {recipe.data.servings}
+    //                         </Text>
+    //                         <Text noOfLines={1}>
+    //                           Cost Per Serving: {recipe.data.cost_per_serving}
+    //                         </Text>
+    //                         <Text noOfLines={1}>
+    //                           Cooking Applications:{' '}
+    //                           {recipe.data.cooking_applications}
+    //                         </Text>
+    //                         <Text noOfLines={1}>
+    //                           Allergens: {recipe.data.allergens}
+    //                         </Text>
+    //                       </Box>
+    //                       <Accordion allowMultiple>
+    //                         <AccordionItem>
+    //                           <h2>
+    //                             <AccordionButton bg="white">
+    //                               <Box as="span" flex="1" textAlign="left">
+    //                                 <Text as="b" textColor="black">
+    //                                   Nutrition Data
+    //                                 </Text>
+    //                               </Box>
+    //                               <AccordionIcon />
+    //                             </AccordionButton>
+    //                           </h2>
+    //                           <AccordionPanel pb={4}>
+    //                             <Box
+    //                               padding="4"
+    //                               color="black"
+    //                               maxW="container.sm">
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Calories:{' '}
+    //                                 {recipe.data.nutrients.calories.toFixed(2)}{' '}
+    //                                 kCal
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Protein:{' '}
+    //                                 {recipe.data.nutrients.protein.toFixed(2)}g
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Carbs:{' '}
+    //                                 {recipe.data.nutrients.total_carbohydrate.toFixed(
+    //                                   2,
+    //                                 )}
+    //                                 g
+    //                               </Text>
+    //                               <Text
+    //                                 noOfLines={1}
+    //                                 style={{paddingLeft: '20px'}}
+    //                                 textColor="white">
+    //                                 Sugar:{' '}
+    //                                 {recipe.data.nutrients.sugars.toFixed(2)}g
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Fat:{' '}
+    //                                 {recipe.data.nutrients.total_fat.toFixed(2)}
+    //                                 g
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Saturated Fat:{' '}
+    //                                 {recipe.data.nutrients.saturated_fat.toFixed(
+    //                                   2,
+    //                                 )}
+    //                                 g
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Cholesterol:{' '}
+    //                                 {recipe.data.nutrients.cholesterol.toFixed(
+    //                                   2,
+    //                                 )}
+    //                                 g
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Sodium:{' '}
+    //                                 {recipe.data.nutrients.sodium.toFixed(2)}g
+    //                               </Text>
+    //                               <Text noOfLines={1} textColor="white">
+    //                                 Fiber:{' '}
+    //                                 {recipe.data.nutrients.dietary_fiber.toFixed(
+    //                                   2,
+    //                                 )}
+    //                                 g
+    //                               </Text>
+    //                             </Box>
+    //                           </AccordionPanel>
+    //                         </AccordionItem>
+    //                       </Accordion>
+    //                       <Accordion allowMultiple>
+    //                         <AccordionItem>
+    //                           <h2>
+    //                             <AccordionButton bg="white">
+    //                               <Box as="span" flex="1" textAlign="left">
+    //                                 <Text as="b" textColor="black">
+    //                                   Instructions:
+    //                                 </Text>
+    //                               </Box>
+    //                               <AccordionIcon />
+    //                             </AccordionButton>
+    //                           </h2>
+    //                           <AccordionPanel pb={4}>
+    //                             <Box
+    //                               padding="4"
+    //                               color="black"
+    //                               maxW="container.sm">
+    //                               <Text textColor="white">
+    //                                 {recipe.data.instructions}
+    //                               </Text>
+    //                             </Box>
+    //                           </AccordionPanel>
+    //                         </AccordionItem>
+    //                       </Accordion>
+    //                     </VStack>
+    //                     <HStack align="right" marginTop={2}>
+    //                       <Button
+    //                         boxShadow="xs"
+    //                         rounded="md"
+    //                         variant="outline"
+    //                         padding="4"
+    //                         colorScheme="teal"
+    //                         color="white"
+    //                         maxW="container.sm"
+    //                         onClick={() => {
+    //                           //Print Recipe
+    //                         }}>
+    //                         <AiFillPrinter />
+    //                         <Text marginLeft={2}>Print Recipe</Text>
+    //                       </Button>
+    //                       <Button
+    //                         marginLeft={130}
+    //                         boxShadow="xs"
+    //                         rounded="md"
+    //                         padding="4"
+    //                         bg={'red.400'}
+    //                         _hover={{
+    //                           bg: 'red.500',
+    //                         }}
+    //                         _focus={{
+    //                           bg: 'red.500',
+    //                         }}
+    //                         maxW="container.sm"
+    //                         onClick={() => {
+    //                           toast({
+    //                             title: 'Recipe deleted.',
+    //                             description:
+    //                               'This recipe has been removed from your recipe book.',
+    //                             status: 'success',
+    //                             duration: 3000,
+    //                             isClosable: true,
+    //                           });
+    //                           deleteMyRecipe(recipe.data.recipe_name);
+    //                         }}>
+    //                         <Text textColor="white">Delete Recipe</Text>
+    //                       </Button>
+    //                     </HStack>
+    //                   </Container>
+    //                 ))
+    //               )}
+    //             </SimpleGrid>
+    //           </Box>
+    //         </VStack>
+    // )
+  }
 
   return (
     <>
@@ -308,22 +562,22 @@ const CalendarPage: React.FC = () => {
       </Flex>
       <HStack height={'auto'} padding={'25px'}>
         <VStack w={'50%'} align={'left'}>
-          <Container>
+          <Container w={'750px'}>
             <FullCalendar
               plugins={[interactionPlugin, dayGridPlugin]}
               initialView="dayGridMonth"
               selectable={true}
-              aspectRatio={.85}
+              aspectRatio={.8}
+              dateClick={function(info){
+                console.log(info);
+                displayScheduledMeals(info);
+              }}
               selectAllow={function(selectInfo){
-                console.log(selectInfo)
-                console.log(selectInfo.start.getDay())
-                //var oneDay = 24 * 60 * 60 * 1000;
-                var startDay = selectInfo.start.getDay();
-                var endDay = selectInfo.end.getDay() - 1/*oneDay*/;
-                var count = endDay - startDay;
-                //  starts at 0, so add to start at 1
-                var dayCount = (count + 1);
-                if(dayCount == 1){
+                var startDate = selectInfo.start.getDate()
+                var endDate = selectInfo.end.getDate() - 1
+                var startMonth = selectInfo.start.getMonth()
+                var endMonth = selectInfo.end.getMonth()
+                if(startDate == endDate && startMonth == endMonth){
                     return true;
                 }else{
                     return false;
@@ -333,6 +587,8 @@ const CalendarPage: React.FC = () => {
               expandRows={true}
               dayMaxEvents={true}
               events={profile?.events}
+              eventDisplay='list-item'
+              eventBackgroundColor='teal'
             />
           </Container>
           <Container>
@@ -340,14 +596,16 @@ const CalendarPage: React.FC = () => {
           </Container>
         </VStack>
         <Container 
+        id='MealPlanInfo'
         centerContent={true} 
         border={'solid'} 
         borderColor={'teal'}
         height={'650px'}
         w={'600px'}>
-          <Text>
+          {/* <Text>
             Select Day to View Meal Plan Info
-          </Text>
+          </Text> */}
+          <Text>{stuff}</Text>
         </Container>
       </HStack>
     </>
