@@ -716,7 +716,6 @@ const Form2 = () => {
 const Form3 = () => {
   const [instructions, setInstructions] = useState('');
   const [selectedFile, setSelectedFile] = useState<any>();  
-  const [fileLink, setFileLink] = useState('');
 
   useEffect(() => {
     const instructions_storage: any =
@@ -734,9 +733,11 @@ const Form3 = () => {
     const storageRef = ref(storage, Math.random().toString(16).slice(2));
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then(async snapshot => {
-      setFileLink(await getDownloadURL(snapshot.ref))
+      await getDownloadURL(snapshot.ref).then(link => {
+        console.log(link);
+        localStorage.setItem('FILE', JSON.stringify(link));
+      })
     });
-    localStorage.setItem('FILE', JSON.stringify(fileLink));
   }
   return (
     <>
@@ -940,6 +941,8 @@ export default function Multistep() {
                       // replace hardcoded ingredients list with user inputted data
 
                       // call to the DB with hardcoded data (for now)
+                      console.log(fileStorage);
+                      console.log(file);
                       toDB(
                         recipeName,
                         servings,
@@ -951,7 +954,7 @@ export default function Multistep() {
                         false,
                         ingredients,
                         instructions,
-                        file
+                        JSON.parse(localStorage.getItem('FILE') as string)
                       );
                       window.localStorage.removeItem('RECIPENAME');
                       window.localStorage.removeItem('COOKINGTIME');

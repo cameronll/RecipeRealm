@@ -98,8 +98,11 @@ const Profile: React.FC = () => {
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then(async snapshot => {
       const userRef = doc(db, 'users/', email);
-      await updateDoc(userRef, {
-      profilePic: await getDownloadURL(snapshot.ref)
+      await getDownloadURL(snapshot.ref).then(async link => {
+        console.log(link);
+        await updateDoc(userRef, {
+          profilePic: link
+      })
     }); 
     });
   }

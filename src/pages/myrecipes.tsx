@@ -86,7 +86,7 @@ const Recipes: React.FC = () => {
   const [savedRecipes, savedRecipesLoading, savedRecipesError] = useCollectionData(savedRecipesQuery);
 
   const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
-
+  
   const postsQuery = query(collection(db, 'posts'), where('email', '==', email));
   const [posts, postsLoading, postsError] = useCollectionData(postsQuery);
 
