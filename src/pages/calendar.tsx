@@ -366,8 +366,9 @@ const CalendarPage: React.FC = () => {
           id='MealPlanInfo'
           border={'solid'}
           borderColor={'teal'}
-          height={'auto'}
+          height={'800px'}
           maxH='750px'
+          overflowY={'scroll'}
           w={'1000px'}>
           {dateSelected? (
           <Text>Select a day to view what's scheduled</Text>) : (
