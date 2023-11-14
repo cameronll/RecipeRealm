@@ -60,6 +60,7 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore';
 import { AiFillPrinter } from 'react-icons/ai';
+import { render } from '@testing-library/react';
 
 // export default class App extends React.Component {
 //   render() {
@@ -287,8 +288,8 @@ const CalendarPage: React.FC = () => {
       </>
     )
   }
-
-  function displayScheduledMeals(){
+  var stuff = '';
+  function displayScheduledMeals(dateClicked: Object){
     //const toast = useToast();
     async function deleteMyRecipe(recipeName: string) {
       if (recipeName === null) {
@@ -296,7 +297,7 @@ const CalendarPage: React.FC = () => {
       }
       await deleteDoc(doc(db, 'users/', email, 'Recipes/', recipeName));
     }
-
+    stuff = 'Hello'
 
     // return(
     //   <VStack spacing={10}>
@@ -560,7 +561,7 @@ const CalendarPage: React.FC = () => {
         </VStack>
       </Flex>
       <HStack height={'auto'} padding={'25px'}>
-        <VStack w={'900px'} align={'left'}>
+        <VStack w={'50%'} align={'left'}>
           <Container w={'750px'}>
             <FullCalendar
               plugins={[interactionPlugin, dayGridPlugin]}
@@ -568,7 +569,8 @@ const CalendarPage: React.FC = () => {
               selectable={true}
               aspectRatio={.8}
               dateClick={function(info){
-                console.log(info)
+                console.log(info);
+                displayScheduledMeals(info);
               }}
               selectAllow={function(selectInfo){
                 var startDate = selectInfo.start.getDate()
@@ -594,14 +596,16 @@ const CalendarPage: React.FC = () => {
           </Container>
         </VStack>
         <Container 
+        id='MealPlanInfo'
         centerContent={true} 
         border={'solid'} 
         borderColor={'teal'}
         height={'650px'}
         w={'600px'}>
-          <Text>
+          {/* <Text>
             Select Day to View Meal Plan Info
-          </Text>
+          </Text> */}
+          <Text>{stuff}</Text>
         </Container>
       </HStack>
     </>
