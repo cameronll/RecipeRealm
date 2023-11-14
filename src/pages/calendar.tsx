@@ -367,6 +367,7 @@ const CalendarPage: React.FC = () => {
           border={'solid'}
           borderColor={'teal'}
           height={'auto'}
+          maxH='750px'
           w={'1000px'}>
           {dateSelected? (
           <Text>Select a day to view what's scheduled</Text>) : (
