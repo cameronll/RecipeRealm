@@ -329,12 +329,14 @@ const CalendarPage: React.FC = () => {
               selectable={true}
               aspectRatio={.8}
               dateClick={function (info) {
+                // Function to handle date clicking
                 var tempEvents:Recipe[] = [];
                 for(let i = 0; i < profile?.events.length; i++){
                   if (info.dateStr == profile?.events[i].date){
                     tempEvents.push(profile?.events[i].recipe);
                   }
                 }
+                console.log(tempEvents)
                 setDateEvents(tempEvents);
               }}
               selectAllow={function (selectInfo) {
@@ -366,12 +368,219 @@ const CalendarPage: React.FC = () => {
           borderColor={'teal'}
           height={'auto'}
           w={'1000px'}>
-          {dateSelected ? (<Text>Select a day to view what's scheduled</Text>) : (
+          {dateSelected? (
+          <Text>Select a day to view what's scheduled</Text>) : (
             <VStack spacing={10}>
               <Box>
-                {(
-                  dateEvents && dateEvents.map(recipe => (
-                    <Text></Text>
+                {(dateEvents && dateEvents.map((recipe: Recipe) => (
+                    <Container
+                        boxShadow={'2xl'}
+                        minW="sm"
+                        borderRadius="lg"
+                        overflow="hidden"
+                        justify-content="space-between"
+                        bg="teal"
+                        minH="350"
+                        display="flex"
+                        flexDirection="column"
+                        marginBottom={4}
+                        marginTop={4}
+                        rounded="md"
+                        shadow={'dark-lg'}>
+                        <VStack align="2x1">
+                          <Center>
+                            <Image
+                              borderRadius="30px"
+                              // src={recipe.pic}
+                              alt="No Picture"
+                              w={300}
+                              mb={15}
+                            />
+                          </Center>
+
+                          <Button
+                            variant="link"
+                            rounded="md"
+                            as="h3"
+                            size="lg"
+                            color="black"
+                            padding={1}>
+                            <Center>
+                              <Text as="b" fontSize="34px" textColor="white">
+                                {recipe.recipe_name}
+                              </Text>
+                            </Center>
+                          </Button>
+
+                          <Box
+                            boxShadow="xs"
+                            rounded="md"
+                            padding="4"
+                            bg="white"
+                            color="black"
+                            maxW="container.sm">
+                            <Text noOfLines={1}>
+                              Difficulty: {recipe.difficulty}
+                            </Text>
+                            <Text noOfLines={1}>
+                              Time: {recipe.cooking_time}
+                            </Text>
+                            <Text noOfLines={1}>
+                              Servings: {recipe.servings}
+                            </Text>
+                            <Text noOfLines={1}>
+                              Cost Per Serving: {recipe.cost_per_serving}
+                            </Text>
+                            <Text noOfLines={1}>
+                              Cooking Applications:{' '}
+                              {recipe.cooking_applications}
+                            </Text>
+                            <Text noOfLines={1}>
+                              Allergens: {recipe.allergens}
+                            </Text>
+                          </Box>
+                          <Accordion allowMultiple>
+                            <AccordionItem>
+                              <h2>
+                                <AccordionButton bg="white">
+                                  <Box as="span" flex="1" textAlign="left">
+                                    <Text as="b" textColor="black">
+                                      Nutrition Data
+                                    </Text>
+                                  </Box>
+                                  <AccordionIcon />
+                                </AccordionButton>
+                              </h2>
+                              <AccordionPanel pb={4}>
+                                <Box
+                                  padding="4"
+                                  color="black"
+                                  maxW="container.sm">
+                                  <Text noOfLines={1} textColor="white">
+                                    Calories:{' '}
+                                    {recipe.nutrients.calories.toFixed(2)}{' '}
+                                    kCal
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Protein:{' '}
+                                    {recipe.nutrients.protein.toFixed(2)}g
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Carbs:{' '}
+                                    {recipe.nutrients.total_carbohydrate.toFixed(
+                                      2,
+                                    )}
+                                    g
+                                  </Text>
+                                  <Text
+                                    noOfLines={1}
+                                    style={{paddingLeft: '20px'}}
+                                    textColor="white">
+                                    Sugar:{' '}
+                                    {recipe.nutrients.sugars.toFixed(2)}g
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Fat:{' '}
+                                    {recipe.nutrients.total_fat.toFixed(2)}
+                                    g
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Saturated Fat:{' '}
+                                    {recipe.nutrients.saturated_fat.toFixed(
+                                      2,
+                                    )}
+                                    g
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Cholesterol:{' '}
+                                    {recipe.nutrients.cholesterol.toFixed(
+                                      2,
+                                    )}
+                                    g
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Sodium:{' '}
+                                    {recipe.nutrients.sodium.toFixed(2)}g
+                                  </Text>
+                                  <Text noOfLines={1} textColor="white">
+                                    Fiber:{' '}
+                                    {recipe.nutrients.dietary_fiber.toFixed(
+                                      2,
+                                    )}
+                                    g
+                                  </Text>
+                                </Box>
+                              </AccordionPanel>
+                            </AccordionItem>
+                          </Accordion>
+                          <Accordion allowMultiple>
+                            <AccordionItem>
+                              <h2>
+                                <AccordionButton bg="white">
+                                  <Box as="span" flex="1" textAlign="left">
+                                    <Text as="b" textColor="black">
+                                      Instructions:
+                                    </Text>
+                                  </Box>
+                                  <AccordionIcon />
+                                </AccordionButton>
+                              </h2>
+                              <AccordionPanel pb={4}>
+                                <Box
+                                  padding="4"
+                                  color="black"
+                                  maxW="container.sm">
+                                  <Text textColor="white">
+                                    {recipe.instructions}
+                                  </Text>
+                                </Box>
+                              </AccordionPanel>
+                            </AccordionItem>
+                          </Accordion>
+                        </VStack>
+                        <HStack align="right" marginTop={2}>
+                          <Button
+                            boxShadow="xs"
+                            rounded="md"
+                            variant="outline"
+                            padding="4"
+                            colorScheme="teal"
+                            color="white"
+                            maxW="container.sm"
+                            onClick={() => {
+                              //Print Recipe
+                            }}>
+                            <AiFillPrinter />
+                            <Text marginLeft={2}>Print Recipe</Text>
+                          </Button>
+                          <Button
+                            marginLeft={130}
+                            boxShadow="xs"
+                            rounded="md"
+                            padding="4"
+                            bg={'red.400'}
+                            _hover={{
+                              bg: 'red.500',
+                            }}
+                            _focus={{
+                              bg: 'red.500',
+                            }}
+                            maxW="container.sm"
+                            onClick={() => {
+                              toast({
+                                title: 'Recipe deleted.',
+                                description:
+                                  'This recipe has been removed from your recipe book.',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                              });
+                              deleteMyRecipe(recipe.recipe_name);
+                            }}>
+                            <Text textColor="white">Delete Recipe</Text>
+                          </Button>
+                        </HStack>
+                      </Container>
                   ))
                 )}
               </Box>
