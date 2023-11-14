@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage, ref } from "firebase/storage";
-import firebase from 'firebase/compat/app';
+//import firebase from 'firebase/compat/app';
 //import * as firebaseui from 'firebaseui'
 //import 'firebaseui/dist/firebaseui.css'
 
@@ -21,7 +21,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const storage = getStorage();
+const storage = getStorage(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 

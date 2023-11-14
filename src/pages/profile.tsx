@@ -62,7 +62,6 @@ import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link} from 'react-router-dom';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { FirebaseError } from 'firebase/app';
-import firebase from 'firebase/compat';
 
 const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
@@ -147,10 +146,8 @@ const Profile: React.FC = () => {
   const handleDelete = async () => {
     //TODO: Delete USer from database
     await deleteDoc(doc(db, 'users', email));
-    const user = firebase.auth().currentUser;
-    user?.delete();
- 
-    
+    // const user = firebase.auth().currentUser;
+    // user?.delete();
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();

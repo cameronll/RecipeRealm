@@ -156,7 +156,6 @@ const Posts: React.FC = () => {
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then(async snapshot => {
       await getDownloadURL(snapshot.ref).then(link => {
-        console.log(snapshot.ref);
         console.log(link);
         setFileLink(link);
       })
