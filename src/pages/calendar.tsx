@@ -103,6 +103,7 @@ type Recipe = {
   ingredients: string[];
   instructions: string;
   nutrients: nutrition;
+  pic: string
 };
 
 type event = {
@@ -393,7 +394,7 @@ const CalendarPage: React.FC = () => {
                           <Center>
                             <Image
                               borderRadius="30px"
-                              // src={recipe.pic}
+                              src={recipe.pic}
                               alt="No Picture"
                               w={300}
                               mb={15}
