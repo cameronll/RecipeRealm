@@ -417,7 +417,7 @@ const CalendarPage: React.FC = () => {
                             borderRadius="30px"
                             src={recipe.pic}
                             alt="No Picture"
-                            h="250px"
+                            h="auto"
                             w={300}
                             mb={15}
                           />

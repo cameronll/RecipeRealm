@@ -233,11 +233,7 @@ const Posts: React.FC = () => {
           </VStack>
         </Flex>
       </Flex>
-      {/* <Heading w="100%" textAlign={'center'} fontWeight="normal" marginTop={5}>
-        <Text marginTop={5} as="b" fontSize={80}>
-          Create Posts
-        </Text>
-      </Heading> */}
+
       <Center minH="80vh">
         <Box
           boxShadow="dark-lg"
@@ -245,6 +241,9 @@ const Posts: React.FC = () => {
           padding="4"
           color="black"
           minW="container.sm">
+          <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
+            Post Details
+          </Heading>
           <FormControl mt={1}>
             <HStack>
               <FormLabel

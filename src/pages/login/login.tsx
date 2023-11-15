@@ -72,7 +72,7 @@ const Login = () => {
         toast({
           //
           title: 'Incorrect Information',
-          description: "We could not validate your information",
+          description: 'We could not validate your information',
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -149,8 +149,12 @@ const Login = () => {
 
             <Flex>
               <Link to="/signup">
-                <Button colorScheme="teal" size="lg">
-                  Sign up
+                <Button
+                  color="teal"
+                  colorScheme="white"
+                  size="lg"
+                  variant="outline">
+                  <Text color="teal">Sign up</Text>
                 </Button>
               </Link>
               {/* <GoogleButton onClick={googleSignIn} /> */}

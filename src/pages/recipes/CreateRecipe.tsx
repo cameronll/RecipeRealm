@@ -283,7 +283,7 @@ const Form1 = () => {
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
-        Add
+        Recipe Title
       </Heading>
       <FormControl mt="2%">
         <FormLabel htmlFor="recipeName" fontWeight={'normal'}>

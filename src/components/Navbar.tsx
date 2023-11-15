@@ -68,12 +68,10 @@ const Navbar: React.FC = () => {
           />
           <HStack spacing={8} alignItems={'center'}>
             <Image
-              mt={15}
-              borderRadius="35px"
+              borderRadius="40px"
               src="newlogoteal.png"
               alt="Logo"
               w={100}
-              mb={15}
             />
             <HStack as={'nav'} spacing={4} display={{base: 'none', md: 'flex'}}>
               {Links.map(link => (
