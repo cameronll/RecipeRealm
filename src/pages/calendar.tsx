@@ -148,6 +148,7 @@ function getTodoList(date: {getDate: () => any}) {
 }
 
 const CalendarPage: React.FC = () => {
+  const toast = useToast();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const savedRecipesQuery = query(
     collection(db, 'users/' + email + '/SavedRecipes'),
@@ -167,14 +168,6 @@ const CalendarPage: React.FC = () => {
   const [date, setDate] = useState('');
   const [recipeName, setRecipeName] = useState<any>();
   const [events, setEvents] = useState<any>([]);
-
-  const toast = useToast();
-  async function deleteMyRecipe(recipeName: string) {
-    if (recipeName === null) {
-      recipeName = 'null';
-    }
-    await deleteDoc(doc(db, 'users/', email, 'Recipes/', recipeName));
-  }
 
   function renderCell(date: any) {
     const list = getTodoList(date);
@@ -239,6 +232,14 @@ const CalendarPage: React.FC = () => {
           events: arrayUnion(newEvent),
         });
       }
+      toast({
+        //
+        title: 'Recipe Created',
+        description: 'Recipe added to your calendar.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
