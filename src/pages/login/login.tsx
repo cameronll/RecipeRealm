@@ -127,7 +127,7 @@ const Login = () => {
           <form onSubmit={signIn}>
             <Input
               placeholder="Username"
-              value={email}
+              value={email.toLowerCase()}
               onChange={e => setEmail(e.target.value)}
               variant="filled"
               mb={4}
