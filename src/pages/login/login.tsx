@@ -115,7 +115,7 @@ const Login = () => {
           </Center>
           <form onSubmit={signIn}>
             <Input
-              placeholder="email"
+              placeholder="Enter email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               variant="filled"

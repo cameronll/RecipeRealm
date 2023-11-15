@@ -199,10 +199,8 @@ const FriendProfile: React.FC = (friend: any) => {
             <HStack spacing={4}>
               <Avatar
                 size="2xl"
-                name="Segun Adebayo"
-                src={
-                  'https://i.ytimg.com/vi/3EDFSswI29c/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBZKEgwDw==&rs=AOn4CLDJAwWFyjufCBlFlIm1PDteqDDfCA'
-                }
+                name={profile?.name}
+                src={profile?.profilePic}
               />{' '}
               <VStack marginLeft={10}>
                 <Heading>{profile?.name}'s Page</Heading>

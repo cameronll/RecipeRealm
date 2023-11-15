@@ -12,6 +12,8 @@ import {
   Spacer,
   Image,
   Center,
+  InputRightElement,
+  InputGroup,
 } from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
@@ -48,6 +50,8 @@ async function uniqueUsername(username: string): Promise<boolean> {
 const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
   const toast = useToast();
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
   const following: string[] = [];
   const profilePic =
     'https://firebasestorage.googleapis.com' +
@@ -64,7 +68,11 @@ const SignUp = () => {
       if (await uniqueUsername(values.username)) {
         try {
           // Create a new user in Firebase authentication
-          await createUserWithEmailAndPassword(auth, values.email, values.password).then(async (userCredential) => {
+          await createUserWithEmailAndPassword(
+            auth,
+            values.email,
+            values.password,
+          ).then(async userCredential => {
             const name = values.firstname + ' ' + values.lastname;
             const docRef = await setDoc(doc(db, 'users', values.email), {
               email: values.email,
@@ -73,7 +81,7 @@ const SignUp = () => {
               following: following,
               profilePic: profilePic,
             });
-          })
+          });
 
           // Additional actions upon successful signup (if needed)
           toast({
@@ -90,19 +98,18 @@ const SignUp = () => {
           toast({
             //
             title: 'Email Already In Use',
-            description: "This email already has an account",
+            description: 'This email already has an account',
             status: 'error',
             duration: 3000,
             isClosable: true,
           });
         }
-      }
-      else{
+      } else {
         // Additional actions upon successful signup (if needed)
         toast({
           //
           title: 'Username Taken',
-          description: "Please choose a unique username",
+          description: 'Please choose a unique username',
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -210,13 +217,20 @@ const SignUp = () => {
               />
 
               <FormLabel>Password</FormLabel>
-              <Input
-                name="password"
-                id="password"
-                placeholder="Password..."
-                onChange={formik.handleChange}
-                value={formik.values.password}
-              />
+              <InputGroup size="md">
+                <Input
+                  name="password"
+                  id="password"
+                  placeholder="Password..."
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button h="1.75rem" size="sm" onClick={handleClick}>
+                    {show ? 'Hide' : 'Show'}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
               <Flex>
                 <Box>
                   <Link to="/login">
