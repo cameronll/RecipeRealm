@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navbar from '../components/Navbar';
-import {db, storage} from '../firebaseConfig';
+import {auth, db, storage} from '../firebaseConfig';
 import {useDownloadURL, useUploadFile} from 'react-firebase-hooks/storage';
 import {
   getBlob,
@@ -61,7 +61,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
-import {Link} from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useDocumentData} from 'react-firebase-hooks/firestore';
 import {FirebaseError} from 'firebase/app';
 
@@ -77,6 +77,7 @@ const Profile: React.FC = () => {
   const [profile, profileLoading, profileError] = useDocumentData(
     doc(db, 'users/', email),
   );
+  const navigate = useNavigate();
 
   const [selectedFile, setSelectedFile] = useState<any>();
 
@@ -155,8 +156,17 @@ const Profile: React.FC = () => {
   const handleDelete = async () => {
     //TODO: Delete USer from database
     await deleteDoc(doc(db, 'users', email));
-    // const user = firebase.auth().currentUser;
-    // user?.delete();
+    const user = getAuth().currentUser;
+    user?.delete();
+
+    const q = query(
+      collection(db, 'posts/'),
+      where('email', '==', email),
+    );
+    const docs = await getDocs(q);
+    docs.forEach(doc => {
+      deleteDoc(doc.ref);
+    });
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -277,7 +287,18 @@ const Profile: React.FC = () => {
                 </HStack>
               </VStack>
               <VStack alignSelf="end">
-                <Button alignSelf="end" colorScheme="red" onClick={onOpen}>
+                <Button alignSelf="end" colorScheme="red" onClick={() => {
+                  handleDelete();
+                  toast({
+                    //
+                    title: 'Account Deleted',
+                    description: "Your account has been permanently removed",
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                  navigate('/login');
+                }}>
                   Delete Acccount
                 </Button>
 

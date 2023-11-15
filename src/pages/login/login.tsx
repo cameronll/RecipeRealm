@@ -13,6 +13,7 @@ import {
   Center,
   InputGroup,
   InputRightElement,
+  useToast,
 } from '@chakra-ui/react';
 //import Calendar from '../calendar';
 //import Recipes from '../myrecipes';
@@ -57,6 +58,7 @@ const Login = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const signIn = (e: React.FormEvent) => {
     e.preventDefault(); // doesnt reload page
@@ -67,7 +69,14 @@ const Login = () => {
         navigate('../recipes');
       })
       .catch(e => {
-        console.log(e);
+        toast({
+          //
+          title: 'Incorrect Information',
+          description: "We could not validate your information",
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       });
   };
 
