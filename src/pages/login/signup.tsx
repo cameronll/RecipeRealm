@@ -49,8 +49,9 @@ const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
   const toast = useToast();
   const following: string[] = [];
-  const profilePic = 'https://firebasestorage.googleapis.com' +
-  '/v0/b/reciperealm-cbc4f.appspot.com/o/default.jpeg?alt=media&token=e68e229a-2860-495a-8ced-8480f6c79b7f'
+  const profilePic =
+    'https://firebasestorage.googleapis.com' +
+    '/v0/b/reciperealm-cbc4f.appspot.com/o/default.jpeg?alt=media&token=e68e229a-2860-495a-8ced-8480f6c79b7f';
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -69,13 +70,13 @@ const SignUp = () => {
             values.password,
           );
 
-          const name = values.firstname + " " + values.lastname;
+          const name = values.firstname + ' ' + values.lastname;
           const docRef = await setDoc(doc(db, 'users', values.email), {
             email: values.email,
             name: name,
             username: values.username,
             following: following,
-            profilePic: profilePic
+            profilePic: profilePic,
           });
           console.log('Document written with ID: ', docRef);
 
@@ -150,7 +151,7 @@ const SignUp = () => {
           <Center>
             <Image
               borderRadius="30px"
-              src="circleLogo.png"
+              src="newlogoteal.png"
               alt="Logo"
               w={350}
               mb={15}
@@ -204,7 +205,7 @@ const SignUp = () => {
                 value={formik.values.password}
               />
               <Flex>
-                <Box p="2">
+                <Box>
                   <Link to="/login">
                     <Button
                       mt={4}
@@ -217,7 +218,7 @@ const SignUp = () => {
                   </Link>
                 </Box>
                 <Spacer />
-                <Box p="2">
+                <Box>
                   <Button
                     mt={4}
                     variant="solid"

@@ -30,25 +30,25 @@ const provider = new GoogleAuthProvider();
 
 const googleSignIn = async () => {
   signInWithPopup(auth, provider)
-  .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    //const credential = GoogleAuthProvider.credentialFromResult(result);
-    //const token = credential.accessToken;
-    // The signed-in user info.
-    const user = result.user;
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
-  
+    .then(result => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      //const credential = GoogleAuthProvider.credentialFromResult(result);
+      //const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+    })
+    .catch(error => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
 };
 
 const Login = () => {
@@ -93,7 +93,7 @@ const Login = () => {
           <Center>
             <Image
               borderRadius="30px"
-              src="circleLogo.png"
+              src="newlogoteal.png"
               alt="Logo"
               w={350}
               mb={15}
@@ -143,8 +143,6 @@ const Login = () => {
                 <Button colorScheme="teal" size="lg" onClick={signIn}>
                   Login
                 </Button>
-
-                
               </Link>
               <GoogleButton onClick={googleSignIn} />
 
@@ -166,10 +164,7 @@ const Login = () => {
         spacing={{base: 8, md: 10}}
         align={'center'}
         direction={'column'}>
-        
-        <Box textAlign={'center'}>
-          
-        </Box>
+        <Box textAlign={'center'}></Box>
       </Stack>
     </>
   );

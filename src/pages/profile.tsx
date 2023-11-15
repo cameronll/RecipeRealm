@@ -9,6 +9,8 @@ import {
   ref,
   uploadBytes,
 } from 'firebase/storage';
+import {BsUpload} from 'react-icons/bs';
+import {FaTrashAlt} from 'react-icons/fa';
 import {
   collection,
   addDoc,
@@ -60,8 +62,8 @@ import {
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link} from 'react-router-dom';
-import { useDocumentData } from 'react-firebase-hooks/firestore';
-import { FirebaseError } from 'firebase/app';
+import {useDocumentData} from 'react-firebase-hooks/firestore';
+import {FirebaseError} from 'firebase/app';
 
 const Profile: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
@@ -72,15 +74,20 @@ const Profile: React.FC = () => {
   const [oldPassword, setOldPassword] = useState('');
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
-  const [profile, profileLoading, profileError] = useDocumentData(doc(db, 'users/', email));
+  const [profile, profileLoading, profileError] = useDocumentData(
+    doc(db, 'users/', email),
+  );
 
   const [selectedFile, setSelectedFile] = useState<any>();
 
   useEffect(() => {
-    const username_from_storage: any = window.localStorage.getItem('NEWUSERNAME');
+    const username_from_storage: any =
+      window.localStorage.getItem('NEWUSERNAME');
     const bio_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
-    const firstName_from_storage: any = window.localStorage.getItem('NEWFIRSTNAME');
-    const lastName_from_storage: any = window.localStorage.getItem('NEWLASTNAME');
+    const firstName_from_storage: any =
+      window.localStorage.getItem('NEWFIRSTNAME');
+    const lastName_from_storage: any =
+      window.localStorage.getItem('NEWLASTNAME');
 
     setNewUsername(JSON.parse(username_from_storage));
     setNewBiography(JSON.parse(bio_from_storage));
@@ -88,22 +95,24 @@ const Profile: React.FC = () => {
     setLastName(JSON.parse(lastName_from_storage));
 
     // on mount, get the download url from database and set the url to selectedFile
-    if (profile){
-      getDownloadURL(ref(storage, profile.profilePic)).then((url) => setSelectedFile(url));
+    if (profile) {
+      getDownloadURL(ref(storage, profile.profilePic)).then(url =>
+        setSelectedFile(url),
+      );
     }
   }, [profile]);
 
   async function uploadImage(file: any) {
-    const storageRef = ref(storage, (email + 'Profile'));
+    const storageRef = ref(storage, email + 'Profile');
     // 'file' comes from the Blob or File API
     uploadBytes(storageRef, file).then(async snapshot => {
       const userRef = doc(db, 'users/', email);
       await getDownloadURL(snapshot.ref).then(async link => {
         console.log(link);
         await updateDoc(userRef, {
-          profilePic: link
-      })
-    }); 
+          profilePic: link,
+        });
+      });
     });
   }
 
@@ -123,13 +132,13 @@ const Profile: React.FC = () => {
     const targ = e.target.value;
     window.localStorage.setItem('NEWFIRSTNAME', JSON.stringify(targ));
     setFirstName(targ);
-  }
+  };
 
   const handleLastNameChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('NEWLASTNAME', JSON.stringify(targ));
     setLastName(targ);
-  }
+  };
 
   const handleOldPasswordChange = (e: any) => {
     const name = e.target.value;
@@ -172,27 +181,25 @@ const Profile: React.FC = () => {
         });
       }
     }
-  
 
-    if (newBiography === null){
-      newBiography = profile?.biography
+    if (newBiography === null) {
+      newBiography = profile?.biography;
     }
-    if (newUsername === null){
-      newUsername = profile?.username
+    if (newUsername === null) {
+      newUsername = profile?.username;
     }
 
-    var newName:string = '';
-    if (newFirstName === null || newLastName === null){
+    var newName: string = '';
+    if (newFirstName === null || newLastName === null) {
       newName = profile?.name;
-    }
-    else {
-      newName = newFirstName + " " + newLastName;
+    } else {
+      newName = newFirstName + ' ' + newLastName;
     }
     const docRef = doc(db, 'users/', email);
     await updateDoc(docRef, {
       username: newUsername,
       biography: newBiography,
-      name: newName
+      name: newName,
     });
   }
   return (
@@ -240,33 +247,34 @@ const Profile: React.FC = () => {
                 <Center>
                   {selectedFile && (
                     <div>
-                      <img
-                        alt="No Image"
-                        width={'250px'}
-                        src={selectedFile}
-                      />
+                      <img alt="No Image" width={'250px'} src={selectedFile} />
                       <br />
-                      <button onClick={() => setSelectedFile(undefined)}>
-                        Remove
-                      </button>
                     </div>
                   )}
                 </Center>
-
-                <Center w="full">
-                  <input
-                    type="file"
-                    name="myImage"
-                    onChange={event => {
-                      if (event?.target?.files) {
-                        // when the file is chosen, change it into a url and make it the selected file
-                        setSelectedFile(URL.createObjectURL(event.target.files[0]));
-                        // upload the image to storage
-                        uploadImage(event.target.files[0]);
-                      }
-                    }}
-                  />
-                </Center>
+                <HStack>
+                  <Center w="full">
+                    <input
+                      type="file"
+                      name="myImage"
+                      onChange={event => {
+                        if (event?.target?.files) {
+                          // when the file is chosen, change it into a url and make it the selected file
+                          setSelectedFile(
+                            URL.createObjectURL(event.target.files[0]),
+                          );
+                          // upload the image to storage
+                          uploadImage(event.target.files[0]);
+                        }
+                      }}
+                    />
+                  </Center>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => setSelectedFile(undefined)}>
+                    <FaTrashAlt /> Remove Picture
+                  </Button>
+                </HStack>
               </VStack>
               <VStack alignSelf="end">
                 <Button alignSelf="end" colorScheme="red" onClick={onOpen}>
@@ -412,7 +420,14 @@ const Profile: React.FC = () => {
                   localStorage.removeItem('NEWUSERNAME');
                   localStorage.removeItem('NEWBIOGRAPHY');
                 }
-                toDB(newBiography, newUsername, firstName, lastName, newPassword, oldPassword);
+                toDB(
+                  newBiography,
+                  newUsername,
+                  firstName,
+                  lastName,
+                  newPassword,
+                  oldPassword,
+                );
               }}>
               Apply
             </Button>

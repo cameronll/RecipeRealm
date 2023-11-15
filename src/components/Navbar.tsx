@@ -69,8 +69,8 @@ const Navbar: React.FC = () => {
           <HStack spacing={8} alignItems={'center'}>
             <Image
               mt={15}
-              borderRadius="30px"
-              src="widthLogo.png"
+              borderRadius="35px"
+              src="newlogoteal.png"
               alt="Logo"
               w={100}
               mb={15}
@@ -83,7 +83,7 @@ const Navbar: React.FC = () => {
               ))}
             </HStack>
           </HStack>
-          <Flex alignItems={'center'}>
+          <Flex alignItems={'center'} height="17">
             <Menu>
               <MenuButton
                 as={Button}

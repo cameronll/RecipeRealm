@@ -119,6 +119,7 @@ const FriendProfile: React.FC = (friend: any) => {
   const toast = useToast();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [numPosts, setNumPosts] = useState(0);
+  const [numFriends, setNumFriends] = useState(0);
   const [profile, setProfile] = useState<any>();
   const [email, setEmail] = useState('');
 
@@ -295,8 +296,9 @@ const FriendProfile: React.FC = (friend: any) => {
                           <Center>
                             <Image
                               borderRadius="30px"
-                              src="default-image-icon-missing-picture-page-vector-40546530.jpg"
-                              alt="Logo"
+                              minH="250px"
+                              src={recipe.data.pic}
+                              alt="No Picture"
                               w={300}
                               mb={15}
                             />
@@ -316,13 +318,13 @@ const FriendProfile: React.FC = (friend: any) => {
                             </Center>
                           </Button>
                           {/* <Stack direction="row" spacing={4} align="stretch">
-                    <Button variant="link" colorScheme="red">
-                      <AiOutlineHeart style={{fontSize: '34px'}} />
-                    </Button>
-                    <Button variant="link" colorScheme="green">
-                      <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                    </Button>
-                  </Stack> */}
+                      <Button variant="link" colorScheme="red">
+                        <AiOutlineHeart style={{fontSize: '34px'}} />
+                      </Button>
+                      <Button variant="link" colorScheme="green">
+                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                      </Button>
+                    </Stack> */}
 
                           <Box
                             boxShadow="xs"
@@ -450,7 +452,22 @@ const FriendProfile: React.FC = (friend: any) => {
                             </AccordionItem>
                           </Accordion>
                         </VStack>
-                        <HStack align="right" marginTop={2}></HStack>
+                        <HStack align="right" marginTop={2}>
+                          <Button
+                            boxShadow="xs"
+                            rounded="md"
+                            variant="outline"
+                            padding="4"
+                            colorScheme="teal"
+                            color="white"
+                            maxW="container.sm"
+                            onClick={() => {
+                              //Print Recipe
+                            }}>
+                            <AiFillPrinter />
+                            <Text marginLeft={2}>Print Recipe</Text>
+                          </Button>
+                        </HStack>
                       </Container>
                     ))
                   )}
@@ -478,7 +495,7 @@ const FriendProfile: React.FC = (friend: any) => {
                         borderRadius="lg"
                         overflow="hidden"
                         justify-content="space-between"
-                        bg="#f0f0f0"
+                        bg="teal"
                         minH="350"
                         display="flex"
                         flexDirection="column"
@@ -492,8 +509,9 @@ const FriendProfile: React.FC = (friend: any) => {
                           <Center>
                             <Image
                               borderRadius="30px"
-                              src="default-image-icon-missing-picture-page-vector-40546530.jpg"
-                              alt="Logo"
+                              minH="250px"
+                              src={recipe.data.pic}
+                              alt="No Picture"
                               w={300}
                               mb={15}
                             />
@@ -507,25 +525,25 @@ const FriendProfile: React.FC = (friend: any) => {
                             color="black"
                             padding={1}>
                             <Center>
-                              <Text as="b" fontSize="34px">
+                              <Text as="b" fontSize="34px" textColor="white">
                                 {recipe.data.recipe_name}
                               </Text>
                             </Center>
                           </Button>
                           {/* <Stack direction="row" spacing={4} align="stretch">
-                    <Button variant="link" colorScheme="red">
-                      <AiOutlineHeart style={{fontSize: '34px'}} />
-                    </Button>
-                    <Button variant="link" colorScheme="green">
-                      <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                    </Button>
-                  </Stack> */}
+                      <Button variant="link" colorScheme="red">
+                        <AiOutlineHeart style={{fontSize: '34px'}} />
+                      </Button>
+                      <Button variant="link" colorScheme="green">
+                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                      </Button>
+                    </Stack> */}
 
                           <Box
                             boxShadow="xs"
                             rounded="md"
                             padding="4"
-                            bg="#22b8bf"
+                            bg="white"
                             color="black"
                             maxW="container.sm">
                             <Text noOfLines={1}>
@@ -551,9 +569,11 @@ const FriendProfile: React.FC = (friend: any) => {
                           <Accordion allowMultiple>
                             <AccordionItem>
                               <h2>
-                                <AccordionButton bg="#22b8bf">
+                                <AccordionButton bg="white">
                                   <Box as="span" flex="1" textAlign="left">
-                                    <Text as="b">Nutrition Data</Text>
+                                    <Text as="b" textColor="black">
+                                      Nutrition Data
+                                    </Text>
                                   </Box>
                                   <AccordionIcon />
                                 </AccordionButton>
@@ -563,37 +583,58 @@ const FriendProfile: React.FC = (friend: any) => {
                                   padding="4"
                                   color="black"
                                   maxW="container.sm">
-                                  <Text noOfLines={1}>
-                                    Calories: {recipe.data.nutrients.calories}
+                                  <Text noOfLines={1} textColor="white">
+                                    Calories:{' '}
+                                    {recipe.data.nutrients.calories.toFixed(2)}{' '}
+                                    kCal
                                   </Text>
-                                  <Text noOfLines={1}>
-                                    Protein: {recipe.data.nutrients.protein}
+                                  <Text noOfLines={1} textColor="white">
+                                    Protein:{' '}
+                                    {recipe.data.nutrients.protein.toFixed(2)}g
                                   </Text>
-                                  <Text noOfLines={1}>
+                                  <Text noOfLines={1} textColor="white">
                                     Carbs:{' '}
-                                    {recipe.data.nutrients.total_carbohydrate}g
+                                    {recipe.data.nutrients.total_carbohydrate.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
                                   <Text
                                     noOfLines={1}
-                                    style={{paddingLeft: '20px'}}>
-                                    Sugar: {recipe.data.nutrients.sugars}
+                                    style={{paddingLeft: '20px'}}
+                                    textColor="white">
+                                    Sugar:{' '}
+                                    {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>
-                                  <Text noOfLines={1}>
-                                    Fat: {recipe.data.nutrients.total_fat}
+                                  <Text noOfLines={1} textColor="white">
+                                    Fat:{' '}
+                                    {recipe.data.nutrients.total_fat.toFixed(2)}
+                                    g
                                   </Text>
-                                  <Text noOfLines={1}>
+                                  <Text noOfLines={1} textColor="white">
                                     Saturated Fat:{' '}
-                                    {recipe.data.nutrients.saturated_fat}
+                                    {recipe.data.nutrients.saturated_fat.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
-                                  <Text noOfLines={1}>
+                                  <Text noOfLines={1} textColor="white">
                                     Cholesterol:{' '}
-                                    {recipe.data.nutrients.cholesterol}
+                                    {recipe.data.nutrients.cholesterol.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
-                                  <Text noOfLines={1}>
-                                    Sodium: {recipe.data.nutrients.sodium}
+                                  <Text noOfLines={1} textColor="white">
+                                    Sodium:{' '}
+                                    {recipe.data.nutrients.sodium.toFixed(2)}g
                                   </Text>
-                                  <Text noOfLines={1}>
-                                    Fiber: {recipe.data.nutrients.dietary_fiber}
+                                  <Text noOfLines={1} textColor="white">
+                                    Fiber:{' '}
+                                    {recipe.data.nutrients.dietary_fiber.toFixed(
+                                      2,
+                                    )}
+                                    g
                                   </Text>
                                 </Box>
                               </AccordionPanel>
@@ -602,9 +643,11 @@ const FriendProfile: React.FC = (friend: any) => {
                           <Accordion allowMultiple>
                             <AccordionItem>
                               <h2>
-                                <AccordionButton bg="#22b8bf">
+                                <AccordionButton bg="white">
                                   <Box as="span" flex="1" textAlign="left">
-                                    <Text as="b">Instructions:</Text>
+                                    <Text as="b" textColor="black">
+                                      Instructions:
+                                    </Text>
                                   </Box>
                                   <AccordionIcon />
                                 </AccordionButton>
@@ -614,7 +657,9 @@ const FriendProfile: React.FC = (friend: any) => {
                                   padding="4"
                                   color="black"
                                   maxW="container.sm">
-                                  <Text>{recipe.data.instructions}</Text>
+                                  <Text textColor="white">
+                                    {recipe.data.instructions}
+                                  </Text>
                                 </Box>
                               </AccordionPanel>
                             </AccordionItem>
@@ -627,7 +672,7 @@ const FriendProfile: React.FC = (friend: any) => {
                             variant="outline"
                             padding="4"
                             colorScheme="teal"
-                            color="teal"
+                            color="white"
                             maxW="container.sm"
                             onClick={() => {
                               //Print Recipe

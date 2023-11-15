@@ -62,7 +62,7 @@ const LoginNavbar: React.FC = () => {
             <Image
               mt={15}
               borderRadius="30px"
-              src="widthLogo.png"
+              src="newlogoteal.png"
               alt="Logo"
               w={100}
               mb={15}
