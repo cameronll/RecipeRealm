@@ -66,18 +66,12 @@ const Login = () => {
       .then(userCredential => {
         const user = userCredential.user;
 
-        
         localStorage.clear();
         localStorage.setItem('EMAIL', JSON.stringify(email));
-        console.log(user)
-        if(user.email !== null){
-       
-         navigate('../recipes');
-         
+        console.log(user);
+        if (user.email !== null) {
+          navigate('../recipes');
         }
-
-        
-        
       })
       .catch(e => {
         toast({
@@ -168,22 +162,12 @@ const Login = () => {
                   <Text color="teal">Sign up</Text>
                 </Button>
               </Link>
-              {/* <GoogleButton onClick={googleSignIn} /> */}
 
               <Spacer />
 
               <Link to="/Recipes">
                 <Button colorScheme="teal" size="lg" onClick={signIn}>
                   Login
-                </Button>
-              </Link>
-              <GoogleButton onClick={googleSignIn} />
-
-              <Spacer />
-
-              <Link to="/signup">
-                <Button colorScheme="teal" size="lg">
-                  Sign up
                 </Button>
               </Link>
             </Flex>

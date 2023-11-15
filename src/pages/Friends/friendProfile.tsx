@@ -214,25 +214,7 @@ const FriendProfile: React.FC = (friend: any) => {
           </VStack>
         </HStack>
       </Container>
-      {/* <VStack
-      w={'full'}
-      h={'80px'}
-      backgroundImage={
-        'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
-      }
-      bgColor="gray.400"
-      borderColor="gray.200"
-      dropShadow="lg">
-      <Box margin={4} textAlign="center">
-        <Heading
-          size="sm"
-          fontSize="35px"
-          textAlign="center"
-          alignSelf={'center'}>
-          {profile?.username}'s Recipes
-        </Heading>
-      </Box>
-    </VStack> */}
+
       <Tabs isManual variant="enclosed" colorScheme="gray" size="lg">
         <TabList
           sx={{
