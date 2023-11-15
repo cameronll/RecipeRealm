@@ -62,9 +62,20 @@ const Login = () => {
     e.preventDefault(); // doesnt reload page
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
+        const user = userCredential.user;
+
+        
         localStorage.clear();
         localStorage.setItem('EMAIL', JSON.stringify(email));
-        navigate('../recipes');
+        console.log(user)
+        if(user.email !== null){
+       
+         navigate('../recipes');
+         
+        }
+
+        
+        
       })
       .catch(e => {
         console.log(e);
@@ -107,7 +118,7 @@ const Login = () => {
           <form onSubmit={signIn}>
             <Input
               placeholder="Username"
-              value={email}
+              value={email.toLowerCase()}
               onChange={e => setEmail(e.target.value)}
               variant="filled"
               mb={4}
@@ -139,11 +150,11 @@ const Login = () => {
             </InputGroup>
 
             <Flex>
-              <Link to="/Recipes">
+              
                 <Button colorScheme="teal" size="lg" onClick={signIn}>
                   Login
                 </Button>
-              </Link>
+              
               <GoogleButton onClick={googleSignIn} />
 
               <Spacer />
