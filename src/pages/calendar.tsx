@@ -281,8 +281,9 @@ const CalendarPage: React.FC = () => {
                 include "T" when specifying time of day)
               </Text>
               <Input
+                type="datetime-local"
                 outlineColor={'teal'}
-                placeholder="yyyy-mm-ddThh:mm:ss"
+                placeholder="Select Date and Time"
                 onChange={handleDateChange}
               />
               <Text padding={'25px'} fontSize={'20px'} fontWeight={'600'}>
@@ -557,32 +558,6 @@ const CalendarPage: React.FC = () => {
                           }}>
                           <AiFillPrinter />
                           <Text marginLeft={2}>Print Recipe</Text>
-                        </Button>
-                        <Button
-                          marginLeft={130}
-                          boxShadow="xs"
-                          rounded="md"
-                          padding="4"
-                          bg={'red.400'}
-                          _hover={{
-                            bg: 'red.500',
-                          }}
-                          _focus={{
-                            bg: 'red.500',
-                          }}
-                          maxW="container.sm"
-                          onClick={() => {
-                            toast({
-                              title: 'Recipe deleted.',
-                              description:
-                                'This recipe has been removed from your recipe book.',
-                              status: 'success',
-                              duration: 3000,
-                              isClosable: true,
-                            });
-                            deleteMyRecipe(recipe.recipe_name);
-                          }}>
-                          <Text textColor="white">Delete Recipe</Text>
                         </Button>
                       </HStack>
                     </Container>

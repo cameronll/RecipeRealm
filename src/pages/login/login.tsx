@@ -106,7 +106,7 @@ const Login = () => {
           </Center>
           <form onSubmit={signIn}>
             <Input
-              placeholder="Username"
+              placeholder="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               variant="filled"
@@ -139,18 +139,18 @@ const Login = () => {
             </InputGroup>
 
             <Flex>
-              <Link to="/Recipes">
-                <Button colorScheme="teal" size="lg" onClick={signIn}>
-                  Login
-                </Button>
-              </Link>
-              <GoogleButton onClick={googleSignIn} />
-
-              <Spacer />
-
               <Link to="/signup">
                 <Button colorScheme="teal" size="lg">
                   Sign up
+                </Button>
+              </Link>
+              {/* <GoogleButton onClick={googleSignIn} /> */}
+
+              <Spacer />
+
+              <Link to="/Recipes">
+                <Button colorScheme="teal" size="lg" onClick={signIn}>
+                  Login
                 </Button>
               </Link>
             </Flex>

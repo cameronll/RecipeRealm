@@ -257,7 +257,11 @@ const Recipes: React.FC = () => {
                   justifyContent="center"
                   alignItems="center">
                   {recipes?.length === 0 ? (
-                    <Heading textAlign="center">You have 0 recipes</Heading>
+                    <Center>
+                      <Heading alignSelf="center" minH="350" textAlign="center">
+                        You have 0 recipes
+                      </Heading>
+                    </Center>
                   ) : (
                     recipes &&
                     recipes.map(recipe => (
@@ -371,10 +375,7 @@ const Recipes: React.FC = () => {
                                     )}
                                     g
                                   </Text>
-                                  <Text
-                                    noOfLines={1}
-                                    style={{paddingLeft: '20px'}}
-                                    textColor="white">
+                                  <Text noOfLines={1} textColor="white">
                                     Sugar:{' '}
                                     {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>
@@ -611,10 +612,7 @@ const Recipes: React.FC = () => {
                                     )}
                                     g
                                   </Text>
-                                  <Text
-                                    noOfLines={1}
-                                    style={{paddingLeft: '20px'}}
-                                    textColor="white">
+                                  <Text noOfLines={1} textColor="white">
                                     Sugar:{' '}
                                     {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>

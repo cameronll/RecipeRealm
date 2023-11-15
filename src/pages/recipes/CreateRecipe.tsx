@@ -780,6 +780,7 @@ const Form3 = () => {
               </div>
             )}
           </Box>
+          <FormHelperText mb={2}>Image of Dish</FormHelperText>
           <input
             type="file"
             name="myImage"
