@@ -12,6 +12,8 @@ import {
   Spacer,
   Image,
   Center,
+  InputRightElement,
+  InputGroup,
 } from '@chakra-ui/react';
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
@@ -36,10 +38,10 @@ function validateName(value: any) {
   return error;
 }
 
-async function uniqueUsername(email: string): Promise<boolean> {
+async function uniqueUsername(username: string): Promise<boolean> {
   const queryUsernames = await getDocs(collection(db, 'users'));
   const usernames = queryUsernames.docs.map(doc => doc.data().username);
-  if (usernames.includes(email)) {
+  if (usernames.includes(username)) {
     return false;
   }
   return true;
@@ -48,6 +50,8 @@ async function uniqueUsername(email: string): Promise<boolean> {
 const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
   const toast = useToast();
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
   const following: string[] = [];
   const profilePic =
     'https://firebasestorage.googleapis.com' +
@@ -64,21 +68,20 @@ const SignUp = () => {
       if (await uniqueUsername(values.username)) {
         try {
           // Create a new user in Firebase authentication
-          const userCredential = await createUserWithEmailAndPassword(
+          await createUserWithEmailAndPassword(
             auth,
             values.email,
             values.password,
-          );
-
-          const name = values.firstname + ' ' + values.lastname;
-          const docRef = await setDoc(doc(db, 'users', values.email), {
-            email: values.email,
-            name: name,
-            username: values.username,
-            following: following,
-            profilePic: profilePic,
+          ).then(async userCredential => {
+            const name = values.firstname + ' ' + values.lastname;
+            const docRef = await setDoc(doc(db, 'users', values.email), {
+              email: values.email,
+              name: name,
+              username: values.username,
+              following: following,
+              profilePic: profilePic,
+            });
           });
-          console.log('Document written with ID: ', docRef);
 
           // Additional actions upon successful signup (if needed)
           toast({
@@ -92,8 +95,25 @@ const SignUp = () => {
 
           navigate('/login'); //navigate to login
         } catch (e) {
-          console.log(e);
+          toast({
+            //
+            title: 'Email Already In Use',
+            description: 'This email already has an account',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
         }
+      } else {
+        // Additional actions upon successful signup (if needed)
+        toast({
+          //
+          title: 'Username Taken',
+          description: 'Please choose a unique username',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       }
     },
   });
@@ -197,13 +217,20 @@ const SignUp = () => {
               />
 
               <FormLabel>Password</FormLabel>
-              <Input
-                name="password"
-                id="password"
-                placeholder="Password..."
-                onChange={formik.handleChange}
-                value={formik.values.password}
-              />
+              <InputGroup size="md">
+                <Input
+                  name="password"
+                  id="password"
+                  placeholder="Password..."
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button h="1.75rem" size="sm" onClick={handleClick}>
+                    {show ? 'Hide' : 'Show'}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
               <Flex>
                 <Box>
                   <Link to="/login">

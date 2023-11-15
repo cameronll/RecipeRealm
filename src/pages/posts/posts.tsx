@@ -47,7 +47,7 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import {Header} from 'rsuite';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
 function getRecipeIndex(recipes: any[], recipe_name: string): number {
   for (let i = 0; i < recipes.length; i++) {
@@ -84,7 +84,12 @@ type recipe = {
   nutrients: nutrition;
 };
 
-async function toDB(title: string, description: string, recipe: any, pic: string) {
+async function toDB(
+  title: string,
+  description: string,
+  recipe: any,
+  pic: string,
+) {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const getUser = doc(db, 'users/', email);
   const getUserData = await getDoc(getUser);
@@ -109,7 +114,7 @@ async function toDB(title: string, description: string, recipe: any, pic: string
     description: description,
     recipe: recipe,
     likes: 0,
-    pic: pic
+    pic: pic,
   });
 }
 const Posts: React.FC = () => {
@@ -148,7 +153,6 @@ const Posts: React.FC = () => {
       const recipe_store: any = window.localStorage.getItem('RECIPE');
       setPostRecipe(JSON.parse(recipe_store));
     }
-    
   }, []);
 
   async function uploadImage(file: any) {
@@ -158,7 +162,7 @@ const Posts: React.FC = () => {
       await getDownloadURL(snapshot.ref).then(link => {
         console.log(link);
         setFileLink(link);
-      })
+      });
     });
   }
 
@@ -203,7 +207,7 @@ const Posts: React.FC = () => {
         w={'full'}
         h={'100'}
         backgroundImage={
-          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+          'url(https://hips.hearstapps.com/hmg-prod/images/wdy050113taco-01-1624540365.jpg)'
         }
         backgroundSize={'cover'}
         backgroundPosition={'center center'}
@@ -321,34 +325,30 @@ const Posts: React.FC = () => {
               Image
             </FormLabel>
             <Box>
-            <Center>
-                  {selectedFile && (
-                    <div>
-                      <Image
-                        alt="No Image"
-                        width='250px'
-                        src={selectedFile}
-                      />
-                      <br />
-                      <button onClick={() => setSelectedFile(undefined)}>
-                        Remove
-                      </button>
-                    </div>
-                  )}
-                </Center>
+              <Center>
+                {selectedFile && (
+                  <div>
+                    <Image alt="No Image" width="250px" src={selectedFile} />
+                    <br />
+                    <button onClick={() => setSelectedFile(undefined)}>
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </Center>
             </Box>
-              <input
-                type="file"
-                name="myImage"
-                onChange={event => {
-                  if (event?.target?.files) {
-                    // when the file is chosen, change it into a url and make it the selected file
-                    setSelectedFile(URL.createObjectURL(event.target.files[0]));
-                    // upload the image to storage
-                    uploadImage(event.target.files[0]);
-                  }
-                }}
-              />
+            <input
+              type="file"
+              name="myImage"
+              onChange={event => {
+                if (event?.target?.files) {
+                  // when the file is chosen, change it into a url and make it the selected file
+                  setSelectedFile(URL.createObjectURL(event.target.files[0]));
+                  // upload the image to storage
+                  uploadImage(event.target.files[0]);
+                }
+              }}
+            />
           </FormControl>
           <Link to="/recipes">
             <Button colorScheme="red.500">Back</Button>

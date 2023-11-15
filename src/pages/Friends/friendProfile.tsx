@@ -199,10 +199,8 @@ const FriendProfile: React.FC = (friend: any) => {
             <HStack spacing={4}>
               <Avatar
                 size="2xl"
-                name="Segun Adebayo"
-                src={
-                  'https://i.ytimg.com/vi/3EDFSswI29c/hqdefault.jpg?sqp=-oaymwE9CNACELwBSFryq4qpAy8IARUAAAAAGAElAADIQj0AgKJDeAHwAQH4AbYIgALQBYoCDAgAEAEYZSBZKEgwDw==&rs=AOn4CLDJAwWFyjufCBlFlIm1PDteqDDfCA'
-                }
+                name={profile?.name}
+                src={profile?.profilePic}
               />{' '}
               <VStack marginLeft={10}>
                 <Heading>{profile?.name}'s Page</Heading>
@@ -245,20 +243,11 @@ const FriendProfile: React.FC = (friend: any) => {
             <FiBookOpen />
             <Text marginLeft={2}>Recipe Book</Text>
           </Tab>
-          <Tab>
-            {' '}
-            <BsBookmarks />
-            <Text marginLeft={2}>Saved Recipes</Text>
-          </Tab>
+
           <Tab>
             {' '}
             <RiPagesLine />
             <Text marginLeft={2}>My Posts</Text>
-          </Tab>
-          <Tab>
-            {' '}
-            <FaUserFriends />
-            <Text marginLeft={2}>My Friends</Text>
           </Tab>
         </TabList>
         <TabPanels>
@@ -599,10 +588,7 @@ const FriendProfile: React.FC = (friend: any) => {
                                     )}
                                     g
                                   </Text>
-                                  <Text
-                                    noOfLines={1}
-                                    style={{paddingLeft: '20px'}}
-                                    textColor="white">
+                                  <Text noOfLines={1} textColor="white">
                                     Sugar:{' '}
                                     {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>
@@ -688,8 +674,6 @@ const FriendProfile: React.FC = (friend: any) => {
               </Box>
             </HStack>
           </TabPanel>
-          <TabPanel minH="100vh"></TabPanel>
-          <TabPanel minH="100vh"></TabPanel>
         </TabPanels>
       </Tabs>
     </>

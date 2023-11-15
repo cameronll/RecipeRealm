@@ -200,25 +200,7 @@ const Recipes: React.FC = () => {
           </VStack>
         </HStack>
       </Container>
-      {/* <VStack
-        w={'full'}
-        h={'80px'}
-        backgroundImage={
-          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
-        }
-        bgColor="gray.400"
-        borderColor="gray.200"
-        dropShadow="lg">
-        <Box margin={4} textAlign="center">
-          <Heading
-            size="sm"
-            fontSize="35px"
-            textAlign="center"
-            alignSelf={'center'}>
-            {profile?.username}'s Recipes
-          </Heading>
-        </Box>
-      </VStack> */}
+
       <Tabs isManual variant="enclosed" colorScheme="gray" size="lg">
         <TabList
           sx={{
@@ -257,7 +239,11 @@ const Recipes: React.FC = () => {
                   justifyContent="center"
                   alignItems="center">
                   {recipes?.length === 0 ? (
-                    <Heading textAlign="center">You have 0 recipes</Heading>
+                    <Center>
+                      <Heading alignSelf="center" minH="350" textAlign="center">
+                        You have 0 recipes
+                      </Heading>
+                    </Center>
                   ) : (
                     recipes &&
                     recipes.map(recipe => (
@@ -371,10 +357,7 @@ const Recipes: React.FC = () => {
                                     )}
                                     g
                                   </Text>
-                                  <Text
-                                    noOfLines={1}
-                                    style={{paddingLeft: '20px'}}
-                                    textColor="white">
+                                  <Text noOfLines={1} textColor="white">
                                     Sugar:{' '}
                                     {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>
@@ -611,10 +594,7 @@ const Recipes: React.FC = () => {
                                     )}
                                     g
                                   </Text>
-                                  <Text
-                                    noOfLines={1}
-                                    style={{paddingLeft: '20px'}}
-                                    textColor="white">
+                                  <Text noOfLines={1} textColor="white">
                                     Sugar:{' '}
                                     {recipe.data.nutrients.sugars.toFixed(2)}g
                                   </Text>
@@ -714,6 +694,7 @@ const Recipes: React.FC = () => {
                                 duration: 3000,
                                 isClosable: true,
                               });
+                              deleteSavedRecipe(recipe.data.recipe_name);
                             }}>
                             <Text textColor="white">Remove Recipe</Text>
                           </Button>

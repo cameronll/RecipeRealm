@@ -43,7 +43,7 @@ import {useToast} from '@chakra-ui/react';
 import React from 'react';
 import {MinusIcon} from '@chakra-ui/icons';
 import Navbar from '../../components/Navbar';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -70,7 +70,7 @@ type recipe = {
   ingredients: string[];
   instructions: string;
   nutrients: nutrition;
-  pic: string
+  pic: string;
 };
 /* 
   function to get nutrition data from Nutritionix API
@@ -221,7 +221,7 @@ async function toDB(
   posted: boolean,
   ingredients: string[],
   instructions: string,
-  file: string
+  file: string,
 ) {
   // if there is a user logged in...
   // store the currently logged in user's email in email
@@ -715,7 +715,7 @@ const Form2 = () => {
 
 const Form3 = () => {
   const [instructions, setInstructions] = useState('');
-  const [selectedFile, setSelectedFile] = useState<any>();  
+  const [selectedFile, setSelectedFile] = useState<any>();
 
   useEffect(() => {
     const instructions_storage: any =
@@ -736,7 +736,7 @@ const Form3 = () => {
       await getDownloadURL(snapshot.ref).then(link => {
         console.log(link);
         localStorage.setItem('FILE', JSON.stringify(link));
-      })
+      });
     });
   }
   return (
@@ -770,32 +770,29 @@ const Form3 = () => {
             Instructions on how to make the recipe
           </FormHelperText>
           <Box>
-              {selectedFile && (
-                <div>
-                  <Image
-                    alt="No Image"
-                    width='250px'
-                    src={selectedFile}
-                  />
-                  <br />
-                  <button onClick={() => setSelectedFile(undefined)}>
-                    Remove
-                  </button>
-                </div>
-              )}
-            </Box>
+            {selectedFile && (
+              <div>
+                <Image alt="No Image" width="250px" src={selectedFile} />
+                <br />
+                <button onClick={() => setSelectedFile(undefined)}>
+                  Remove
+                </button>
+              </div>
+            )}
+          </Box>
+          <FormHelperText mb={2}>Image of Dish</FormHelperText>
           <input
-                type="file"
-                name="myImage"
-                onChange={event => {
-                  if (event?.target?.files) {
-                    // when the file is chosen, change it into a url and make it the selected file
-                    setSelectedFile(URL.createObjectURL(event.target.files[0]));
-                    // upload the image to storage
-                    uploadImage(event.target.files[0]);
-                  }
-                }}
-              />
+            type="file"
+            name="myImage"
+            onChange={event => {
+              if (event?.target?.files) {
+                // when the file is chosen, change it into a url and make it the selected file
+                setSelectedFile(URL.createObjectURL(event.target.files[0]));
+                // upload the image to storage
+                uploadImage(event.target.files[0]);
+              }
+            }}
+          />
         </FormControl>
       </SimpleGrid>
     </>
@@ -833,7 +830,7 @@ export default function Multistep() {
         w={'full'}
         h={'100'}
         backgroundImage={
-          'url(https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fphotos-images%2Ffood-background.html&psig=AOvVaw19YTiVWLg69rXtH_pxsMAt&ust=1698854868045000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjS8djVoIIDFQAAAAAdAAAAABAJ)'
+          'url(https://hips.hearstapps.com/hmg-prod/images/wdy050113taco-01-1624540365.jpg)'
         }
         backgroundSize={'cover'}
         backgroundPosition={'center center'}
@@ -954,7 +951,7 @@ export default function Multistep() {
                         false,
                         ingredients,
                         instructions,
-                        JSON.parse(localStorage.getItem('FILE') as string)
+                        JSON.parse(localStorage.getItem('FILE') as string),
                       );
                       window.localStorage.removeItem('RECIPENAME');
                       window.localStorage.removeItem('COOKINGTIME');
