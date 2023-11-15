@@ -36,10 +36,10 @@ function validateName(value: any) {
   return error;
 }
 
-async function uniqueUsername(email: string): Promise<boolean> {
+async function uniqueUsername(username: string): Promise<boolean> {
   const queryUsernames = await getDocs(collection(db, 'users'));
   const usernames = queryUsernames.docs.map(doc => doc.data().username);
-  if (usernames.includes(email)) {
+  if (usernames.includes(username)) {
     return false;
   }
   return true;
@@ -64,21 +64,16 @@ const SignUp = () => {
       if (await uniqueUsername(values.username)) {
         try {
           // Create a new user in Firebase authentication
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            values.email,
-            values.password,
-          );
-
-          const name = values.firstname + ' ' + values.lastname;
-          const docRef = await setDoc(doc(db, 'users', values.email), {
-            email: values.email,
-            name: name,
-            username: values.username,
-            following: following,
-            profilePic: profilePic,
-          });
-          console.log('Document written with ID: ', docRef);
+          await createUserWithEmailAndPassword(auth, values.email, values.password).then(async (userCredential) => {
+            const name = values.firstname + ' ' + values.lastname;
+            const docRef = await setDoc(doc(db, 'users', values.email), {
+              email: values.email,
+              name: name,
+              username: values.username,
+              following: following,
+              profilePic: profilePic,
+            });
+          })
 
           // Additional actions upon successful signup (if needed)
           toast({
@@ -92,8 +87,26 @@ const SignUp = () => {
 
           navigate('/login'); //navigate to login
         } catch (e) {
-          console.log(e);
+          toast({
+            //
+            title: 'Email Already In Use',
+            description: "This email already has an account",
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
         }
+      }
+      else{
+        // Additional actions upon successful signup (if needed)
+        toast({
+          //
+          title: 'Username Taken',
+          description: "Please choose a unique username",
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       }
     },
   });
