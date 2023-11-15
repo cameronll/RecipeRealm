@@ -399,11 +399,7 @@ const Form2 = () => {
 
   //buttonDisable
   const disableAdd = (): boolean | undefined => {
-    if (
-      ingredientName === '' ||
-      ingredientAmount === 0 ||
-      ingredientMeasurement === ''
-    ) {
+    if (ingredientName === '') {
       return true;
     }
     return false;
@@ -646,10 +642,10 @@ const Form2 = () => {
             </FormLabel>
             <NumberInput
               max={999}
-              min={0}
+              min={1}
               value={ingredientAmount}
               onChange={handleIAmount}
-              isRequired={true}>
+              isRequired={false}>
               <NumberInputField id={`amount-`} />
               <NumberInputStepper>
                 <NumberIncrementStepper />
@@ -670,8 +666,7 @@ const Form2 = () => {
               w="full"
               rounded="md"
               value={ingredientMeasurement}
-              onChange={handleIMeasurement}
-              isRequired={false}>
+              onChange={handleIMeasurement}>
               <option> </option>
               <option> </option>
               <option>Ibs</option>

@@ -165,7 +165,7 @@ const Recipes: React.FC = () => {
                 <Text>{recipes?.length} Recipes</Text>
                 <Text>{numPosts} Posts</Text>
                 <Text>{profile?.following.length} Friends</Text>
-                <Text color={'black'} fontSize={'lg'}>
+                <Text color={'black'} fontSize={'lg'} maxWidth={500}>
                   {profile?.biography}
                 </Text>
               </VStack>
