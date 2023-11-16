@@ -166,6 +166,8 @@ const Posts: React.FC = () => {
     });
   }
 
+  const isDisabled = () => {};
+
   const handleTitleChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('TITLE', JSON.stringify(targ));

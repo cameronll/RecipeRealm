@@ -162,9 +162,25 @@ const Recipes: React.FC = () => {
               />{' '}
               <VStack marginLeft={10}>
                 <Heading>{profile?.name}</Heading>
-                <Text>{recipes?.length} Recipes</Text>
-                <Text>{numPosts} Posts</Text>
-                <Text>{profile?.following.length} Friends</Text>
+                {/* Displaye Recipe Length */}
+                {recipes?.length === 1 ? (
+                  <Text fontSize={18}>{recipes?.length} recipe</Text>
+                ) : (
+                  <Text fontSize={18}>{recipes?.length} recipes</Text>
+                )}
+                {/* Display Recipe Length */}
+                {numPosts === 1 ? (
+                  <Text fontSize={18}>{numPosts} post</Text>
+                ) : (
+                  <Text fontSize={18}>{numPosts} posts</Text>
+                )}
+                {/* Display # friends */}
+                {profile?.following.length === 1 ? (
+                  <Text fontSize={18}>{profile?.following.length} post</Text>
+                ) : (
+                  <Text fontSize={18}>{profile?.following.length} posts</Text>
+                )}
+
                 <Text color={'black'} fontSize={'lg'} maxWidth={500}>
                   {profile?.biography}
                 </Text>

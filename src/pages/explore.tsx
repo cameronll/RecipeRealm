@@ -269,12 +269,6 @@ const Explore: React.FC = () => {
     return -1;
   }
 
-  /*
-  data that can be displayed:
-  post.username.<description, title, username, recipe_name>
-  post.username.date_time.toDate().toString()
-  */
-
   return (
     <Box>
       <Navbar />
@@ -295,11 +289,7 @@ const Explore: React.FC = () => {
           backgroundPosition={'center center'}
           alignContent={'flex-end'}
           backgroundColor="rgba(0, 128, 128, 0.7)">
-          <VStack
-            w={'full'}
-            px={useBreakpointValue({base: 4, md: 8})}
-            // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
-          >
+          <VStack w={'full'} px={useBreakpointValue({base: 4, md: 8})}>
             <Stack maxW={'2xl'} spacing={6}>
               <Text textAlign="center" fontSize="6xl" as="b" color="white">
                 Explore
@@ -325,7 +315,6 @@ const Explore: React.FC = () => {
                 savedRecipes &&
                 allPosts.map(post => (
                   <Container
-                    // minH="100vh"
                     shadow={1000}
                     maxW="container.lg"
                     color="white"
@@ -431,11 +420,13 @@ const Explore: React.FC = () => {
                         // bgColor="#4fb9af"
                       >
                         <Text fontSize={25}>{post.title}</Text>
+
                         <Flex>
                           <Text fontSize={18}>Posted by: </Text>
                           <Text fontSize={18} marginLeft={2}>
                             {profiles[getIndex(profiles, post.email)]?.username}{' '}
                           </Text>
+
                           <Popover
                             closeOnBlur={false}
                             placement="left"
@@ -641,7 +632,11 @@ const Explore: React.FC = () => {
                             View Recipe
                           </Button>
                         </Flex>
-
+                        {post.likes === 1 ? (
+                          <Text fontSize={18}>{post.likes} like</Text>
+                        ) : (
+                          <Text fontSize={18}>{post.likes} likes</Text>
+                        )}
                         <Text fontSize={20}>Caption:</Text>
                         <Text>{post.description}</Text>
                       </Box>
@@ -752,7 +747,11 @@ const Explore: React.FC = () => {
                           </Button>
                         )}
                         <Spacer />
-                        <Text>{post?.date_time.toDate().toString()}</Text>
+                        <Text fontSize={20}>
+                          {post?.date_time.toDate().getMonth()}/
+                          {post?.date_time.toDate().getDay()}/
+                          {post?.date_time.toDate().getFullYear()}
+                        </Text>
                       </Stack>
 
                       <Box
@@ -764,6 +763,11 @@ const Explore: React.FC = () => {
                         // bgColor="#4fb9af"
                       >
                         <Text fontSize={25}>{post.title}</Text>
+                        {post.likes === 1 ? (
+                          <Text fontSize={18}>{post.likes} like</Text>
+                        ) : (
+                          <Text fontSize={18}>{post.likes} likes</Text>
+                        )}
                         <Flex>
                           <Text fontSize={18}>Posted by: </Text>
                           <Text fontSize={18} marginLeft={2}>
