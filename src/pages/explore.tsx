@@ -90,6 +90,7 @@ type nutrition = {
   protein: number;
 };
 
+// type that holds recipe information
 type Recipe = {
   recipe_name: string;
   servings: string;
@@ -105,16 +106,19 @@ type Recipe = {
 };
 
 const Explore: React.FC = () => {
+  // email from local storage, used to identify current user
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   // useState to create constants
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
-
+  // toast for popups
   const toast = useToast();
-
+  // create a listener to the user called: user
   const userQuery = doc(db, 'users/', email);
   const [user, userLoading, userError] = useDocumentData(userQuery);
 
+  // create a listener to the posts database called: allPosts
+  // posts are sorted by time descending
   const allPostsQuery = query(
     collection(db, 'posts'),
     orderBy('date_time', 'desc'),
@@ -122,21 +126,25 @@ const Explore: React.FC = () => {
   const [allPosts, allPostsLoading, allPostsError] =
     useCollectionData(allPostsQuery);
 
+    // create a listener to all the profiles called: profiles
   const profilesQuery = query(collection(db, 'users'));
   const [profiles, profileLoading, profilesError] =
     useCollectionData(profilesQuery);
 
+    // create a listener for the user's saved recipes
   const savedRecipesQuery = query(
     collection(db, 'users/' + email + '/SavedRecipes'),
   );
   const [savedRecipes, savedRecipesLoading, savedRecipesError] =
     useCollectionData(savedRecipesQuery);
 
+    // useEffect, when user has loaded, set the following list and the liked list
   useEffect(() => {
     setFollowing(user?.following);
     setLiked(user?.liked);
   }, [user]);
 
+  // if following has loaded, create a listener to all posts posted by friends
   var friendsPostsQuery: any;
   if (following) {
     if (following.length !== 0) {
@@ -146,6 +154,7 @@ const Explore: React.FC = () => {
         orderBy('date_time', 'desc'),
       );
     }
+    // if following has not loaded, create a fake query that returns nothing
   } else {
     friendsPostsQuery = query(
       collection(db, 'posts'),
@@ -155,10 +164,13 @@ const Explore: React.FC = () => {
   }
   const [friendsPosts, friendsPostsLoading, friendsPostsError] =
     useCollectionData(friendsPostsQuery);
-
+    
+    // function to add a follower to your following list
   async function addFollowing(followingEmail: string) {
+    // if you don't follow them...
     if (!isFollowing(followingEmail)) {
       const getUser = doc(db, 'users/', email);
+      // update the user's doc, append their email to the end
       await updateDoc(getUser, {
         following: arrayUnion(followingEmail),
       });
@@ -167,9 +179,12 @@ const Explore: React.FC = () => {
     }
   }
 
+  // function to remove a follower from your following list
   async function removeFollowing(followingEmail: string) {
+    // if you DO follow them...
     if (isFollowing(followingEmail)) {
       const getUser = doc(db, 'users/', email);
+      // remove their name from your list
       await updateDoc(getUser, {
         following: arrayRemove(followingEmail),
       });
@@ -177,6 +192,7 @@ const Explore: React.FC = () => {
   }
   const initRef = useRef<HTMLButtonElement | null>(null);
 
+  // function to check if someone is in the current user's following list
   function isFollowing(followingEmail: string) {
     if (following?.includes(followingEmail)) {
       return true;
@@ -184,6 +200,9 @@ const Explore: React.FC = () => {
     return false;
   }
 
+  // function to check if a post is in the current user's following list
+  // uses the time posted as a unique key
+  // time goes down to nanoseconds...so it's unique
   function isLiked(datetime: any) {
     for (let i = 0; i < liked?.length; i++) {
       if (liked[i].seconds === datetime.seconds) {
@@ -193,16 +212,20 @@ const Explore: React.FC = () => {
     return false;
   }
 
+  // function to like a post
   async function like(datetime: any) {
+    // add the posts datetime (key) to your list
     const docRef = doc(db, 'users/', email);
     await updateDoc(docRef, {
       liked: arrayUnion(datetime),
     });
+    // update the post
     const q = query(
       collection(db, 'posts/'),
       where('date_time', '==', datetime),
     );
     const docs = await getDocs(q);
+    // add a like to the post
     docs.forEach(doc => {
       updateDoc(doc.ref, {
         likes: increment(1),
@@ -210,8 +233,10 @@ const Explore: React.FC = () => {
     });
   }
 
+  // function to unlike a post
   async function unlike(datetime: any) {
     const docRef = doc(db, 'users/', email);
+    // remove the datetime from your liked list
     await updateDoc(docRef, {
       liked: arrayRemove(datetime),
     });
@@ -219,6 +244,7 @@ const Explore: React.FC = () => {
       collection(db, 'posts/'),
       where('date_time', '==', datetime),
     );
+    // get the post, decrease it's number of likes by 1
     const docs = await getDocs(q);
     docs.forEach(doc => {
       updateDoc(doc.ref, {
@@ -227,9 +253,11 @@ const Explore: React.FC = () => {
     });
   }
 
+  // function to see if the post is saved 
   function isSaved(recipe: Recipe) {
     if (savedRecipes) {
       for (let i = 0; i < savedRecipes.length; i++) {
+        // if the recipe is in the user's saved recipe list, return true
         if (savedRecipes[i].data.recipe_name === recipe.recipe_name) {
           return true;
         }
@@ -238,15 +266,19 @@ const Explore: React.FC = () => {
     return false;
   }
 
+  // function to save a recipe
   async function saveRecipe(recipe: Recipe, creatorEmail: string) {
+    // get the username of the creator of the post
     const docRef = doc(db, 'users', creatorEmail);
     const docSnap = await getDoc(docRef);
     if (docSnap) {
       const username = docSnap.data()?.username;
       await setDoc(
+        // go to your account
         doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name),
         {
-          // name in database: variable
+          // create the recipe with the passed in data and the username
+          // of the creator
           data: recipe,
           creator: username,
         },
@@ -254,14 +286,18 @@ const Explore: React.FC = () => {
     }
   }
 
+  // function to delete a recipe
   async function unsaveRecipe(recipe: Recipe) {
+    // delete the doc from the user's Saved Recipe list
     await deleteDoc(
       doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name),
     );
   }
 
+  // function to get the index of an email in the profiles array
   function getIndex(profiles: any[], email: string): number {
     for (let i = 0; i < profiles?.length; i++) {
+      // count until the email is found
       if (profiles[i].email === email) {
         return i;
       }
@@ -301,6 +337,7 @@ const Explore: React.FC = () => {
       <Tabs isFitted variant="enclosed" size="lg">
         <TabList mb="1em">
           <Tab>
+            {/* two tabs: explore and friends */}
             <Text as="b">Explore</Text>
           </Tab>
           <Tab>
@@ -310,9 +347,12 @@ const Explore: React.FC = () => {
         <TabPanels>
           <TabPanel>
             <VStack minH="100vh">
-              {allPosts &&
+              {
+              // when all the data is loaded in...
+              allPosts &&
                 profiles &&
                 savedRecipes &&
+                // map individual posts
                 allPosts.map(post => (
                   <Container
                     shadow={1000}
@@ -334,12 +374,14 @@ const Explore: React.FC = () => {
                       display="flex"
                       flexDirection="column">
                       <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.recipe.data.recipe_name}
+                        {// the name of the recipe from the post
+                        post?.recipe.data.recipe_name}
                       </div>
                       <Center>
                         <Image
                           borderRadius="30px"
-                          src={post.pic}
+                          src={// the picture attached to the post
+                            post.pic}
                           alt="No Image"
                           w={300}
                           mb={15}
@@ -350,10 +392,12 @@ const Explore: React.FC = () => {
                         spacing={4}
                         align="stretch"
                         marginBottom={3}>
-                        {isLiked(post.date_time) ? (
+                        {// check if the post has been liked
+                        isLiked(post.date_time) ? (
                           <Button
                             variant="link"
                             colorScheme="white"
+                            // if it has been liked, unlike it on click
                             onClick={() => unlike(post?.date_time)}>
                             <AiFillHeart style={{fontSize: '34px'}} />
                           </Button>
@@ -361,6 +405,7 @@ const Explore: React.FC = () => {
                           <Button
                             variant="link"
                             colorScheme="white"
+                            // if it has not been liked, like it on click
                             onClick={() => like(post?.date_time)}>
                             <AiOutlineHeart style={{fontSize: '34px'}} />
                           </Button>
@@ -368,11 +413,15 @@ const Explore: React.FC = () => {
                         <Button variant="link" colorScheme="white">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
-                        {isSaved(post.recipe.data) ? (
+                        {// check if this post has been saved
+                        isSaved(post.recipe.data) ? (
                           <Button
                             variant="link"
                             colorScheme="white"
                             onClick={() => {
+                              // if it has been saved, when clicked:
+                              // do a popup to show it has been unsaved
+                              // remove the recipe from the saved list
                               toast({
                                 title: 'Unsaved',
                                 description:
@@ -390,6 +439,9 @@ const Explore: React.FC = () => {
                             variant="link"
                             colorScheme="white"
                             onClick={() => {
+                              // if it has been saved, on click:
+                              // popup to show it has been added to recipe book
+                              // save the recipe
                               toast({
                                 title: 'Saved!',
                                 description:
@@ -405,7 +457,8 @@ const Explore: React.FC = () => {
                         )}
                         <Spacer />
                         <Text fontSize={20}>
-                          {post?.date_time.toDate().getMonth()}/
+                          {// formatting the time to look nice
+                          post?.date_time.toDate().getMonth()}/
                           {post?.date_time.toDate().getDay()}/
                           {post?.date_time.toDate().getFullYear()}
                         </Text>
@@ -424,7 +477,8 @@ const Explore: React.FC = () => {
                         <Flex>
                           <Text fontSize={18}>Posted by: </Text>
                           <Text fontSize={18} marginLeft={2}>
-                            {profiles[getIndex(profiles, post.email)]?.username}{' '}
+                            {// get the profile of the person who posted this recipe
+                            profiles[getIndex(profiles, post.email)]?.username}{' '}
                           </Text>
 
                           <Popover
@@ -460,7 +514,7 @@ const Explore: React.FC = () => {
                                           textAlign={'center'}>
                                           <Avatar
                                             size={'xl'}
-                                            src={
+                                            src={ // the picture of the person who posted it, gotten with getIndex
                                               profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.profilePic
@@ -485,6 +539,7 @@ const Explore: React.FC = () => {
                                             textColor="white">
                                             @
                                             {
+                                              // the username of the person who posted this recipe
                                               profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.username
@@ -496,6 +551,7 @@ const Explore: React.FC = () => {
                                             color="white"
                                             px={3}>
                                             {
+                                              // the name of the person who posted the recipe
                                               profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.name
@@ -507,6 +563,7 @@ const Explore: React.FC = () => {
                                             px={3}>
                                             <Text color="white">
                                               {
+                                                // the biography of the person who posted the recipe
                                                 profiles[
                                                   getIndex(profiles, post.email)
                                                 ]?.biography
@@ -528,6 +585,9 @@ const Explore: React.FC = () => {
                                                   bg: 'gray.200',
                                                 }}
                                                 onClick={() => {
+                                                  // link to the friends profile
+                                                  // store their username in local storage
+                                                  // so that it can be accessed in the next page
                                                   window.localStorage.setItem(
                                                     'USERNAME',
                                                     JSON.stringify(
@@ -545,7 +605,8 @@ const Explore: React.FC = () => {
                                                 </Text>
                                               </Button>
                                             </Link>
-                                            {isFollowing(post.email) ? (
+                                            { // check if the poster is in the user's following list
+                                            isFollowing(post.email) ? (
                                               <Button
                                                 flex={1}
                                                 fontSize={'sm'}
@@ -562,6 +623,8 @@ const Explore: React.FC = () => {
                                                   bg: 'red.500',
                                                 }}
                                                 onClick={() => {
+                                                  // if you follow this person,
+                                                  // unfollow them on click
                                                   toast({
                                                     title: 'Unfollowed',
                                                     description:
@@ -591,7 +654,9 @@ const Explore: React.FC = () => {
                                                   bg: 'green.500',
                                                 }}
                                                 onClick={() => {
+                                                  // if the email of the poster == the user's email
                                                   if (post.email === email) {
+                                                    // make sure you don't follow yourself
                                                     toast({
                                                       title: 'Cannot Follow',
                                                       description:
@@ -601,6 +666,7 @@ const Explore: React.FC = () => {
                                                       isClosable: true,
                                                     });
                                                   } else {
+                                                    // add this person to your following list
                                                     addFollowing(post.email);
                                                     toast({
                                                       title: 'Followed',
@@ -632,13 +698,15 @@ const Explore: React.FC = () => {
                             View Recipe
                           </Button>
                         </Flex>
-                        {post.likes === 1 ? (
+                        { //display the likes
+                        post.likes === 1 ? (
                           <Text fontSize={18}>{post.likes} like</Text>
                         ) : (
                           <Text fontSize={18}>{post.likes} likes</Text>
                         )}
                         <Text fontSize={20}>Caption:</Text>
-                        <Text>{post.description}</Text>
+                        <Text>{// display the caption
+                        post.description}</Text>
                       </Box>
                     </Box>
                   </Container>
@@ -647,14 +715,18 @@ const Explore: React.FC = () => {
           </TabPanel>
           <TabPanel>
             <VStack minH="100vh">
-              {friendsPosts?.length === 0 ? (
+              {// if your friends list is empty
+              // display that you have no friends
+              friendsPosts?.length === 0 ? (
                 <Heading textAlign="center" minH="100vh" fontSize={80}>
                   You have no friends
                 </Heading>
               ) : (
+                // when all the data loads in
                 friendsPosts &&
                 profiles &&
                 savedRecipes &&
+                // map the friends posts individually
                 friendsPosts.map(post => (
                   <Container
                     // minH="100vh"
@@ -677,12 +749,14 @@ const Explore: React.FC = () => {
                       display="flex"
                       flexDirection="column">
                       <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.recipe.data.recipe_name}
+                        {// name of the poster
+                        post?.recipe.data.recipe_name}
                       </div>
                       <Center>
                         <Image
                           borderRadius="30px"
-                          src={post.pic}
+                          src={// picture attached to the recipe
+                            post.pic}
                           alt="No Image"
                           w={300}
                           mb={15}
@@ -693,10 +767,13 @@ const Explore: React.FC = () => {
                         spacing={4}
                         align="stretch"
                         marginBottom={3}>
-                        {isLiked(post.date_time) ? (
+                        {// check if you have liked this post
+                        isLiked(post.date_time) ? (
                           <Button
                             variant="link"
                             colorScheme="white"
+                            // if you have liked this post
+                            // unlike the post on click
                             onClick={() => unlike(post?.date_time)}>
                             <AiFillHeart style={{fontSize: '34px'}} />
                           </Button>
@@ -704,6 +781,8 @@ const Explore: React.FC = () => {
                           <Button
                             variant="link"
                             colorScheme="white"
+                            // if you haven't liked this post
+                            // like the post on click
                             onClick={() => like(post?.date_time)}>
                             <AiOutlineHeart style={{fontSize: '34px'}} />
                           </Button>
@@ -711,11 +790,14 @@ const Explore: React.FC = () => {
                         <Button variant="link" colorScheme="white">
                           <BsFillChatDotsFill style={{fontSize: '34px'}} />
                         </Button>
-                        {isSaved(post.recipe.data) ? (
+                        {// check if the user has saved the recipe
+                        isSaved(post.recipe.data) ? (
                           <Button
                             variant="link"
                             colorScheme="white"
                             onClick={() => {
+                              // if they do have it saved:
+                              // unsave the post on click
                               toast({
                                 title: 'Unsaved',
                                 description:
@@ -733,6 +815,8 @@ const Explore: React.FC = () => {
                             variant="link"
                             colorScheme="white"
                             onClick={() => {
+                              // if they do not have it saved:
+                              // save the post on click
                               toast({
                                 title: 'Saved!',
                                 description:
@@ -748,7 +832,8 @@ const Explore: React.FC = () => {
                         )}
                         <Spacer />
                         <Text fontSize={20}>
-                          {post?.date_time.toDate().getMonth()}/
+                          {// format the time nicely
+                          post?.date_time.toDate().getMonth()}/
                           {post?.date_time.toDate().getDay()}/
                           {post?.date_time.toDate().getFullYear()}
                         </Text>
@@ -763,7 +848,8 @@ const Explore: React.FC = () => {
                         // bgColor="#4fb9af"
                       >
                         <Text fontSize={25}>{post.title}</Text>
-                        {post.likes === 1 ? (
+                        {// display the number of likes
+                        post.likes === 1 ? (
                           <Text fontSize={18}>{post.likes} like</Text>
                         ) : (
                           <Text fontSize={18}>{post.likes} likes</Text>
@@ -771,7 +857,8 @@ const Explore: React.FC = () => {
                         <Flex>
                           <Text fontSize={18}>Posted by: </Text>
                           <Text fontSize={18} marginLeft={2}>
-                            {profiles[getIndex(profiles, post.email)]?.username}{' '}
+                            {// username of the person who posted
+                            profiles[getIndex(profiles, post.email)]?.username}{' '}
                           </Text>
                           <Popover
                             closeOnBlur={false}
@@ -806,7 +893,7 @@ const Explore: React.FC = () => {
                                           textAlign={'center'}>
                                           <Avatar
                                             size={'xl'}
-                                            src={
+                                            src={ // profile pic of the selected user
                                               profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.profilePic
@@ -830,7 +917,7 @@ const Explore: React.FC = () => {
                                             fontFamily={'body'}
                                             textColor="white">
                                             @
-                                            {
+                                            { // username of the selected user
                                               profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.username
@@ -841,7 +928,7 @@ const Explore: React.FC = () => {
                                             as="b"
                                             color="white"
                                             px={3}>
-                                            {
+                                            { // name of the selected user
                                               profiles[
                                                 getIndex(profiles, post.email)
                                               ]?.name
@@ -852,7 +939,7 @@ const Explore: React.FC = () => {
                                             color="white"
                                             px={3}>
                                             <Text color="white">
-                                              {
+                                              { // biography of the selected user
                                                 profiles[
                                                   getIndex(profiles, post.email)
                                                 ]?.biography
@@ -874,6 +961,10 @@ const Explore: React.FC = () => {
                                                   bg: 'gray.200',
                                                 }}
                                                 onClick={() => {
+                                                  // on click:
+                                                  // link them to the friendsProfile page
+                                                  // store the selected user's username 
+                                                  // so that it can be accessed on the next page
                                                   window.localStorage.setItem(
                                                     'USERNAME',
                                                     JSON.stringify(
@@ -891,7 +982,8 @@ const Explore: React.FC = () => {
                                                 </Text>
                                               </Button>
                                             </Link>
-                                            {isFollowing(post.email) ? (
+                                            { // check if the user follows this person
+                                            isFollowing(post.email) ? (
                                               <Button
                                                 flex={1}
                                                 fontSize={'sm'}
@@ -907,6 +999,8 @@ const Explore: React.FC = () => {
                                                 _focus={{
                                                   bg: 'red.500',
                                                 }}
+                                                // if they do follow them:
+                                                // unfollow on click
                                                 onClick={() => {
                                                   toast({
                                                     title: 'Unfollowed',
@@ -936,6 +1030,8 @@ const Explore: React.FC = () => {
                                                 _focus={{
                                                   bg: 'green.500',
                                                 }}
+                                                // if they don't follow them,
+                                                // follow them on click
                                                 onClick={() => {
                                                   if (post.email === email) {
                                                     toast({
@@ -980,7 +1076,8 @@ const Explore: React.FC = () => {
                         </Flex>
 
                         <Text fontSize={20}>Caption:</Text>
-                        <Text>{post.description}</Text>
+                        <Text>{// caption of the post
+                        post.description}</Text>
                       </Box>
                     </Box>
                   </Container>
