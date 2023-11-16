@@ -20,6 +20,7 @@ import Navbar from '../components/Navbar';
 import {
   Box,
   Button,
+  ButtonGroup,
   Container,
   Tab,
   TabList,
@@ -53,6 +54,7 @@ import {
   AccordionButton,
   AccordionIcon,
   AccordionPanel,
+  Spacer,
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -320,7 +322,7 @@ const CalendarPage: React.FC = () => {
       </>
     );
   }
-  var dateSelected;
+  var dateSelected: string = '';
 
   return (
     <>
@@ -353,6 +355,7 @@ const CalendarPage: React.FC = () => {
               aspectRatio={0.8}
               dateClick={function (info) {
                 // Function to handle date clicking
+                dateSelected = info.dateStr
                 var tempEvents: Recipe[] = [];
                 for (let i = 0; i < profile?.events.length; i++) {
                   if (info.dateStr == profile?.events[i].date) {
@@ -388,7 +391,7 @@ const CalendarPage: React.FC = () => {
           border={'solid'}
           borderColor={'teal'}
           height={'800px'}
-          maxH="750px"
+          maxH="680px"
           overflowY={'scroll'}
           w={'1000px'}>
           {dateSelected ? (
@@ -546,20 +549,42 @@ const CalendarPage: React.FC = () => {
                         </Accordion>
                       </VStack>
                       <HStack align="right" marginTop={2}>
-                        <Button
-                          boxShadow="xs"
-                          rounded="md"
-                          variant="outline"
-                          padding="4"
-                          colorScheme="teal"
-                          color="white"
-                          maxW="container.sm"
-                          onClick={() => {
-                            //Print Recipe
-                          }}>
-                          <AiFillPrinter />
-                          <Text marginLeft={2}>Print Recipe</Text>
-                        </Button>
+                        <Flex>
+                          <Button
+                            boxShadow="xs"
+                            rounded="md"
+                            variant="outline"
+                            padding="4"
+                            colorScheme="teal"
+                            color="white"
+                            maxW="container.sm"
+                            onClick={() => {
+                              //Print Recipe
+                            }}>
+                            <AiFillPrinter />
+                            <Text marginLeft={2}>Print Recipe</Text>
+                          </Button>
+                        </Flex>
+                        <Spacer/>
+                        <Flex>
+                          <Button
+                            boxShadow="xs"
+                            rounded="md"
+                            padding="4"
+                            colorScheme="red"
+                            color="white"
+                            maxW="container.sm"
+                            onClick={() => {
+                              //Deschedule
+                              for(let i = 0; i < profile?.events.length; i++){
+                                if(dateSelected == profile?.events[i].date){
+                                  console.log(profile?.events[0])
+                                }
+                              }
+                            }}>
+                            <Text>De-schedule</Text>
+                          </Button>
+                        </Flex>
                       </HStack>
                     </Container>
                   ))}
