@@ -58,6 +58,7 @@ type nutrition = {
   protein: number;
 };
 
+// type that holds recipe information
 type recipe = {
   recipe_name: string;
   servings: string;
@@ -255,11 +256,13 @@ async function toDB(
 }
 
 const Form1 = () => {
-  const [show, setShow] = useState(false);
+  // useState to create variables
   const [recipeName, setRecipeName] = useState('');
   const [cookingTime, setCookingTime] = useState('');
 
+  // useEffect runs on mount
   useEffect(() => {
+    // check local storage for any available data
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
     const cooking_time_storage: any =
       window.localStorage.getItem('COOKINGTIME');
@@ -268,6 +271,8 @@ const Form1 = () => {
     setCookingTime(JSON.parse(cooking_time_storage));
   }, []);
 
+  // methods to handle the changing of inputs
+  // write changes to local storage && useState's
   const handleNameChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('RECIPENAME', JSON.stringify(name));
@@ -292,6 +297,8 @@ const Form1 = () => {
         <Input
           id="recipeName"
           type="text"
+          // value = recipeName variable
+          // onChange, call handler
           value={recipeName}
           onChange={handleNameChange}
         />
@@ -306,6 +313,8 @@ const Form1 = () => {
           <Input
             pr="4.5rem"
             placeholder="0 Hours 0 minutes"
+            // value = cookingTime variable
+            // onChange, call handler
             value={cookingTime}
             onChange={handleTimeChange}
           />
@@ -316,13 +325,16 @@ const Form1 = () => {
 };
 
 const Form2 = () => {
+  // useState's to hold basic data
   const [difficulty, setDifficulty] = useState(' ');
   const [appliances, setAppliances] = useState(' ');
   const [cost, setCost] = useState(' ');
   const [allergens, setAllergens] = useState(' ');
   const [servings, setServings] = useState(' ');
 
+  // toast for popups
   const toast = useToast();
+  // ingredient variables
   const [ingredientCount, setcount] = useState(1);
   const [ingredientString, setIngredientString] = useState<string[]>([]);
   //ingredientHandlerState
@@ -330,10 +342,9 @@ const Form2 = () => {
   const [ingredientAmount, setIngredientAmount] = useState(0);
   const [ingredientMeasurement, setIngredientMeasurement] = useState(' ');
 
-  //TO DO
-  // FIX LOCAL STORxAGE
-
   useEffect(() => {
+    // check local storage for any available data
+    // set data to each respective variable
     if (window.localStorage.getItem('DIFFICULTY') !== null) {
       const difficulty_storage: any = window.localStorage.getItem('DIFFICULTY');
       setDifficulty(JSON.parse(difficulty_storage));
@@ -367,6 +378,8 @@ const Form2 = () => {
     }
   }, []);
 
+  // methods to handle changes
+  // on change: set item to local storage and to useState's
   const handleDifficultyChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('DIFFICULTY', JSON.stringify(targ));
@@ -425,10 +438,12 @@ const Form2 = () => {
     setIngredientMeasurement(newMeasurement);
   };
 
+  // function to increment the count
   function incrementCount() {
     //create new ingredient String
     const newIngredient = `${ingredientAmount} ${ingredientMeasurement} ${ingredientName}`;
 
+    // check local storage, update string variables
     if (localStorage.getItem('INGREDIENTSTRING') === null) {
       const helperString: string[] = [];
       helperString.push(newIngredient);
@@ -446,14 +461,14 @@ const Form2 = () => {
     setIngredientMeasurement('');
     setIngredientName('');
 
-    //testing
-    console.log(ingredientString);
-
+    // update the count variable
     setcount(ingredientString.length + 2);
     localStorage.setItem('INGREDIENTCOUNT', JSON.stringify(ingredientCount));
   }
 
+  // decrement count of ingredients
   function decrementCount() {
+    // update local storage and variables
     let retString = localStorage.getItem('INGREDIENTSTRING');
     let helperString: any = JSON.parse(retString as string);
     helperString.pop();
@@ -490,6 +505,7 @@ const Form2 = () => {
           w="full"
           rounded="md"
           value={difficulty}
+          // dropdown with options, onChange uses handler
           onChange={handleDifficultyChange}>
           <option>Beginner</option>
           <option>Intermediate</option>
@@ -508,6 +524,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
+            {/* cost input */}
           Cost per Serving
         </FormLabel>
         <Input
@@ -519,6 +536,7 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          // value is set to cost variable, change calls handler
           value={cost}
           onChange={handleCostChange}
         />
@@ -534,6 +552,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
+            {/* appliances input */}
           Cooking Appliances
         </FormLabel>
         <Input
@@ -546,6 +565,7 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          // value is set to appliances variable, change calls handler
           value={appliances}
           onChange={handleAppliancesChange}
         />
@@ -561,6 +581,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
+            {/* allergens input */}
           Allergens
         </FormLabel>
         <Input
@@ -573,6 +594,7 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          // value is set to allergens variable, change calls handler
           value={allergens}
           onChange={handleAllergensChange}
         />
@@ -588,6 +610,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
+            {/* yield input */}
           Yield (ie. 3 people)
         </FormLabel>
         <Input
@@ -599,6 +622,7 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          // value is set to servings, change calls handler
           value={servings}
           onChange={handleServingsChange}
         />
@@ -609,11 +633,13 @@ const Form2 = () => {
         textAlign={'center'}
         fontWeight="normal"
         mb="2%">
+          {/* ingredients input */}
         Ingredient List
       </Heading>
       <Flex>
         <List spacing={3}>
-          {Array.from({length: ingredientCount}).map((_, index) => (
+          {// map the ingredients
+          Array.from({length: ingredientCount}).map((_, index) => (
             <ListItem>
               <ListIcon as={MinusIcon} color="green.500" />
               {ingredientString.at(index)}
@@ -625,11 +651,13 @@ const Form2 = () => {
         <React.Fragment>
           <FormControl mr="5%">
             <FormLabel htmlFor={`ingredient-`} fontWeight={'normal'}>
+              {/* ingredient name input */}
               Ingredient Name #
             </FormLabel>
             <Input
               id={`ingredient-`}
               placeholder="Ingredient..."
+              // value is set to ingredientName and change calls handler
               value={ingredientName}
               onChange={handleIName}
               isRequired={true}
@@ -638,11 +666,13 @@ const Form2 = () => {
 
           <FormControl mr="5%">
             <FormLabel htmlFor={`amount-`} fontWeight={'normal'}>
+              {/* ingredient amount input */}
               Amount
             </FormLabel>
             <NumberInput
               max={999}
               min={1}
+              // value is set to ingredientAmount, change calls handler
               value={ingredientAmount}
               onChange={handleIAmount}
               isRequired={false}>
@@ -655,6 +685,7 @@ const Form2 = () => {
           </FormControl>
           <FormControl>
             <FormLabel htmlFor={`unit-`} fontWeight={'normal'}>
+              {/* unit of measurement input */}
               Unit of Measurement
             </FormLabel>
             <Select
@@ -665,8 +696,10 @@ const Form2 = () => {
               size="md"
               w="full"
               rounded="md"
+              // value is set to ingredientMeasurement, change calls handler
               value={ingredientMeasurement}
               onChange={handleIMeasurement}>
+                {/* dropdown for options */}
               <option> </option>
               <option> </option>
               <option>Ibs</option>
@@ -682,6 +715,7 @@ const Form2 = () => {
       </Flex>
       <Flex>
         <Button
+        // remove ingredient button, decrements count on click
           onClick={decrementCount}
           colorScheme="red"
           variant="solid"
@@ -693,6 +727,7 @@ const Form2 = () => {
           Remove Ingredient <IoIosRemove />
         </Button>
         <Button
+        // add ingredient button, adds to count on click
           onClick={incrementCount}
           colorScheme="green"
           variant="solid"
@@ -709,27 +744,32 @@ const Form2 = () => {
 };
 
 const Form3 = () => {
+  // useState's to create variables
   const [instructions, setInstructions] = useState('');
   const [selectedFile, setSelectedFile] = useState<any>();
 
   useEffect(() => {
+    // on mount, get instructions from local storage
     const instructions_storage: any =
       window.localStorage.getItem('INSTRUCTIONS');
     setInstructions(JSON.parse(instructions_storage));
   }, []);
 
+  // handle instructions change, set value to local storage and instructions
   const handleInstructionsChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('INSTRUCTIONS', JSON.stringify(targ));
     setInstructions(targ);
   };
 
+  // function to upload an image
   async function uploadImage(file: any) {
+    // create a storageRef with a random value
     const storageRef = ref(storage, Math.random().toString(16).slice(2));
-    // 'file' comes from the Blob or File API
+    // upload the passed image to storage
     uploadBytes(storageRef, file).then(async snapshot => {
+      // when it has been uploaded, put the link in the db
       await getDownloadURL(snapshot.ref).then(link => {
-        console.log(link);
         localStorage.setItem('FILE', JSON.stringify(link));
       });
     });
@@ -737,6 +777,7 @@ const Form3 = () => {
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal">
+        {/* instructions input */}
         Cooking Instructions
       </Heading>
       <SimpleGrid columns={1} spacing={6}>
@@ -758,6 +799,7 @@ const Form3 = () => {
             fontSize={{
               sm: 'sm',
             }}
+            // value is set to instructions, change calls handler
             value={instructions}
             onChange={handleInstructionsChange}
           />
@@ -769,7 +811,9 @@ const Form3 = () => {
               <div>
                 <Image alt="No Image" width="250px" src={selectedFile} />
                 <br />
+                {/* set the selected file to undefined when clicked */}
                 <button onClick={() => setSelectedFile(undefined)}>
+                  {/* button to remove an image */}
                   Remove
                 </button>
               </div>
@@ -781,7 +825,7 @@ const Form3 = () => {
             name="myImage"
             onChange={event => {
               if (event?.target?.files) {
-                // when the file is chosen, change it into a url and make it the selected file
+                // set the selected file to the user's chosen file
                 setSelectedFile(URL.createObjectURL(event.target.files[0]));
                 // upload the image to storage
                 uploadImage(event.target.files[0]);
@@ -795,9 +839,12 @@ const Form3 = () => {
 };
 
 export default function Multistep() {
+  // toast for popups
   const toast = useToast();
+  // step and progress to track pages
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
+  // get ALL THE DATA from local storage
   const recipeFromStorage: any = window.localStorage.getItem('RECIPENAME');
   const recipeName = JSON.parse(recipeFromStorage);
   const cookingTimeStorage: any = window.localStorage.getItem('COOKINGTIME');
@@ -812,8 +859,7 @@ export default function Multistep() {
   const allergens = JSON.parse(allergensStorage);
   const servingsStorage: any = window.localStorage.getItem('SERVINGS');
   const servings = JSON.parse(servingsStorage);
-  const ingredientsStorage: any =
-    window.localStorage.getItem('INGREDIENTSTRING');
+  const ingredientsStorage: any = window.localStorage.getItem('INGREDIENTSTRING');
   const ingredients = JSON.parse(ingredientsStorage);
   const fileStorage: any = window.localStorage.getItem('FILE');
   const file = JSON.parse(fileStorage);
@@ -877,6 +923,7 @@ export default function Multistep() {
                   <HStack>
                     <Button
                       onClick={() => {
+                        // keep track of the step and progress on the back
                         setStep(step - 1);
                         setProgress(progress - 33.33);
                       }}
@@ -891,6 +938,7 @@ export default function Multistep() {
                       w="7rem"
                       isDisabled={step === 3}
                       onClick={() => {
+                        // keep track of the step and progress on the next
                         setStep(step + 1);
                         if (step === 3) {
                           setProgress(100);
@@ -921,6 +969,7 @@ export default function Multistep() {
                       const instructionsStorage: any =
                         window.localStorage.getItem('INSTRUCTIONS');
                       const instructions = JSON.parse(instructionsStorage);
+                      // toast for popup
                       toast({
                         title: 'Recipe created.',
                         description: "We've created your recipe for you.",
@@ -928,13 +977,7 @@ export default function Multistep() {
                         duration: 3000,
                         isClosable: true,
                       });
-                      // TODO
-                      // replace hardcoded data with user inputted data from the form
-                      // replace hardcoded ingredients list with user inputted data
-
-                      // call to the DB with hardcoded data (for now)
-                      console.log(fileStorage);
-                      console.log(file);
+                      // send the data to the db
                       toDB(
                         recipeName,
                         servings,
@@ -948,6 +991,7 @@ export default function Multistep() {
                         instructions,
                         JSON.parse(localStorage.getItem('FILE') as string),
                       );
+                      // remove EVERYTHING from localstorage
                       window.localStorage.removeItem('RECIPENAME');
                       window.localStorage.removeItem('COOKINGTIME');
                       window.localStorage.removeItem('DIFFICULTY');
