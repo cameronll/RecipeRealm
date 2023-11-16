@@ -56,16 +56,19 @@ const googleSignIn = async () => {
  * @returns 
  */
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [show, setShow] = React.useState(false);
+  const [email, setEmail] = useState('');//establishes email in the database
+  const [password, setPassword] = useState('');//establishes the password in the database
+  const [show, setShow] = React.useState(false);//allows the option to view password
   const handleClick = () => setShow(!show);
   const navigate = useNavigate();
   const toast = useToast();
-
+/**
+ * controls for to allow fo rsign in authorization
+ * @param e 
+ */
   const signIn = (e: React.FormEvent) => {
     e.preventDefault(); // doesnt reload page
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password)//method that passes in established values to login to website
       .then(userCredential => {
         const user = userCredential.user;
 
