@@ -80,47 +80,54 @@ import {
 import {getDownloadURL, ref} from 'firebase/storage';
 
 const Recipes: React.FC = () => {
+  // toast for popups
   const toast = useToast();
+  // email from local storage to get the current user
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
+  // get all the recipes and create a listener to the DB
   const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
   const [recipes, recipesLoading, recipesError] =
     useCollectionData(recipesQuery);
 
+    // get all the saved recipes and create a listener to the db
   const savedRecipesQuery = query(
     collection(db, 'users/' + email + '/SavedRecipes'),
   );
   const [savedRecipes, savedRecipesLoading, savedRecipesError] =
     useCollectionData(savedRecipesQuery);
 
+    // get the current user's profile and create a listener to the db
   const [profile, profileLoading, profileError] = useDocumentData(
     doc(db, 'users/', email),
   );
 
+  // get the current user's posts and create a listener to the db
   const postsQuery = query(
     collection(db, 'posts'),
     where('email', '==', email),
   );
   const [posts, postsLoading, postsError] = useCollectionData(postsQuery);
-
+  // number of posts
   const numPosts = posts?.length;
 
+  // function to delete a recipe
   async function deleteMyRecipe(recipeName: string) {
     if (recipeName === null) {
       recipeName = 'null';
     }
+    // delete from db
     await deleteDoc(doc(db, 'users/', email, 'Recipes/', recipeName));
   }
 
+  // function to delete a saved recipe
   async function deleteSavedRecipe(recipeName: string) {
     if (recipeName === null) {
       recipeName = 'null';
     }
+    // delete from db
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
-
-  // MAP SAVED RECIPES TO A NEW TAB LIKE NORMAL RECIPES, DISPLAY THE SAME + ADD
-  // recipe.creator to get the username of who posted it
 
   return (
     <>
@@ -139,7 +146,8 @@ const Recipes: React.FC = () => {
         >
           <Stack minW={'2xl'} spacing={6}>
             <Text textAlign="center" fontSize="6xl" as="b" color="white">
-              @{profile?.username}
+              @{// username at the top
+              profile?.username}
             </Text>
           </Stack>
         </VStack>
@@ -157,14 +165,18 @@ const Recipes: React.FC = () => {
             <HStack spacing={4}>
               <Avatar
                 size="2xl"
-                name={profile?.name}
-                src={profile?.profilePic}
+                name={// default's to the current user's initials
+                  profile?.name}
+                src={// display the current user's profile picture
+                  profile?.profilePic}
               />{' '}
               <VStack marginLeft={10}>
-                <Heading>{profile?.name}</Heading>
+                <Heading>{// display the current user's name
+                profile?.name}</Heading>
                 {/* Displaye Recipe Length */}
                 {recipes?.length === 1 ? (
-                  <Text fontSize={18}>{recipes?.length} recipe</Text>
+                  <Text fontSize={18}>{// display the number of recipes
+                    recipes?.length} recipe</Text>
                 ) : (
                   <Text fontSize={18}>{recipes?.length} recipes</Text>
                 )}
@@ -182,7 +194,8 @@ const Recipes: React.FC = () => {
                 )}
 
                 <Text color={'black'} fontSize={'lg'} maxWidth={500}>
-                  {profile?.biography}
+                  {// display the bio of the user
+                  profile?.biography}
                 </Text>
               </VStack>
             </HStack>
@@ -193,6 +206,8 @@ const Recipes: React.FC = () => {
                   rightIcon={<CgBowl />}
                   colorScheme="teal"
                   onClick={() => {
+                    // button that links to create recipe
+                    // removes everything from localstorage on click
                     window.localStorage.removeItem('RECIPENAME');
                     window.localStorage.removeItem('COOKINGTIME');
                     window.localStorage.removeItem('DIFFICULTY');
@@ -218,6 +233,7 @@ const Recipes: React.FC = () => {
       </Container>
 
       <Tabs isManual variant="enclosed" colorScheme="gray" size="lg">
+        {/* tabs for different data */}
         <TabList
           sx={{
             justifyContent: 'center',
@@ -254,14 +270,17 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {recipes?.length === 0 ? (
+                  {// if they have no recipes
+                  recipes?.length === 0 ? (
                     <Center>
                       <Heading alignSelf="center" minH="350" textAlign="center">
                         You have 0 recipes
                       </Heading>
                     </Center>
                   ) : (
+                    // when recipes loads, 
                     recipes &&
+                    // map each individual recipe 
                     recipes.map(recipe => (
                       <Container
                         boxShadow={'2xl'}
@@ -284,7 +303,8 @@ const Recipes: React.FC = () => {
                             <Image
                               borderRadius="30px"
                               minH="250px"
-                              src={recipe.data.pic}
+                              src={// image attached to the recipe
+                                recipe.data.pic}
                               alt="No Picture"
                               w={300}
                               mb={15}
@@ -300,7 +320,8 @@ const Recipes: React.FC = () => {
                             padding={1}>
                             <Center>
                               <Text as="b" fontSize="34px" textColor="white">
-                                {recipe.data.recipe_name}
+                                {// name of the recipe
+                                recipe.data.recipe_name}
                               </Text>
                             </Center>
                           </Button>
@@ -320,6 +341,7 @@ const Recipes: React.FC = () => {
                             bg="white"
                             color="black"
                             maxW="container.sm">
+                              {/* displaying recipe data */}
                             <Text noOfLines={1}>
                               Difficulty: {recipe.data.difficulty}
                             </Text>
@@ -343,6 +365,7 @@ const Recipes: React.FC = () => {
                           <Accordion allowMultiple>
                             <AccordionItem>
                               <h2>
+                                {/* accordion for nutrition data  */}
                                 <AccordionButton bg="white">
                                   <Box as="span" flex="1" textAlign="left">
                                     <Text as="b" textColor="black">
@@ -357,6 +380,7 @@ const Recipes: React.FC = () => {
                                   padding="4"
                                   color="black"
                                   maxW="container.sm">
+                                    {/* each accordion panel contains:  */}
                                   <Text noOfLines={1} textColor="white">
                                     Calories:{' '}
                                     {recipe.data.nutrients.calories.toFixed(2)}{' '}
@@ -414,6 +438,7 @@ const Recipes: React.FC = () => {
                           <Accordion allowMultiple>
                             <AccordionItem>
                               <h2>
+                              {/* accordion for the instructions */}
                                 <AccordionButton bg="white">
                                   <Box as="span" flex="1" textAlign="left">
                                     <Text as="b" textColor="black">
@@ -429,6 +454,7 @@ const Recipes: React.FC = () => {
                                   color="black"
                                   maxW="container.sm">
                                   <Text textColor="white">
+                                    {/* display the instructions */}
                                     {recipe.data.instructions}
                                   </Text>
                                 </Box>
@@ -465,6 +491,9 @@ const Recipes: React.FC = () => {
                             }}
                             maxW="container.sm"
                             onClick={() => {
+                              // delete button
+                              // on click, popup saying recipe deleted,
+                              // remove recipe from db
                               toast({
                                 title: 'Recipe deleted.',
                                 description:
@@ -473,6 +502,7 @@ const Recipes: React.FC = () => {
                                 duration: 3000,
                                 isClosable: true,
                               });
+                              // passing the name of the recipe
                               deleteMyRecipe(recipe.data.recipe_name);
                             }}>
                             <Text textColor="white">Delete Recipe</Text>
@@ -495,9 +525,11 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {savedRecipes?.length === 0 ? (
+                  {// if they have no recipes, display nothing
+                  savedRecipes?.length === 0 ? (
                     <Heading textAlign="center">You have 0 recipes</Heading>
                   ) : (
+                    // when savedRecipes loads, map savedRecipes individually
                     savedRecipes &&
                     savedRecipes.map(recipe => (
                       <Container
@@ -521,7 +553,8 @@ const Recipes: React.FC = () => {
                             <Image
                               borderRadius="30px"
                               minH="250px"
-                              src={recipe.data.pic}
+                              src={// image attached to the recipe
+                                recipe.data.pic}
                               alt="No Picture"
                               w={300}
                               mb={15}
@@ -537,19 +570,11 @@ const Recipes: React.FC = () => {
                             padding={1}>
                             <Center>
                               <Text as="b" fontSize="34px" textColor="white">
-                                {recipe.data.recipe_name}
+                                {// display the recipe name
+                                recipe.data.recipe_name}
                               </Text>
                             </Center>
                           </Button>
-                          {/* <Stack direction="row" spacing={4} align="stretch">
-                      <Button variant="link" colorScheme="red">
-                        <AiOutlineHeart style={{fontSize: '34px'}} />
-                      </Button>
-                      <Button variant="link" colorScheme="green">
-                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                      </Button>
-                    </Stack> */}
-
                           <Box
                             boxShadow="xs"
                             rounded="md"
@@ -557,6 +582,7 @@ const Recipes: React.FC = () => {
                             bg="white"
                             color="black"
                             maxW="container.sm">
+                              {/* display saved recipe data  */}
                             <Text noOfLines={1}>
                               Difficulty: {recipe.data.difficulty}
                             </Text>
@@ -578,6 +604,7 @@ const Recipes: React.FC = () => {
                             </Text>
                           </Box>
                           <Accordion allowMultiple>
+                            {/* accordion for the nutrition data */}
                             <AccordionItem>
                               <h2>
                                 <AccordionButton bg="white">
@@ -589,6 +616,7 @@ const Recipes: React.FC = () => {
                                   <AccordionIcon />
                                 </AccordionButton>
                               </h2>
+                              {/* accordion contains:  */}
                               <AccordionPanel pb={4}>
                                 <Box
                                   padding="4"
@@ -648,6 +676,7 @@ const Recipes: React.FC = () => {
                               </AccordionPanel>
                             </AccordionItem>
                           </Accordion>
+                          {/* accordion for the instructions */}
                           <Accordion allowMultiple>
                             <AccordionItem>
                               <h2>
@@ -666,7 +695,8 @@ const Recipes: React.FC = () => {
                                   color="black"
                                   maxW="container.sm">
                                   <Text textColor="white">
-                                    {recipe.data.instructions}
+                                    {// display the instructions
+                                    recipe.data.instructions}
                                   </Text>
                                 </Box>
                               </AccordionPanel>
@@ -702,6 +732,9 @@ const Recipes: React.FC = () => {
                             }}
                             maxW="container.sm"
                             onClick={() => {
+                              // delete button
+                              // on click, popup saying recipe deleted
+                              // remove recipe from DB
                               toast({
                                 title: 'Recipe removed.',
                                 description:
@@ -723,6 +756,7 @@ const Recipes: React.FC = () => {
             </HStack>
           </TabPanel>
           <TabPanel minH="100vh">
+            {/* posts display, incomplete */}
             <Container
               // minH="100vh"
               shadow={1000}

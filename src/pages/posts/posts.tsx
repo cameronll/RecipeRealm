@@ -49,8 +49,10 @@ import {
 import {Header} from 'rsuite';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
+// function to get the index of a recipe using its name
 function getRecipeIndex(recipes: any[], recipe_name: string): number {
   for (let i = 0; i < recipes.length; i++) {
+    // if the name matches, return the index
     if (recipes[i]?.data.recipe_name === recipe_name) {
       return i;
     }
@@ -58,6 +60,7 @@ function getRecipeIndex(recipes: any[], recipe_name: string): number {
   return -1;
 }
 
+// type that holds nutrition information
 type nutrition = {
   calories: number;
   total_fat: number;
@@ -70,6 +73,7 @@ type nutrition = {
   protein: number;
 };
 
+// type that holds recipe information
 type recipe = {
   recipe_name: string;
   servings: string;
@@ -84,17 +88,24 @@ type recipe = {
   nutrients: nutrition;
 };
 
+// function to send data to the database (db)
 async function toDB(
+  // parameters that will be sent to db
   title: string,
   description: string,
   recipe: any,
   pic: string,
 ) {
+  // get the active user's account using their email
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const getUser = doc(db, 'users/', email);
   const getUserData = await getDoc(getUser);
+  // get their username
   const username = getUserData?.data()?.username;
+  // get the current date
   const date = new Date();
+  
+  // update the recipe that is being posted
   const recipeDoc = doc(
     db,
     'users/',
@@ -102,9 +113,11 @@ async function toDB(
     'Recipes/',
     recipe.data.recipe_name,
   );
+  // change posted to true, indicating that this recipe has been posted
   const updated = await updateDoc(recipeDoc, {
     posted: true,
   });
+  // create a document, assign these variables
   await addDoc(collection(db, 'posts'), {
     // name in database: variable
     email: email,
@@ -118,19 +131,27 @@ async function toDB(
   });
 }
 const Posts: React.FC = () => {
+  // toast for popups
   const toast = useToast();
+  
+  // useState's to create variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [recipes, setRecipes] = useState<any[]>([]);
   const [recipeName, setRecipeName] = useState<any>();
   const [postRecipe, setPostRecipe] = useState<any>();
+  // selected file is for immediate display
   const [selectedFile, setSelectedFile] = useState<any>();
+  // fileLink is for the db
   const [fileLink, setFileLink] = useState<any>();
 
+  // get the current user from db
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  // navigate to switch pages
   const navigate = useNavigate();
 
   useEffect(() => {
+    // create listener to db
     const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
     const recipesSnapshot = onSnapshot(recipesQuery, querySnapshot => {
       const temp: any[] = [];
@@ -138,9 +159,10 @@ const Posts: React.FC = () => {
       querySnapshot.forEach(doc => {
         temp.push(doc.data());
       });
-      console.log('recipes');
+      // set data to: recipes
       setRecipes(temp);
     });
+    // pull any data that has been stored in local storage
     if (window.localStorage.getItem('TITLE')) {
       const title_store: any = window.localStorage.getItem('TITLE');
       setTitle(JSON.parse(title_store));
@@ -155,12 +177,15 @@ const Posts: React.FC = () => {
     }
   }, []);
 
+  // function to uplaod an image to firebase storage and firestore
   async function uploadImage(file: any) {
+    // storageRef created with random key
     const storageRef = ref(storage, Math.random().toString(16).slice(2));
     // 'file' comes from the Blob or File API
+    // upload the file to storage
     uploadBytes(storageRef, file).then(async snapshot => {
+      // once the file has been uploaded, set fileLink to the downloadURL
       await getDownloadURL(snapshot.ref).then(link => {
-        console.log(link);
         setFileLink(link);
       });
     });
@@ -168,6 +193,8 @@ const Posts: React.FC = () => {
 
   const isDisabled = () => {};
 
+  // methods to handle input changes (title, description, recipe)
+  // store the updates in local storage and the useStates
   const handleTitleChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('TITLE', JSON.stringify(targ));
@@ -185,11 +212,14 @@ const Posts: React.FC = () => {
     setRecipeName(targ);
   };
 
+  // function to handle the submission of the form
   const handleSubmit = () => {
+    // get the title, description, and recipe data
     const title = JSON.parse(localStorage.getItem('TITLE') as string);
     const description = JSON.parse(
       localStorage.getItem('DESCRIPTION') as string,
     );
+    // recipe data is found using the getRecipeIndex function
     const recipe =
       recipes[
         getRecipeIndex(
@@ -197,6 +227,7 @@ const Posts: React.FC = () => {
           JSON.parse(localStorage.getItem('RECIPE') as string),
         )
       ];
+    // send this data to the DB!
     toDB(title, description, recipe, fileLink as string);
     console.log('Document created!');
     navigate('/explore');
@@ -229,6 +260,7 @@ const Posts: React.FC = () => {
           >
             <Stack maxW={'2xl'} spacing={6}>
               <Text textAlign="center" fontSize="6xl" as="b" color="white">
+                {/* title */}
                 Create Post
               </Text>
             </Stack>
@@ -244,6 +276,7 @@ const Posts: React.FC = () => {
           color="black"
           minW="container.sm">
           <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
+            {/* form to give details for the post */}
             Post Details
           </Heading>
           <FormControl mt={1}>
@@ -259,7 +292,9 @@ const Posts: React.FC = () => {
               </FormLabel>
               <Input
                 variant="flushed"
+                // on change (when they type), call the handleTitleChange method
                 onChange={handleTitleChange}
+                // the default value is the title variable
                 value={title}></Input>
             </HStack>
           </FormControl>
@@ -271,6 +306,7 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
+                {/* input for the post's caption */}
               Caption
             </FormLabel>
             <Textarea
@@ -281,7 +317,9 @@ const Posts: React.FC = () => {
               fontSize={{
                 sm: 'sm',
               }}
+              // when changed, call the handleDescriptionChange method
               onChange={handleDescriptionChange}
+              // the default value is the description variable
               value={description}
             />
           </FormControl>
@@ -293,6 +331,7 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
+                {/* dropdown to choose recipe */}
               Recipe
             </FormLabel>
             <Select
@@ -305,8 +344,11 @@ const Posts: React.FC = () => {
               size="sm"
               w="full"
               rounded="md"
+              // on change (when they type), call handleRecipeChange
               onChange={handleRecipeChange}
+              // default value is the recipeName variable
               value={recipeName}>
+              {/* map the recipes to the dropdown */}
               {recipes.map(recipe => (
                 <option>{recipe?.data.recipe_name}</option>
               ))}
@@ -323,15 +365,19 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
+                {/* image input */}
               Image
             </FormLabel>
             <Box>
               <Center>
-                {selectedFile && (
+                {// display the selectedFile when it loads
+                selectedFile && (
                   <div>
-                    <Image alt="No Image" width="250px" src={selectedFile} />
+                    <Image alt="No Image" width="250px" src={// the src is always selectedFile, updates immediately
+                    selectedFile} />
                     <br />
-                    <button onClick={() => setSelectedFile(undefined)}>
+                    <button onClick={// remove button, deletes the file when clicked
+                    () => setSelectedFile(undefined)}>
                       Remove
                     </button>
                   </div>
@@ -339,13 +385,15 @@ const Posts: React.FC = () => {
               </Center>
             </Box>
             <input
+            // image input!
               type="file"
               name="myImage"
-              onChange={event => {
+              onChange={// when an image is selected...
+                event => {
                 if (event?.target?.files) {
-                  // when the file is chosen, change it into a url and make it the selected file
+                  // set the chosen file to selectedFile
                   setSelectedFile(URL.createObjectURL(event.target.files[0]));
-                  // upload the image to storage
+                  // upload the image
                   uploadImage(event.target.files[0]);
                 }
               }}
@@ -358,6 +406,7 @@ const Posts: React.FC = () => {
             <Button
               colorScheme="teal"
               onClick={() => {
+                // when they submit, handleSubmit and give them a popup
                 handleSubmit();
                 toast({
                   title: 'Recipe created.',
