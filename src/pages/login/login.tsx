@@ -153,6 +153,15 @@ const Login = () => {
             </InputGroup>
 
             <Flex>
+            <Link to="/Recipes">
+                <Button colorScheme="teal" size="lg" onClick={signIn}>
+                  Login
+                </Button>
+              </Link>
+
+              <Spacer />
+
+              
               <Link to="/signup">
                 <Button
                   color="teal"
@@ -160,14 +169,6 @@ const Login = () => {
                   size="lg"
                   variant="outline">
                   <Text color="teal">Sign up</Text>
-                </Button>
-              </Link>
-
-              <Spacer />
-
-              <Link to="/Recipes">
-                <Button colorScheme="teal" size="lg" onClick={signIn}>
-                  Login
                 </Button>
               </Link>
             </Flex>
