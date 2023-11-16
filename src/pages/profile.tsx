@@ -64,14 +64,17 @@ import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useDocumentData} from 'react-firebase-hooks/firestore';
 import {FirebaseError} from 'firebase/app';
-
+/**
+ * FUnction to populate data onto Profile page
+ * @returns 
+ */
 const Profile: React.FC = () => {
-  const [newUsername, setNewUsername] = useState('');
-  const [newBiography, setNewBiography] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
+  const [newUsername, setNewUsername] = useState('');//assigns new username
+  const [newBiography, setNewBiography] = useState('');//assigns new biography
+  const [newPassword, setNewPassword] = useState('');//assigns new password 
+  const [firstName, setFirstName] = useState('');//assigns a new first name for user
+  const [lastName, setLastName] = useState('');//assigns a new lastname for users
+  const [oldPassword, setOldPassword] = useState('');//uses old password for authenticating changes in profile
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
   const [profile, profileLoading, profileError] = useDocumentData(
@@ -116,36 +119,55 @@ const Profile: React.FC = () => {
       });
     });
   }
-
+/**
+ * method to change username in the database
+ *
+ * @param e 
+ */
   const handleUsernameChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('NEWUSERNAME', JSON.stringify(name));
     setNewUsername(name);
   };
-
+/**
+ * method to change biography in the database
+ * @param e 
+ */
   const handleBiographyChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('NEWBIOGRAPHY', JSON.stringify(name));
     setNewBiography(name);
   };
-
+/**
+ * method to change the first name in the data base
+ * @param e 
+ */
   const handleFirstNameChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('NEWFIRSTNAME', JSON.stringify(targ));
     setFirstName(targ);
   };
-
+/**
+ * method to change the last name
+ * @param e 
+ */
   const handleLastNameChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('NEWLASTNAME', JSON.stringify(targ));
     setLastName(targ);
   };
-
+/**
+ * method to handle old password change
+ * @param e 
+ */
   const handleOldPasswordChange = (e: any) => {
     const name = e.target.value;
     setOldPassword(name);
   };
-
+/**
+ * changes the current password to this new one in the database
+ * @param e 
+ */
   const handlePasswordChange = (e: any) => {
     const name = e.target.value;
     setNewPassword(name);
@@ -157,7 +179,7 @@ const Profile: React.FC = () => {
     //TODO: Delete USer from database
     await deleteDoc(doc(db, 'users', email));
     const user = getAuth().currentUser;
-    user?.delete();
+    user?.delete();//should delete user
 
     const q = query(
       collection(db, 'posts/'),
@@ -171,7 +193,15 @@ const Profile: React.FC = () => {
 
   const {isOpen, onOpen, onClose} = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
-
+/**
+ * function call that updates the database with the specified parameters
+ * @param newBiography //biography added to the database
+ * @param newUsername //username added to the database
+ * @param newFirstName //first name added to the database
+ * @param newLastName //last name added to the database
+ * @param newPassword //password added in the database
+ * @param oldPassword //previous password in the database
+ */
   async function toDB(
     newBiography: string,
     newUsername: string,
@@ -180,6 +210,7 @@ const Profile: React.FC = () => {
     newPassword: string,
     oldPassword: string,
   ) {
+    
     const email = JSON.parse(localStorage.getItem('EMAIL') as string);
     const auth = getAuth();
     const user = auth.currentUser;

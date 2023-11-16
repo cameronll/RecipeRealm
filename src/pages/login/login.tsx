@@ -51,7 +51,10 @@ const googleSignIn = async () => {
       // ...
     });
 };
-
+/**
+ * Function to login in to website
+ * @returns 
+ */
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
