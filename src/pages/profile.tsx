@@ -59,6 +59,7 @@ import {
   VStack,
   useBreakpointValue,
   Text,
+  Spacer,
 } from '@chakra-ui/react';
 import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link, Navigate, useNavigate} from 'react-router-dom';
@@ -66,15 +67,16 @@ import {useDocumentData} from 'react-firebase-hooks/firestore';
 import {FirebaseError} from 'firebase/app';
 /**
  * FUnction to populate data onto Profile page
- * @returns 
+ * @returns
  */
 const Profile: React.FC = () => {
-  const [newUsername, setNewUsername] = useState('');//assigns new username
-  const [newBiography, setNewBiography] = useState('');//assigns new biography
-  const [newPassword, setNewPassword] = useState('');//assigns new password 
-  const [firstName, setFirstName] = useState('');//assigns a new first name for user
-  const [lastName, setLastName] = useState('');//assigns a new lastname for users
-  const [oldPassword, setOldPassword] = useState('');//uses old password for authenticating changes in profile
+  const [newUsername, setNewUsername] = useState(''); //assigns new username
+  const [newBiography, setNewBiography] = useState(''); //assigns new biography
+  const [newPassword, setNewPassword] = useState(''); //assigns new password
+  const [firstName, setFirstName] = useState(''); //assigns a new first name for user
+  const [lastName, setLastName] = useState(''); //assigns a new lastname for users
+  const [oldPassword, setOldPassword] = useState(''); //uses old password for authenticating changes in profile
+  const [deletePassword, setDeletePassword] = useState('');
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
   const [profile, profileLoading, profileError] = useDocumentData(
@@ -119,55 +121,55 @@ const Profile: React.FC = () => {
       });
     });
   }
-/**
- * method to change username in the database
- *
- * @param e 
- */
+  /**
+   * method to change username in the database
+   *
+   * @param e
+   */
   const handleUsernameChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('NEWUSERNAME', JSON.stringify(name));
     setNewUsername(name);
   };
-/**
- * method to change biography in the database
- * @param e 
- */
+  /**
+   * method to change biography in the database
+   * @param e
+   */
   const handleBiographyChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('NEWBIOGRAPHY', JSON.stringify(name));
     setNewBiography(name);
   };
-/**
- * method to change the first name in the data base
- * @param e 
- */
+  /**
+   * method to change the first name in the data base
+   * @param e
+   */
   const handleFirstNameChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('NEWFIRSTNAME', JSON.stringify(targ));
     setFirstName(targ);
   };
-/**
- * method to change the last name
- * @param e 
- */
+  /**
+   * method to change the last name
+   * @param e
+   */
   const handleLastNameChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('NEWLASTNAME', JSON.stringify(targ));
     setLastName(targ);
   };
-/**
- * method to handle old password change
- * @param e 
- */
+  /**
+   * method to handle old password change
+   * @param e
+   */
   const handleOldPasswordChange = (e: any) => {
     const name = e.target.value;
     setOldPassword(name);
   };
-/**
- * changes the current password to this new one in the database
- * @param e 
- */
+  /**
+   * changes the current password to this new one in the database
+   * @param e
+   */
   const handlePasswordChange = (e: any) => {
     const name = e.target.value;
     setNewPassword(name);
@@ -175,33 +177,66 @@ const Profile: React.FC = () => {
 
   //Handle Delete
 
-  const handleDelete = async () => {
-    //TODO: Delete USer from database
-    await deleteDoc(doc(db, 'users', email));
-    const user = getAuth().currentUser;
-    user?.delete();//should delete user
+  const handleDelete = async (password: string) => {
+    try{
+      handleReauthenticate(password)
+    }
+    catch(error){
+          toast({
+            //
+            title: 'Invalid Password',
+            description:
+              'We could not delete your account',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
+          console.log(error);
+          return;
+      }
+      toast({
+        //
+        title: 'Account Deleted',
+        description:
+          'Your account has been permanently removed',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate('/login');
 
-    const q = query(
-      collection(db, 'posts/'),
-      where('email', '==', email),
-    );
-    const docs = await getDocs(q);
-    docs.forEach(doc => {
-      deleteDoc(doc.ref);
-    });
+      //TODO: Delete User from database
+      await deleteDoc(doc(db, 'users', email));
+      const user = getAuth().currentUser;
+      const deleted = user?.delete(); //should delete user
+      console.log(deleted);
+
+      const q = query(collection(db, 'posts/'), where('email', '==', email));
+      const docs = await getDocs(q);
+      docs.forEach(doc => {
+        deleteDoc(doc.ref);
+      });
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
-/**
- * function call that updates the database with the specified parameters
- * @param newBiography //biography added to the database
- * @param newUsername //username added to the database
- * @param newFirstName //first name added to the database
- * @param newLastName //last name added to the database
- * @param newPassword //password added in the database
- * @param oldPassword //previous password in the database
- */
+
+  const enableDeleteButton = () => {
+    if (1 != Math.random()) {
+      return false;
+    }
+    return true;
+  };
+
+  /**
+   * function call that updates the database with the specified parameters
+   * @param newBiography //biography added to the database
+   * @param newUsername //username added to the database
+   * @param newFirstName //first name added to the database
+   * @param newLastName //last name added to the database
+   * @param newPassword //password added in the database
+   * @param oldPassword //previous password in the database
+   */
   async function toDB(
     newBiography: string,
     newUsername: string,
@@ -210,7 +245,6 @@ const Profile: React.FC = () => {
     newPassword: string,
     oldPassword: string,
   ) {
-    
     const email = JSON.parse(localStorage.getItem('EMAIL') as string);
     const auth = getAuth();
     const user = auth.currentUser;
@@ -242,6 +276,19 @@ const Profile: React.FC = () => {
       biography: newBiography,
       name: newName,
     });
+  }
+
+  function handleDeletePasswordChange(e: any){
+    const password = e.target.value;
+    setDeletePassword(password);
+  }
+  function handleReauthenticate(password: string) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(email, password);
+    if (user) {
+      const authenticated = reauthenticateWithCredential(user, credential).then((snap) => {console.log("Authenticated")});
+    }
   }
   return (
     <>
@@ -318,18 +365,7 @@ const Profile: React.FC = () => {
                 </HStack>
               </VStack>
               <VStack alignSelf="end">
-                <Button alignSelf="end" colorScheme="red" onClick={() => {
-                  handleDelete();
-                  toast({
-                    //
-                    title: 'Account Deleted',
-                    description: "Your account has been permanently removed",
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                  navigate('/login');
-                }}>
+                <Button alignSelf="end" colorScheme="red" onClick={onOpen}>
                   Delete Acccount
                 </Button>
 
@@ -345,22 +381,48 @@ const Profile: React.FC = () => {
 
                       <AlertDialogBody>
                         Are you sure? You can't undo this action afterwards.
+                        <FormControl>
+                          <FormLabel
+                            htmlFor="costPerServing"
+                            fontSize="sm"
+                            fontWeight="md"
+                            color="gray.700"
+                            _dark={{
+                              color: 'gray.50',
+                            }}
+                            mt="2%">
+                            {/* Passsword input */}
+                            Enter Password
+                          </FormLabel>
+                          <Input
+                            type="text"
+                            name="costPerServing"
+                            id="costPerServing"
+                            focusBorderColor="brand.400"
+                            shadow="sm"
+                            size="sm"
+                            w="full"
+                            rounded="md"
+                            //HandlePassword
+                            value={deletePassword}
+                            onChange={handleDeletePasswordChange}
+                          />
+                        </FormControl>
                       </AlertDialogBody>
 
                       <AlertDialogFooter>
                         <Button ref={cancelRef} onClick={onClose}>
                           Cancel
                         </Button>
-                        <Link to="/login">
-                          <Button
-                            colorScheme="red"
-                            // onClick={() => {
-                            //   handleDelete();
-                            // }}
-                            ml={3}>
-                            Delete
-                          </Button>
-                        </Link>
+                        <Spacer />
+
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            handleDelete(deletePassword);
+                          }}>
+                          Delete Account
+                        </Button>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialogOverlay>

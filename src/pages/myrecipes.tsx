@@ -188,9 +188,9 @@ const Recipes: React.FC = () => {
                 )}
                 {/* Display # friends */}
                 {profile?.following.length === 1 ? (
-                  <Text fontSize={18}>{profile?.following.length} post</Text>
+                  <Text fontSize={18}>{profile?.following.length} friend</Text>
                 ) : (
-                  <Text fontSize={18}>{profile?.following.length} posts</Text>
+                  <Text fontSize={18}>{profile?.following.length} friends</Text>
                 )}
 
                 <Text color={'black'} fontSize={'lg'} maxWidth={500}>
