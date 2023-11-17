@@ -251,8 +251,9 @@ const Profile: React.FC = () => {
     if (newPassword && oldPassword) {
       const credential = EmailAuthProvider.credential(email, oldPassword);
       if (user) {
-        reauthenticateWithCredential(user, credential).then(async () => {
+        const reauth = reauthenticateWithCredential(user, credential).then(async () => {
           updatePassword(user, newPassword);
+          console.log(reauth);
         });
       }
     }

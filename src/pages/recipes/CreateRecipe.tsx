@@ -888,7 +888,7 @@ export default function Multistep() {
           <VStack
             w={'full'}
             px={useBreakpointValue({base: 4, md: 8})}
-            // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
+            
           >
             <Stack maxW={'2xl'} spacing={6}>
               <Text textAlign="center" fontSize="6xl" as="b" color="white">
