@@ -26,7 +26,11 @@ import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link, useNavigate} from 'react-router-dom';
 import {useToast} from '@chakra-ui/react';
 import Footer from '../../components/Footer';
-
+/**
+ * check name value to see if name already exists in the database
+ * @param value 
+ * @returns 
+ */
 function validateName(value: any) {
   let error;
   if (!value) {
@@ -37,7 +41,11 @@ function validateName(value: any) {
   }
   return error;
 }
-
+/**
+ * checks the username is not already taken
+ * @param username 
+ * @returns 
+ */
 async function uniqueUsername(username: string): Promise<boolean> {
   const queryUsernames = await getDocs(collection(db, 'users'));
   const usernames = queryUsernames.docs.map(doc => doc.data().username);
@@ -46,7 +54,10 @@ async function uniqueUsername(username: string): Promise<boolean> {
   }
   return true;
 }
-
+/**
+ * method to sign up a new user including formik for handling the form data
+ * @returns 
+ */
 const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
   const toast = useToast();
