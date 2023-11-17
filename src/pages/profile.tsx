@@ -178,44 +178,46 @@ const Profile: React.FC = () => {
   //Handle Delete
 
   const handleDelete = async (password: string) => {
-    try{
-      handleReauthenticate(password)
-    }
-    catch(error){
-          toast({
-            //
-            title: 'Invalid Password',
-            description:
-              'We could not delete your account',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
-          });
-          console.log(error);
-          return;
-      }
-      toast({
-        //
-        title: 'Account Deleted',
-        description:
-          'Your account has been permanently removed',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate('/login');
-
-      //TODO: Delete User from database
-      await deleteDoc(doc(db, 'users', email));
-      const user = getAuth().currentUser;
-      const deleted = user?.delete(); //should delete user
-      console.log(deleted);
-
-      const q = query(collection(db, 'posts/'), where('email', '==', email));
-      const docs = await getDocs(q);
-      docs.forEach(doc => {
-        deleteDoc(doc.ref);
-      });
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(email, password);
+    if (user) {
+      const authenticated = reauthenticateWithCredential(user, credential).then(async (snap) => 
+      {
+        toast({
+          //
+          title: 'Account Deleted',
+          description:
+            'Your account has been permanently removed',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate('/login');
+  
+        //TODO: Delete User from database
+        await deleteDoc(doc(db, 'users', email));
+        const deleted = user?.delete(); //should delete user
+        console.log(deleted);
+  
+        const q = query(collection(db, 'posts/'), where('email', '==', email));
+        const docs = await getDocs(q);
+        docs.forEach(doc => {
+          deleteDoc(doc.ref);
+        });
+    }).catch((error) => {
+      console.log(error);
+        toast({
+          //
+          title: 'Incorrect Password',
+          description:
+            'This password is incorrect',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+    })
+    } 
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -254,7 +256,17 @@ const Profile: React.FC = () => {
         const reauth = reauthenticateWithCredential(user, credential).then(async () => {
           updatePassword(user, newPassword);
           console.log(reauth);
-        });
+        }).catch((error) => {
+          toast({
+            //
+            title: 'Incorrect Password',
+            description:
+              'This password is incorrect',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
+      })
       }
     }
 
@@ -284,12 +296,7 @@ const Profile: React.FC = () => {
     setDeletePassword(password);
   }
   function handleReauthenticate(password: string) {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const credential = EmailAuthProvider.credential(email, password);
-    if (user) {
-      const authenticated = reauthenticateWithCredential(user, credential).then((snap) => {console.log("Authenticated")});
-    }
+    
   }
   return (
     <>
