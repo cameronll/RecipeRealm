@@ -15,7 +15,12 @@ import {
   deleteDoc,
   updateDoc,
   arrayUnion,
+  deleteField,
+  Firestore,
+  FieldValue,
+  arrayRemove,
 } from 'firebase/firestore';
+import firebase from 'firebase/app';
 import Navbar from '../components/Navbar';
 import {
   Box,
@@ -170,6 +175,7 @@ const CalendarPage: React.FC = () => {
   const [date, setDate] = useState('');
   const [recipeName, setRecipeName] = useState<any>();
   const [events, setEvents] = useState<any>([]);
+  const [dateSelected, setDateSelected] = useState('');
 
   function renderCell(date: any) {
     const list = getTodoList(date);
@@ -322,7 +328,6 @@ const CalendarPage: React.FC = () => {
       </>
     );
   }
-  var dateSelected: string = '';
 
   return (
     <>
@@ -353,16 +358,17 @@ const CalendarPage: React.FC = () => {
               initialView="dayGridMonth"
               selectable={true}
               aspectRatio={0.8}
+              unselectAuto={false}
               dateClick={function (info) {
                 // Function to handle date clicking
-                dateSelected = info.dateStr
+                const selectedDate = info.dateStr;
                 var tempEvents: Recipe[] = [];
                 for (let i = 0; i < profile?.events.length; i++) {
                   if (info.dateStr == profile?.events[i].date) {
                     tempEvents.push(profile?.events[i].recipe);
                   }
                 }
-                console.log(tempEvents);
+                setDateSelected(selectedDate);
                 setDateEvents(tempEvents);
               }}
               selectAllow={function (selectInfo) {
@@ -394,9 +400,7 @@ const CalendarPage: React.FC = () => {
           maxH="680px"
           overflowY={'scroll'}
           w={'1000px'}>
-          {dateSelected ? (
-            <Text>Select a day to view what's scheduled</Text>
-          ) : (
+          {(
             <VStack spacing={10}>
               <Box>
                 {dateEvents &&
@@ -577,8 +581,13 @@ const CalendarPage: React.FC = () => {
                             onClick={() => {
                               //Deschedule
                               for(let i = 0; i < profile?.events.length; i++){
-                                if(dateSelected == profile?.events[i].date){
-                                  console.log(profile?.events[0])
+                                if(dateSelected == profile?.events[i].date && profile?.events[i].title == recipe.recipe_name){
+                                  console.log(dateSelected)
+                                  console.log(profile?.events[i])
+                                  console.log(profile?.events[i].title)
+                                  updateDoc(doc(db, 'users/', email), {
+                                    events: arrayRemove(profile?.events[i]),
+                                  })
                                 }
                               }
                             }}>
