@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {db, storage} from '../firebaseConfig';
 import {Whisper, Popover, Badge} from 'rsuite';
 import {
@@ -71,6 +71,7 @@ import {
 } from 'react-firebase-hooks/firestore';
 import {AiFillPrinter} from 'react-icons/ai';
 import {render} from '@testing-library/react';
+import { SelectedElement } from 'rsuite/esm/Picker';
 
 // export default class App extends React.Component {
 //   render() {
@@ -177,6 +178,18 @@ const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<any>([]);
   const [dateSelected, setDateSelected] = useState('');
 
+  // const calendarRef = useRef(null);
+  // useEffect(() => {
+  //   // Get the FullCalendar instance
+  //   const calendar = calendarRef.current; 
+
+  //   if (calendar) {
+  //     // Call the select method to programmatically select the date range
+  //     var currentDate = calendar.getDate();
+  //     calendar.select(currentDate, currentDate);
+  //   }
+  // }, [calendarRef.current]);
+
   function renderCell(date: any) {
     const list = getTodoList(date);
     const displayList = list.filter((item, index) => index < 2);
@@ -251,6 +264,226 @@ const CalendarPage: React.FC = () => {
     }
   };
 
+  /**
+   * Method that dispalys the meals from the selected day on the right side of
+   * the window. Default display day is current day.
+   * @returns 
+   */
+  function displayMeals(){
+    var eventsOnSelected;
+
+    if(dateEvents.length == 0){
+      
+    }else{
+      eventsOnSelected = dateEvents
+    }
+    return(
+      <VStack spacing={10}>
+        <Box>
+          {dateEvents &&
+            dateEvents.map((recipe: Recipe) => (
+              <Container
+                boxShadow={'2xl'}
+                minW="sm"
+                borderRadius="lg"
+                overflow="hidden"
+                justify-content="space-between"
+                bg="teal"
+                minH="350"
+                display="flex"
+                flexDirection="column"
+                marginBottom={4}
+                marginTop={4}
+                rounded="md"
+                shadow={'dark-lg'}>
+                <VStack align="2x1">
+                  <Center>
+                    <Image
+                      borderRadius="30px"
+                      src={recipe.pic}
+                      alt="No Picture"
+                      h="auto"
+                      w={300}
+                      mb={15}
+                    />
+                  </Center>
+
+                  <Button
+                    variant="link"
+                    rounded="md"
+                    as="h3"
+                    size="lg"
+                    color="black"
+                    padding={1}>
+                    <Center>
+                      <Text as="b" fontSize="34px" textColor="white">
+                        {recipe.recipe_name}
+                      </Text>
+                    </Center>
+                  </Button>
+
+                  <Box
+                    boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="white"
+                    color="black"
+                    maxW="container.sm">
+                    <Text noOfLines={1}>
+                      Difficulty: {recipe.difficulty}
+                    </Text>
+                    <Text noOfLines={1}>Time: {recipe.cooking_time}</Text>
+                    <Text noOfLines={1}>Servings: {recipe.servings}</Text>
+                    <Text noOfLines={1}>
+                      Cost Per Serving: {recipe.cost_per_serving}
+                    </Text>
+                    <Text noOfLines={1}>
+                      Cooking Applications: {recipe.cooking_applications}
+                    </Text>
+                    <Text noOfLines={1}>
+                      Allergens: {recipe.allergens}
+                    </Text>
+                  </Box>
+                  <Accordion allowMultiple>
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton bg="white">
+                          <Box as="span" flex="1" textAlign="left">
+                            <Text as="b" textColor="black">
+                              Nutrition Data
+                            </Text>
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <Box
+                          padding="4"
+                          color="black"
+                          maxW="container.sm">
+                          <Text noOfLines={1} textColor="white">
+                            Calories:{' '}
+                            {recipe.nutrients.calories.toFixed(2)} kCal
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Protein: {recipe.nutrients.protein.toFixed(2)}
+                            g
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Carbs:{' '}
+                            {recipe.nutrients.total_carbohydrate.toFixed(
+                              2,
+                            )}
+                            g
+                          </Text>
+                          <Text
+                            noOfLines={1}
+                            style={{paddingLeft: '20px'}}
+                            textColor="white">
+                            Sugar: {recipe.nutrients.sugars.toFixed(2)}g
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Fat: {recipe.nutrients.total_fat.toFixed(2)}g
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Saturated Fat:{' '}
+                            {recipe.nutrients.saturated_fat.toFixed(2)}g
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Cholesterol:{' '}
+                            {recipe.nutrients.cholesterol.toFixed(2)}g
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Sodium: {recipe.nutrients.sodium.toFixed(2)}g
+                          </Text>
+                          <Text noOfLines={1} textColor="white">
+                            Fiber:{' '}
+                            {recipe.nutrients.dietary_fiber.toFixed(2)}g
+                          </Text>
+                        </Box>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
+                  <Accordion allowMultiple>
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton bg="white">
+                          <Box as="span" flex="1" textAlign="left">
+                            <Text as="b" textColor="black">
+                              Instructions:
+                            </Text>
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <Box
+                          padding="4"
+                          color="black"
+                          maxW="container.sm">
+                          <Text textColor="white">
+                            {recipe.instructions}
+                          </Text>
+                        </Box>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
+                </VStack>
+                <HStack align="right" marginTop={2}>
+                  <Flex>
+                    <Button
+                      boxShadow="xs"
+                      rounded="md"
+                      variant="outline"
+                      padding="4"
+                      colorScheme="teal"
+                      color="white"
+                      maxW="container.sm"
+                      onClick={() => {
+                        //Print Recipe
+                      }}>
+                      <AiFillPrinter />
+                      <Text marginLeft={2}>Print Recipe</Text>
+                    </Button>
+                  </Flex>
+                  <Spacer/>
+                  <Flex>
+                    <Button
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      colorScheme="red"
+                      color="white"
+                      maxW="container.sm"
+                      onClick={() => {
+                        //Deschedule
+                        for(let i = 0; i < profile?.events.length; i++){
+                          if(dateSelected == profile?.events[i].date && profile?.events[i].title == recipe.recipe_name){
+                            console.log(dateSelected)
+                            console.log(profile?.events[i])
+                            console.log(profile?.events[i].title)
+                            updateDoc(doc(db, 'users/', email), {
+                              events: arrayRemove(profile?.events[i]),
+                            })
+                          }
+                        }
+                      }}>
+                      <Text>De-schedule</Text>
+                    </Button>
+                  </Flex>
+                </HStack>
+              </Container>
+            ))}
+        </Box>
+      </VStack>
+    );
+  }
+  /**
+   * Function that displays a drawer component when the user clicks on the
+   * "Schedule Recipe" button. The drawer displays boxes for the user to fill in 
+   * date, time, and which meal they want to schedule.
+   * @returns 
+   */
   function ScheduleRecipe() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const btnRef = React.useRef();
@@ -354,6 +587,7 @@ const CalendarPage: React.FC = () => {
         <VStack w={'50%'} align={'left'}>
           <Container w={'750px'}>
             <FullCalendar
+              //ref={calendarRef}
               plugins={[interactionPlugin, dayGridPlugin]}
               initialView="dayGridMonth"
               selectable={true}
@@ -400,205 +634,12 @@ const CalendarPage: React.FC = () => {
           maxH="680px"
           overflowY={'scroll'}
           w={'1000px'}>
-          {(
-            <VStack spacing={10}>
-              <Box>
-                {dateEvents &&
-                  dateEvents.map((recipe: Recipe) => (
-                    <Container
-                      boxShadow={'2xl'}
-                      minW="sm"
-                      borderRadius="lg"
-                      overflow="hidden"
-                      justify-content="space-between"
-                      bg="teal"
-                      minH="350"
-                      display="flex"
-                      flexDirection="column"
-                      marginBottom={4}
-                      marginTop={4}
-                      rounded="md"
-                      shadow={'dark-lg'}>
-                      <VStack align="2x1">
-                        <Center>
-                          <Image
-                            borderRadius="30px"
-                            src={recipe.pic}
-                            alt="No Picture"
-                            h="auto"
-                            w={300}
-                            mb={15}
-                          />
-                        </Center>
-
-                        <Button
-                          variant="link"
-                          rounded="md"
-                          as="h3"
-                          size="lg"
-                          color="black"
-                          padding={1}>
-                          <Center>
-                            <Text as="b" fontSize="34px" textColor="white">
-                              {recipe.recipe_name}
-                            </Text>
-                          </Center>
-                        </Button>
-
-                        <Box
-                          boxShadow="xs"
-                          rounded="md"
-                          padding="4"
-                          bg="white"
-                          color="black"
-                          maxW="container.sm">
-                          <Text noOfLines={1}>
-                            Difficulty: {recipe.difficulty}
-                          </Text>
-                          <Text noOfLines={1}>Time: {recipe.cooking_time}</Text>
-                          <Text noOfLines={1}>Servings: {recipe.servings}</Text>
-                          <Text noOfLines={1}>
-                            Cost Per Serving: {recipe.cost_per_serving}
-                          </Text>
-                          <Text noOfLines={1}>
-                            Cooking Applications: {recipe.cooking_applications}
-                          </Text>
-                          <Text noOfLines={1}>
-                            Allergens: {recipe.allergens}
-                          </Text>
-                        </Box>
-                        <Accordion allowMultiple>
-                          <AccordionItem>
-                            <h2>
-                              <AccordionButton bg="white">
-                                <Box as="span" flex="1" textAlign="left">
-                                  <Text as="b" textColor="black">
-                                    Nutrition Data
-                                  </Text>
-                                </Box>
-                                <AccordionIcon />
-                              </AccordionButton>
-                            </h2>
-                            <AccordionPanel pb={4}>
-                              <Box
-                                padding="4"
-                                color="black"
-                                maxW="container.sm">
-                                <Text noOfLines={1} textColor="white">
-                                  Calories:{' '}
-                                  {recipe.nutrients.calories.toFixed(2)} kCal
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Protein: {recipe.nutrients.protein.toFixed(2)}
-                                  g
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Carbs:{' '}
-                                  {recipe.nutrients.total_carbohydrate.toFixed(
-                                    2,
-                                  )}
-                                  g
-                                </Text>
-                                <Text
-                                  noOfLines={1}
-                                  style={{paddingLeft: '20px'}}
-                                  textColor="white">
-                                  Sugar: {recipe.nutrients.sugars.toFixed(2)}g
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Fat: {recipe.nutrients.total_fat.toFixed(2)}g
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Saturated Fat:{' '}
-                                  {recipe.nutrients.saturated_fat.toFixed(2)}g
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Cholesterol:{' '}
-                                  {recipe.nutrients.cholesterol.toFixed(2)}g
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Sodium: {recipe.nutrients.sodium.toFixed(2)}g
-                                </Text>
-                                <Text noOfLines={1} textColor="white">
-                                  Fiber:{' '}
-                                  {recipe.nutrients.dietary_fiber.toFixed(2)}g
-                                </Text>
-                              </Box>
-                            </AccordionPanel>
-                          </AccordionItem>
-                        </Accordion>
-                        <Accordion allowMultiple>
-                          <AccordionItem>
-                            <h2>
-                              <AccordionButton bg="white">
-                                <Box as="span" flex="1" textAlign="left">
-                                  <Text as="b" textColor="black">
-                                    Instructions:
-                                  </Text>
-                                </Box>
-                                <AccordionIcon />
-                              </AccordionButton>
-                            </h2>
-                            <AccordionPanel pb={4}>
-                              <Box
-                                padding="4"
-                                color="black"
-                                maxW="container.sm">
-                                <Text textColor="white">
-                                  {recipe.instructions}
-                                </Text>
-                              </Box>
-                            </AccordionPanel>
-                          </AccordionItem>
-                        </Accordion>
-                      </VStack>
-                      <HStack align="right" marginTop={2}>
-                        <Flex>
-                          <Button
-                            boxShadow="xs"
-                            rounded="md"
-                            variant="outline"
-                            padding="4"
-                            colorScheme="teal"
-                            color="white"
-                            maxW="container.sm"
-                            onClick={() => {
-                              //Print Recipe
-                            }}>
-                            <AiFillPrinter />
-                            <Text marginLeft={2}>Print Recipe</Text>
-                          </Button>
-                        </Flex>
-                        <Spacer/>
-                        <Flex>
-                          <Button
-                            boxShadow="xs"
-                            rounded="md"
-                            padding="4"
-                            colorScheme="red"
-                            color="white"
-                            maxW="container.sm"
-                            onClick={() => {
-                              //Deschedule
-                              for(let i = 0; i < profile?.events.length; i++){
-                                if(dateSelected == profile?.events[i].date && profile?.events[i].title == recipe.recipe_name){
-                                  console.log(dateSelected)
-                                  console.log(profile?.events[i])
-                                  console.log(profile?.events[i].title)
-                                  updateDoc(doc(db, 'users/', email), {
-                                    events: arrayRemove(profile?.events[i]),
-                                  })
-                                }
-                              }
-                            }}>
-                            <Text>De-schedule</Text>
-                          </Button>
-                        </Flex>
-                      </HStack>
-                    </Container>
-                  ))}
-              </Box>
-            </VStack>
+          {dateSelected == ''?(
+            // displayMeals()
+            //<Button onClick={() => {console.log(dateEvents)}}>thing</Button>
+            <Text paddingTop={'200'} paddingLeft={'75'}>Select a day to view the meals scheduled</Text>
+          ) : (
+            displayMeals()
           )}
         </Container>
       </HStack>
