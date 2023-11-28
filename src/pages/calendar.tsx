@@ -178,6 +178,14 @@ const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<any>([]);
   const [dateSelected, setDateSelected] = useState('');
 
+  useEffect(() => {
+    var tempArray:Recipe[] = [];
+    for (let i = 0; i < profile?.events.length; i++){
+      tempArray.push(profile?.events[i].recipe);
+    }
+    setDateEvents(tempArray);
+  }, [profile]);
+
   // const calendarRef = useRef(null);
   // useEffect(() => {
   //   // Get the FullCalendar instance
@@ -450,21 +458,14 @@ const CalendarPage: React.FC = () => {
                       maxW="container.sm"
                       onClick={() => {
                         //Deschedule
-                        for (let i = 0; i < profile?.events.length; i++) {
-                          if (
-                            profile?.events[i].date.includes(dateSelected) &&
-                            profile?.events[i].title == recipe.recipe_name
-                          ) {
-                            console.log(dateSelected);
-                            console.log(profile?.events[i]);
-                            console.log(profile?.events[i].title);
+                        for(let i = 0; i < profile?.events.length; i++){
+                          if(profile?.events[i].date.includes(dateSelected) && profile?.events[i].title == recipe.recipe_name){
+                            console.log(dateSelected)
+                            console.log(profile?.events[i])
+                            console.log(profile?.events[i].title)
                             updateDoc(doc(db, 'users/', email), {
                               events: arrayRemove(profile?.events[i]),
-                            });
-                            const tempArray = dateEvents;
-                            const index = tempArray.indexOf(profile?.events[i]);
-                            tempArray.splice(index, 1);
-                            setDateEvents(tempArray);
+                            })
                           }
                         }
                       }}>
