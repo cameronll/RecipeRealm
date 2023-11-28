@@ -466,10 +466,6 @@ const CalendarPage: React.FC = () => {
                             updateDoc(doc(db, 'users/', email), {
                               events: arrayRemove(profile?.events[i]),
                             })
-                            const tempArray = dateEvents;
-                            const index = tempArray.indexOf(profile?.events[i]);
-                            tempArray.splice(index, 1);
-                            setDateEvents(tempArray);
                           }
                         }
                       }}>
