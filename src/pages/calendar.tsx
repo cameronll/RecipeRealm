@@ -179,8 +179,8 @@ const CalendarPage: React.FC = () => {
   const [dateSelected, setDateSelected] = useState('');
 
   useEffect(() => {
-    var tempArray:Recipe[] = [];
-    for (let i = 0; i < profile?.events.length; i++){
+    var tempArray: Recipe[] = [];
+    for (let i = 0; i < profile?.events.length; i++) {
       tempArray.push(profile?.events[i].recipe);
     }
     setDateEvents(tempArray);
@@ -197,6 +197,10 @@ const CalendarPage: React.FC = () => {
   //     calendar.select(currentDate, currentDate);
   //   }
   // }, [calendarRef.current]);
+
+  function titleSize(title: string) {
+    return 34 - title.length * 0.2 + 'px';
+  }
 
   function renderCell(date: any) {
     const list = getTodoList(date);
@@ -302,25 +306,27 @@ const CalendarPage: React.FC = () => {
             dateEvents.map((recipe: Recipe) => (
               <Container
                 boxShadow={'2xl'}
-                minW="sm"
+                maxW="md"
                 borderRadius="lg"
                 overflow="hidden"
                 justify-content="space-between"
                 bg="teal"
                 minH="350"
-                display="flex"
                 flexDirection="column"
-                marginBottom={4}
-                marginTop={4}
                 rounded="md"
+                padding={4}
+                margin={4}
                 shadow={'dark-lg'}>
                 <VStack align="2x1">
                   <Center>
                     <Image
                       borderRadius="30px"
-                      src={recipe.pic}
+                      minH="250px"
+                      src={
+                        // image attached to the recipe
+                        recipe.pic
+                      }
                       alt="No Picture"
-                      h="auto"
                       w={300}
                       mb={15}
                     />
@@ -334,12 +340,17 @@ const CalendarPage: React.FC = () => {
                     color="black"
                     padding={1}>
                     <Center>
-                      <Text as="b" fontSize="34px" textColor="white">
-                        {recipe.recipe_name}
+                      <Text
+                        as="b"
+                        fontSize={titleSize(recipe.recipe_name)}
+                        textColor="white">
+                        {
+                          // name of the recipe
+                          recipe.recipe_name
+                        }
                       </Text>
                     </Center>
                   </Button>
-
                   <Box
                     boxShadow="xs"
                     rounded="md"
@@ -347,6 +358,7 @@ const CalendarPage: React.FC = () => {
                     bg="white"
                     color="black"
                     maxW="container.sm">
+                    {/* displaying recipe data */}
                     <Text noOfLines={1}>Difficulty: {recipe.difficulty}</Text>
                     <Text noOfLines={1}>Time: {recipe.cooking_time}</Text>
                     <Text noOfLines={1}>Servings: {recipe.servings}</Text>
@@ -361,6 +373,7 @@ const CalendarPage: React.FC = () => {
                   <Accordion allowMultiple>
                     <AccordionItem>
                       <h2>
+                        {/* accordion for nutrition data  */}
                         <AccordionButton bg="white">
                           <Box as="span" flex="1" textAlign="left">
                             <Text as="b" textColor="black">
@@ -372,6 +385,7 @@ const CalendarPage: React.FC = () => {
                       </h2>
                       <AccordionPanel pb={4}>
                         <Box padding="4" color="black" maxW="container.sm">
+                          {/* each accordion panel contains:  */}
                           <Text noOfLines={1} textColor="white">
                             Calories: {recipe.nutrients.calories.toFixed(2)}{' '}
                             kCal
@@ -383,10 +397,7 @@ const CalendarPage: React.FC = () => {
                             Carbs:{' '}
                             {recipe.nutrients.total_carbohydrate.toFixed(2)}g
                           </Text>
-                          <Text
-                            noOfLines={1}
-                            style={{paddingLeft: '20px'}}
-                            textColor="white">
+                          <Text noOfLines={1} textColor="white">
                             Sugar: {recipe.nutrients.sugars.toFixed(2)}g
                           </Text>
                           <Text noOfLines={1} textColor="white">
@@ -416,6 +427,31 @@ const CalendarPage: React.FC = () => {
                         <AccordionButton bg="white">
                           <Box as="span" flex="1" textAlign="left">
                             <Text as="b" textColor="black">
+                              Ingredients
+                            </Text>
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        {recipe.ingredients.map(
+                          (ingredient: string, index: number) => (
+                            <Text key={index}>
+                              {' '}
+                              <li> {ingredient}</li>
+                            </Text>
+                          ),
+                        )}
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
+                  <Accordion allowMultiple>
+                    <AccordionItem>
+                      <h2>
+                        {/* accordion for the instructions */}
+                        <AccordionButton bg="white">
+                          <Box as="span" flex="1" textAlign="left">
+                            <Text as="b" textColor="black">
                               Instructions:
                             </Text>
                           </Box>
@@ -424,29 +460,30 @@ const CalendarPage: React.FC = () => {
                       </h2>
                       <AccordionPanel pb={4}>
                         <Box padding="4" color="black" maxW="container.sm">
-                          <Text textColor="white">{recipe.instructions}</Text>
+                          <Text textColor="white">
+                            {/* display the instructions */}
+                            {recipe.instructions}
+                          </Text>
                         </Box>
                       </AccordionPanel>
                     </AccordionItem>
                   </Accordion>
                 </VStack>
                 <HStack align="right" marginTop={2}>
-                  <Flex>
-                    <Button
-                      boxShadow="xs"
-                      rounded="md"
-                      variant="outline"
-                      padding="4"
-                      colorScheme="teal"
-                      color="white"
-                      maxW="container.sm"
-                      onClick={() => {
-                        //Print Recipe
-                      }}>
-                      <AiFillPrinter />
-                      <Text marginLeft={2}>Print Recipe</Text>
-                    </Button>
-                  </Flex>
+                  <Button
+                    boxShadow="xs"
+                    rounded="md"
+                    variant="outline"
+                    padding="4"
+                    colorScheme="teal"
+                    color="white"
+                    maxW="container.sm"
+                    onClick={() => {
+                      //Print Recipe
+                    }}>
+                    <AiFillPrinter />
+                    <Text marginLeft={2}>Print Recipe</Text>
+                  </Button>
                   <Spacer />
                   <Flex>
                     <Button
@@ -458,14 +495,17 @@ const CalendarPage: React.FC = () => {
                       maxW="container.sm"
                       onClick={() => {
                         //Deschedule
-                        for(let i = 0; i < profile?.events.length; i++){
-                          if(profile?.events[i].date.includes(dateSelected) && profile?.events[i].title == recipe.recipe_name){
-                            console.log(dateSelected)
-                            console.log(profile?.events[i])
-                            console.log(profile?.events[i].title)
+                        for (let i = 0; i < profile?.events.length; i++) {
+                          if (
+                            profile?.events[i].date.includes(dateSelected) &&
+                            profile?.events[i].title == recipe.recipe_name
+                          ) {
+                            console.log(dateSelected);
+                            console.log(profile?.events[i]);
+                            console.log(profile?.events[i].title);
                             updateDoc(doc(db, 'users/', email), {
                               events: arrayRemove(profile?.events[i]),
-                            })
+                            });
                           }
                         }
                       }}>
@@ -539,10 +579,10 @@ const CalendarPage: React.FC = () => {
                 placeholder="Click to select..."
                 onChange={handleRecipeChange}>
                 {recipes?.map(recipe => (
-                  <option>{recipe?.data.recipe_name}</option>
+                  <option>{recipe?.recipe_name}</option>
                 ))}
                 {savedRecipes?.map(recipe => (
-                  <option>{recipe.data.recipe_name}</option>
+                  <option>{recipe.recipe_name}</option>
                 ))}
               </Select>
             </DrawerBody>
