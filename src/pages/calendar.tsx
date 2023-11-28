@@ -71,7 +71,7 @@ import {
 } from 'react-firebase-hooks/firestore';
 import {AiFillPrinter} from 'react-icons/ai';
 import {render} from '@testing-library/react';
-import { SelectedElement } from 'rsuite/esm/Picker';
+import {SelectedElement} from 'rsuite/esm/Picker';
 
 // export default class App extends React.Component {
 //   render() {
@@ -189,7 +189,7 @@ const CalendarPage: React.FC = () => {
   // const calendarRef = useRef(null);
   // useEffect(() => {
   //   // Get the FullCalendar instance
-  //   const calendar = calendarRef.current; 
+  //   const calendar = calendarRef.current;
 
   //   if (calendar) {
   //     // Call the select method to programmatically select the date range
@@ -274,7 +274,7 @@ const CalendarPage: React.FC = () => {
       }
       toast({
         //
-        title: 'Recipe Created',
+        title: 'Recipe Scheduled',
         description: 'Recipe added to your calendar.',
         status: 'success',
         duration: 3000,
@@ -286,17 +286,16 @@ const CalendarPage: React.FC = () => {
   /**
    * Method that dispalys the meals from the selected day on the right side of
    * the window. Default display day is current day.
-   * @returns 
+   * @returns
    */
-  function displayMeals(){
+  function displayMeals() {
     var eventsOnSelected;
 
-    if(dateEvents.length == 0){
-      
-    }else{
-      eventsOnSelected = dateEvents
+    if (dateEvents.length == 0) {
+    } else {
+      eventsOnSelected = dateEvents;
     }
-    return(
+    return (
       <VStack spacing={10}>
         <Box>
           {dateEvents &&
@@ -348,9 +347,7 @@ const CalendarPage: React.FC = () => {
                     bg="white"
                     color="black"
                     maxW="container.sm">
-                    <Text noOfLines={1}>
-                      Difficulty: {recipe.difficulty}
-                    </Text>
+                    <Text noOfLines={1}>Difficulty: {recipe.difficulty}</Text>
                     <Text noOfLines={1}>Time: {recipe.cooking_time}</Text>
                     <Text noOfLines={1}>Servings: {recipe.servings}</Text>
                     <Text noOfLines={1}>
@@ -359,9 +356,7 @@ const CalendarPage: React.FC = () => {
                     <Text noOfLines={1}>
                       Cooking Applications: {recipe.cooking_applications}
                     </Text>
-                    <Text noOfLines={1}>
-                      Allergens: {recipe.allergens}
-                    </Text>
+                    <Text noOfLines={1}>Allergens: {recipe.allergens}</Text>
                   </Box>
                   <Accordion allowMultiple>
                     <AccordionItem>
@@ -376,24 +371,17 @@ const CalendarPage: React.FC = () => {
                         </AccordionButton>
                       </h2>
                       <AccordionPanel pb={4}>
-                        <Box
-                          padding="4"
-                          color="black"
-                          maxW="container.sm">
+                        <Box padding="4" color="black" maxW="container.sm">
                           <Text noOfLines={1} textColor="white">
-                            Calories:{' '}
-                            {recipe.nutrients.calories.toFixed(2)} kCal
+                            Calories: {recipe.nutrients.calories.toFixed(2)}{' '}
+                            kCal
                           </Text>
                           <Text noOfLines={1} textColor="white">
-                            Protein: {recipe.nutrients.protein.toFixed(2)}
-                            g
+                            Protein: {recipe.nutrients.protein.toFixed(2)}g
                           </Text>
                           <Text noOfLines={1} textColor="white">
                             Carbs:{' '}
-                            {recipe.nutrients.total_carbohydrate.toFixed(
-                              2,
-                            )}
-                            g
+                            {recipe.nutrients.total_carbohydrate.toFixed(2)}g
                           </Text>
                           <Text
                             noOfLines={1}
@@ -416,8 +404,7 @@ const CalendarPage: React.FC = () => {
                             Sodium: {recipe.nutrients.sodium.toFixed(2)}g
                           </Text>
                           <Text noOfLines={1} textColor="white">
-                            Fiber:{' '}
-                            {recipe.nutrients.dietary_fiber.toFixed(2)}g
+                            Fiber: {recipe.nutrients.dietary_fiber.toFixed(2)}g
                           </Text>
                         </Box>
                       </AccordionPanel>
@@ -436,13 +423,8 @@ const CalendarPage: React.FC = () => {
                         </AccordionButton>
                       </h2>
                       <AccordionPanel pb={4}>
-                        <Box
-                          padding="4"
-                          color="black"
-                          maxW="container.sm">
-                          <Text textColor="white">
-                            {recipe.instructions}
-                          </Text>
+                        <Box padding="4" color="black" maxW="container.sm">
+                          <Text textColor="white">{recipe.instructions}</Text>
                         </Box>
                       </AccordionPanel>
                     </AccordionItem>
@@ -465,7 +447,7 @@ const CalendarPage: React.FC = () => {
                       <Text marginLeft={2}>Print Recipe</Text>
                     </Button>
                   </Flex>
-                  <Spacer/>
+                  <Spacer />
                   <Flex>
                     <Button
                       boxShadow="xs"
@@ -476,7 +458,6 @@ const CalendarPage: React.FC = () => {
                       maxW="container.sm"
                       onClick={() => {
                         //Deschedule
-                        var tempEvents: Recipe[] = [];
                         for(let i = 0; i < profile?.events.length; i++){
                           if(profile?.events[i].date.includes(dateSelected) && profile?.events[i].title == recipe.recipe_name){
                             console.log(dateSelected)
@@ -485,6 +466,10 @@ const CalendarPage: React.FC = () => {
                             updateDoc(doc(db, 'users/', email), {
                               events: arrayRemove(profile?.events[i]),
                             })
+                            const tempArray = dateEvents;
+                            const index = tempArray.indexOf(profile?.events[i]);
+                            tempArray.splice(index, 1);
+                            setDateEvents(tempArray);
                           }
                         }
                       }}>
@@ -500,9 +485,9 @@ const CalendarPage: React.FC = () => {
   }
   /**
    * Function that displays a drawer component when the user clicks on the
-   * "Schedule Recipe" button. The drawer displays boxes for the user to fill in 
+   * "Schedule Recipe" button. The drawer displays boxes for the user to fill in
    * date, time, and which meal they want to schedule.
-   * @returns 
+   * @returns
    */
   function ScheduleRecipe() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -670,10 +655,12 @@ const CalendarPage: React.FC = () => {
           maxH="680px"
           overflowY={'scroll'}
           w={'1000px'}>
-          {dateSelected == ''?(
+          {dateSelected == '' ? (
             // displayMeals()
             //<Button onClick={() => {console.log(dateEvents)}}>thing</Button>
-            <Text paddingTop={'200'} paddingLeft={'75'}>Select a day to view the meals scheduled</Text>
+            <Text paddingTop={'200'} paddingLeft={'75'}>
+              Select a day to view the meals scheduled
+            </Text>
           ) : (
             displayMeals()
           )}

@@ -3,7 +3,7 @@ import {db, storage} from '../firebaseConfig';
 import {AiFillPrinter, AiOutlineHeart} from 'react-icons/ai';
 import {FiBookOpen} from 'react-icons/fi';
 import {CgBowl} from 'react-icons/cg';
-import {FaUserFriends} from 'react-icons/fa';
+
 import {
   BsWindow,
   BsBookmarks,
@@ -90,14 +90,14 @@ const Recipes: React.FC = () => {
   const [recipes, recipesLoading, recipesError] =
     useCollectionData(recipesQuery);
 
-    // get all the saved recipes and create a listener to the db
+  // get all the saved recipes and create a listener to the db
   const savedRecipesQuery = query(
     collection(db, 'users/' + email + '/SavedRecipes'),
   );
   const [savedRecipes, savedRecipesLoading, savedRecipesError] =
     useCollectionData(savedRecipesQuery);
 
-    // get the current user's profile and create a listener to the db
+  // get the current user's profile and create a listener to the db
   const [profile, profileLoading, profileError] = useDocumentData(
     doc(db, 'users/', email),
   );
@@ -129,6 +129,11 @@ const Recipes: React.FC = () => {
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
 
+  //Functions to adjust Title Size
+  function titleSize(title: string) {
+    return 34 - title.length * 0.2 + 'px';
+  }
+
   return (
     <>
       <Navbar />
@@ -146,8 +151,11 @@ const Recipes: React.FC = () => {
         >
           <Stack minW={'2xl'} spacing={6}>
             <Text textAlign="center" fontSize="6xl" as="b" color="white">
-              @{// username at the top
-              profile?.username}
+              @
+              {
+                // username at the top
+                profile?.username
+              }
             </Text>
           </Stack>
         </VStack>
@@ -165,18 +173,31 @@ const Recipes: React.FC = () => {
             <HStack spacing={4}>
               <Avatar
                 size="2xl"
-                name={// default's to the current user's initials
-                  profile?.name}
-                src={// display the current user's profile picture
-                  profile?.profilePic}
+                name={
+                  // default's to the current user's initials
+                  profile?.name
+                }
+                src={
+                  // display the current user's profile picture
+                  profile?.profilePic
+                }
               />{' '}
               <VStack marginLeft={10}>
-                <Heading>{// display the current user's name
-                profile?.name}</Heading>
+                <Heading>
+                  {
+                    // display the current user's name
+                    profile?.name
+                  }
+                </Heading>
                 {/* Displaye Recipe Length */}
                 {recipes?.length === 1 ? (
-                  <Text fontSize={18}>{// display the number of recipes
-                    recipes?.length} recipe</Text>
+                  <Text fontSize={18}>
+                    {
+                      // display the number of recipes
+                      recipes?.length
+                    }{' '}
+                    recipe
+                  </Text>
                 ) : (
                   <Text fontSize={18}>{recipes?.length} recipes</Text>
                 )}
@@ -194,8 +215,10 @@ const Recipes: React.FC = () => {
                 )}
 
                 <Text color={'black'} fontSize={'lg'} maxWidth={500}>
-                  {// display the bio of the user
-                  profile?.biography}
+                  {
+                    // display the bio of the user
+                    profile?.biography
+                  }
                 </Text>
               </VStack>
             </HStack>
@@ -223,7 +246,15 @@ const Recipes: React.FC = () => {
                 </Button>
               </Link>
               <Link to="/Posts">
-                <Button w="300px" rightIcon={<BsWindow />} colorScheme="gray">
+                <Button
+                  w="300px"
+                  rightIcon={<BsWindow />}
+                  colorScheme="gray"
+                  onClick={() => {
+                    window.localStorage.removeItem('TITLE');
+                    window.localStorage.removeItem('DESCRIPTION');
+                    window.localStorage.removeItem('RECIPE');
+                  }}>
                   Create Post
                 </Button>
               </Link>
@@ -270,247 +301,279 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {// if they have no recipes
-                  recipes?.length === 0 ? (
-                    <Center>
-                      <Heading alignSelf="center" minH="350" textAlign="center">
-                        You have 0 recipes
-                      </Heading>
-                    </Center>
-                  ) : (
-                    // when recipes loads, 
-                    recipes &&
-                    // map each individual recipe 
-                    recipes.map(recipe => (
-                      <Container
-                        boxShadow={'2xl'}
-                        minW="sm"
-                        borderRadius="lg"
-                        overflow="hidden"
-                        justify-content="space-between"
-                        bg="teal"
-                        minH="350"
-                        display="flex"
-                        flexDirection="column"
-                        rounded="md"
-                        padding={4}
-                        margin={4}
-                        marginRight={10}
-                        marginLeft={10}
-                        shadow={'dark-lg'}>
-                        <VStack align="2x1">
-                          <Center>
-                            <Image
-                              borderRadius="30px"
-                              minH="250px"
-                              src={// image attached to the recipe
-                                recipe.data.pic}
-                              alt="No Picture"
-                              w={300}
-                              mb={15}
-                            />
-                          </Center>
-
-                          <Button
-                            variant="link"
-                            rounded="md"
-                            as="h3"
-                            size="lg"
-                            color="black"
-                            padding={1}>
+                  {
+                    // if they have no recipes
+                    recipes?.length === 0 ? (
+                      <Center>
+                        <Heading
+                          alignSelf="center"
+                          minH="350"
+                          textAlign="center">
+                          You have 0 recipes
+                        </Heading>
+                      </Center>
+                    ) : (
+                      // when recipes loads,
+                      recipes &&
+                      // map each individual recipe
+                      recipes.map(recipe => (
+                        <Container
+                          boxShadow={'2xl'}
+                          maxW="md"
+                          borderRadius="lg"
+                          overflow="hidden"
+                          justify-content="space-between"
+                          bg="teal"
+                          minH="350"
+                          display="flex"
+                          flexDirection="column"
+                          rounded="md"
+                          padding={4}
+                          margin={4}
+                          marginRight={10}
+                          marginLeft={10}
+                          shadow={'dark-lg'}>
+                          <VStack align="2x1">
                             <Center>
-                              <Text as="b" fontSize="34px" textColor="white">
-                                {// name of the recipe
-                                recipe.data.recipe_name}
-                              </Text>
+                              <Image
+                                borderRadius="30px"
+                                minH="250px"
+                                src={
+                                  // image attached to the recipe
+                                  recipe.data.pic
+                                }
+                                alt="No Picture"
+                                w={300}
+                                mb={15}
+                              />
                             </Center>
-                          </Button>
-                          {/* <Stack direction="row" spacing={4} align="stretch">
-                      <Button variant="link" colorScheme="red">
-                        <AiOutlineHeart style={{fontSize: '34px'}} />
-                      </Button>
-                      <Button variant="link" colorScheme="green">
-                        <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                      </Button>
-                    </Stack> */}
 
-                          <Box
-                            boxShadow="xs"
-                            rounded="md"
-                            padding="4"
-                            bg="white"
-                            color="black"
-                            maxW="container.sm">
+                            <Button
+                              variant="link"
+                              rounded="md"
+                              as="h3"
+                              size="lg"
+                              color="black"
+                              padding={1}>
+                              <Center>
+                                <Text
+                                  as="b"
+                                  fontSize={titleSize(recipe.data.recipe_name)}
+                                  textColor="white">
+                                  {
+                                    // name of the recipe
+                                    recipe.data.recipe_name
+                                  }
+                                </Text>
+                              </Center>
+                            </Button>
+                            <Box
+                              boxShadow="xs"
+                              rounded="md"
+                              padding="4"
+                              bg="white"
+                              color="black"
+                              maxW="container.sm">
                               {/* displaying recipe data */}
-                            <Text noOfLines={1}>
-                              Difficulty: {recipe.data.difficulty}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Time: {recipe.data.cooking_time}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Servings: {recipe.data.servings}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Cost Per Serving: {recipe.data.cost_per_serving}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Cooking Applications:{' '}
-                              {recipe.data.cooking_applications}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Allergens: {recipe.data.allergens}
-                            </Text>
-                          </Box>
-                          <Accordion allowMultiple>
-                            <AccordionItem>
-                              <h2>
-                                {/* accordion for nutrition data  */}
-                                <AccordionButton bg="white">
-                                  <Box as="span" flex="1" textAlign="left">
-                                    <Text as="b" textColor="black">
-                                      Nutrition Data
-                                    </Text>
-                                  </Box>
-                                  <AccordionIcon />
-                                </AccordionButton>
-                              </h2>
-                              <AccordionPanel pb={4}>
-                                <Box
-                                  padding="4"
-                                  color="black"
-                                  maxW="container.sm">
+                              <Text noOfLines={1}>
+                                Difficulty: {recipe.data.difficulty}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Time: {recipe.data.cooking_time}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Servings: {recipe.data.servings}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Cost Per Serving: {recipe.data.cost_per_serving}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Cooking Applications:{' '}
+                                {recipe.data.cooking_applications}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Allergens: {recipe.data.allergens}
+                              </Text>
+                            </Box>
+                            <Accordion allowMultiple>
+                              <AccordionItem>
+                                <h2>
+                                  {/* accordion for nutrition data  */}
+                                  <AccordionButton bg="white">
+                                    <Box as="span" flex="1" textAlign="left">
+                                      <Text as="b" textColor="black">
+                                        Nutrition Data
+                                      </Text>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel pb={4}>
+                                  <Box
+                                    padding="4"
+                                    color="black"
+                                    maxW="container.sm">
                                     {/* each accordion panel contains:  */}
-                                  <Text noOfLines={1} textColor="white">
-                                    Calories:{' '}
-                                    {recipe.data.nutrients.calories.toFixed(2)}{' '}
-                                    kCal
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Protein:{' '}
-                                    {recipe.data.nutrients.protein.toFixed(2)}g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Carbs:{' '}
-                                    {recipe.data.nutrients.total_carbohydrate.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Sugar:{' '}
-                                    {recipe.data.nutrients.sugars.toFixed(2)}g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Fat:{' '}
-                                    {recipe.data.nutrients.total_fat.toFixed(2)}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Saturated Fat:{' '}
-                                    {recipe.data.nutrients.saturated_fat.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Cholesterol:{' '}
-                                    {recipe.data.nutrients.cholesterol.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Sodium:{' '}
-                                    {recipe.data.nutrients.sodium.toFixed(2)}g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Fiber:{' '}
-                                    {recipe.data.nutrients.dietary_fiber.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                </Box>
-                              </AccordionPanel>
-                            </AccordionItem>
-                          </Accordion>
-                          <Accordion allowMultiple>
-                            <AccordionItem>
-                              <h2>
-                              {/* accordion for the instructions */}
-                                <AccordionButton bg="white">
-                                  <Box as="span" flex="1" textAlign="left">
-                                    <Text as="b" textColor="black">
-                                      Instructions:
+                                    <Text noOfLines={1} textColor="white">
+                                      Calories:{' '}
+                                      {recipe.data.nutrients.calories.toFixed(
+                                        2,
+                                      )}{' '}
+                                      kCal
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Protein:{' '}
+                                      {recipe.data.nutrients.protein.toFixed(2)}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Carbs:{' '}
+                                      {recipe.data.nutrients.total_carbohydrate.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Sugar:{' '}
+                                      {recipe.data.nutrients.sugars.toFixed(2)}g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Fat:{' '}
+                                      {recipe.data.nutrients.total_fat.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Saturated Fat:{' '}
+                                      {recipe.data.nutrients.saturated_fat.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Cholesterol:{' '}
+                                      {recipe.data.nutrients.cholesterol.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Sodium:{' '}
+                                      {recipe.data.nutrients.sodium.toFixed(2)}g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Fiber:{' '}
+                                      {recipe.data.nutrients.dietary_fiber.toFixed(
+                                        2,
+                                      )}
+                                      g
                                     </Text>
                                   </Box>
-                                  <AccordionIcon />
-                                </AccordionButton>
-                              </h2>
-                              <AccordionPanel pb={4}>
-                                <Box
-                                  padding="4"
-                                  color="black"
-                                  maxW="container.sm">
-                                  <Text textColor="white">
-                                    {/* display the instructions */}
-                                    {recipe.data.instructions}
-                                  </Text>
-                                </Box>
-                              </AccordionPanel>
-                            </AccordionItem>
-                          </Accordion>
-                        </VStack>
-                        <HStack align="right" marginTop={2}>
-                          <Button
-                            boxShadow="xs"
-                            rounded="md"
-                            variant="outline"
-                            padding="4"
-                            colorScheme="teal"
-                            color="white"
-                            maxW="container.sm"
-                            onClick={() => {
-                              //Print Recipe
-                            }}>
-                            <AiFillPrinter />
-                            <Text marginLeft={2}>Print Recipe</Text>
-                          </Button>
-                          <Button
-                            marginLeft={130}
-                            boxShadow="xs"
-                            rounded="md"
-                            padding="4"
-                            bg={'red.400'}
-                            _hover={{
-                              bg: 'red.500',
-                            }}
-                            _focus={{
-                              bg: 'red.500',
-                            }}
-                            maxW="container.sm"
-                            onClick={() => {
-                              // delete button
-                              // on click, popup saying recipe deleted,
-                              // remove recipe from db
-                              toast({
-                                title: 'Recipe deleted.',
-                                description:
-                                  'This recipe has been removed from your recipe book.',
-                                status: 'success',
-                                duration: 3000,
-                                isClosable: true,
-                              });
-                              // passing the name of the recipe
-                              deleteMyRecipe(recipe.data.recipe_name);
-                            }}>
-                            <Text textColor="white">Delete Recipe</Text>
-                          </Button>
-                        </HStack>
-                      </Container>
-                    ))
-                  )}
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                            <Accordion allowMultiple>
+                              <AccordionItem>
+                                <h2>
+                                  <AccordionButton bg="white">
+                                    <Box as="span" flex="1" textAlign="left">
+                                      <Text as="b" textColor="black">
+                                        Ingredients
+                                      </Text>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel pb={4}>
+                                  {recipe.data.ingredients.map(
+                                    (ingredient: string, index: number) => (
+                                      <Text key={index}>
+                                        {' '}
+                                        <li> {ingredient}</li>
+                                      </Text>
+                                    ),
+                                  )}
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                            <Accordion allowMultiple>
+                              <AccordionItem>
+                                <h2>
+                                  {/* accordion for the instructions */}
+                                  <AccordionButton bg="white">
+                                    <Box as="span" flex="1" textAlign="left">
+                                      <Text as="b" textColor="black">
+                                        Instructions:
+                                      </Text>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel pb={4}>
+                                  <Box
+                                    padding="4"
+                                    color="black"
+                                    maxW="container.sm">
+                                    <Text textColor="white">
+                                      {/* display the instructions */}
+                                      {recipe.data.instructions}
+                                    </Text>
+                                  </Box>
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                          </VStack>
+                          <HStack align="right" marginTop={2}>
+                            <Button
+                              boxShadow="xs"
+                              rounded="md"
+                              variant="outline"
+                              padding="4"
+                              colorScheme="teal"
+                              color="white"
+                              maxW="container.sm"
+                              onClick={() => {
+                                //Print Recipe
+                              }}>
+                              <AiFillPrinter />
+                              <Text marginLeft={2}>Print Recipe</Text>
+                            </Button>
+                            <Button
+                              marginLeft={130}
+                              boxShadow="xs"
+                              rounded="md"
+                              padding="4"
+                              bg={'red.400'}
+                              _hover={{
+                                bg: 'red.500',
+                              }}
+                              _focus={{
+                                bg: 'red.500',
+                              }}
+                              maxW="container.sm"
+                              onClick={() => {
+                                // delete button
+                                // on click, popup saying recipe deleted,
+                                // remove recipe from db
+                                toast({
+                                  title: 'Recipe deleted.',
+                                  description:
+                                    'This recipe has been removed from your recipe book.',
+                                  status: 'success',
+                                  duration: 3000,
+                                  isClosable: true,
+                                });
+                                // passing the name of the recipe
+                                deleteMyRecipe(recipe.data.recipe_name);
+                              }}>
+                              <Text textColor="white">Delete Recipe</Text>
+                            </Button>
+                          </HStack>
+                        </Container>
+                      ))
+                    )
+                  }
                 </SimpleGrid>
               </Box>
             </HStack>
@@ -525,232 +588,245 @@ const Recipes: React.FC = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center">
-                  {// if they have no recipes, display nothing
-                  savedRecipes?.length === 0 ? (
-                    <Heading textAlign="center">You have 0 recipes</Heading>
-                  ) : (
-                    // when savedRecipes loads, map savedRecipes individually
-                    savedRecipes &&
-                    savedRecipes.map(recipe => (
-                      <Container
-                        boxShadow={'2xl'}
-                        minW="sm"
-                        borderRadius="lg"
-                        overflow="hidden"
-                        justify-content="space-between"
-                        bg="teal"
-                        minH="350"
-                        display="flex"
-                        flexDirection="column"
-                        rounded="md"
-                        padding={4}
-                        margin={4}
-                        marginRight={10}
-                        marginLeft={10}
-                        shadow={'dark-lg'}>
-                        <VStack align="2x1">
-                          <Center>
-                            <Image
-                              borderRadius="30px"
-                              minH="250px"
-                              src={// image attached to the recipe
-                                recipe.data.pic}
-                              alt="No Picture"
-                              w={300}
-                              mb={15}
-                            />
-                          </Center>
-
-                          <Button
-                            variant="link"
-                            rounded="md"
-                            as="h3"
-                            size="lg"
-                            color="black"
-                            padding={1}>
+                  {
+                    // if they have no recipes, display nothing
+                    savedRecipes?.length === 0 ? (
+                      <Heading textAlign="center">You have 0 recipes</Heading>
+                    ) : (
+                      // when savedRecipes loads, map savedRecipes individually
+                      savedRecipes &&
+                      savedRecipes.map(recipe => (
+                        <Container
+                          boxShadow={'2xl'}
+                          minW="sm"
+                          borderRadius="lg"
+                          overflow="hidden"
+                          justify-content="space-between"
+                          bg="teal"
+                          minH="350"
+                          display="flex"
+                          flexDirection="column"
+                          rounded="md"
+                          padding={4}
+                          margin={4}
+                          marginRight={10}
+                          marginLeft={10}
+                          shadow={'dark-lg'}>
+                          <VStack align="2x1">
                             <Center>
-                              <Text as="b" fontSize="34px" textColor="white">
-                                {// display the recipe name
-                                recipe.data.recipe_name}
-                              </Text>
+                              <Image
+                                borderRadius="30px"
+                                minH="250px"
+                                src={
+                                  // image attached to the recipe
+                                  recipe.data.pic
+                                }
+                                alt="No Picture"
+                                w={300}
+                                mb={15}
+                              />
                             </Center>
-                          </Button>
-                          <Box
-                            boxShadow="xs"
-                            rounded="md"
-                            padding="4"
-                            bg="white"
-                            color="black"
-                            maxW="container.sm">
+
+                            <Button
+                              variant="link"
+                              rounded="md"
+                              as="h3"
+                              size="lg"
+                              color="black"
+                              padding={1}>
+                              <Center>
+                                <Text as="b" fontSize="34px" textColor="white">
+                                  {
+                                    // display the recipe name
+                                    recipe.data.recipe_name
+                                  }
+                                </Text>
+                              </Center>
+                            </Button>
+                            <Box
+                              boxShadow="xs"
+                              rounded="md"
+                              padding="4"
+                              bg="white"
+                              color="black"
+                              maxW="container.sm">
                               {/* display saved recipe data  */}
-                            <Text noOfLines={1}>
-                              Difficulty: {recipe.data.difficulty}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Time: {recipe.data.cooking_time}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Servings: {recipe.data.servings}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Cost Per Serving: {recipe.data.cost_per_serving}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Cooking Applications:{' '}
-                              {recipe.data.cooking_applications}
-                            </Text>
-                            <Text noOfLines={1}>
-                              Allergens: {recipe.data.allergens}
-                            </Text>
-                          </Box>
-                          <Accordion allowMultiple>
-                            {/* accordion for the nutrition data */}
-                            <AccordionItem>
-                              <h2>
-                                <AccordionButton bg="white">
-                                  <Box as="span" flex="1" textAlign="left">
-                                    <Text as="b" textColor="black">
-                                      Nutrition Data
+                              <Text noOfLines={1}>
+                                Difficulty: {recipe.data.difficulty}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Time: {recipe.data.cooking_time}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Servings: {recipe.data.servings}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Cost Per Serving: {recipe.data.cost_per_serving}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Cooking Applications:{' '}
+                                {recipe.data.cooking_applications}
+                              </Text>
+                              <Text noOfLines={1}>
+                                Allergens: {recipe.data.allergens}
+                              </Text>
+                            </Box>
+                            <Accordion allowMultiple>
+                              {/* accordion for the nutrition data */}
+                              <AccordionItem>
+                                <h2>
+                                  <AccordionButton bg="white">
+                                    <Box as="span" flex="1" textAlign="left">
+                                      <Text as="b" textColor="black">
+                                        Nutrition Data
+                                      </Text>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                {/* accordion contains:  */}
+                                <AccordionPanel pb={4}>
+                                  <Box
+                                    padding="4"
+                                    color="black"
+                                    maxW="container.sm">
+                                    <Text noOfLines={1} textColor="white">
+                                      Calories:{' '}
+                                      {recipe.data.nutrients.calories.toFixed(
+                                        2,
+                                      )}{' '}
+                                      kCal
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Protein:{' '}
+                                      {recipe.data.nutrients.protein.toFixed(2)}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Carbs:{' '}
+                                      {recipe.data.nutrients.total_carbohydrate.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Sugar:{' '}
+                                      {recipe.data.nutrients.sugars.toFixed(2)}g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Fat:{' '}
+                                      {recipe.data.nutrients.total_fat.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Saturated Fat:{' '}
+                                      {recipe.data.nutrients.saturated_fat.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Cholesterol:{' '}
+                                      {recipe.data.nutrients.cholesterol.toFixed(
+                                        2,
+                                      )}
+                                      g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Sodium:{' '}
+                                      {recipe.data.nutrients.sodium.toFixed(2)}g
+                                    </Text>
+                                    <Text noOfLines={1} textColor="white">
+                                      Fiber:{' '}
+                                      {recipe.data.nutrients.dietary_fiber.toFixed(
+                                        2,
+                                      )}
+                                      g
                                     </Text>
                                   </Box>
-                                  <AccordionIcon />
-                                </AccordionButton>
-                              </h2>
-                              {/* accordion contains:  */}
-                              <AccordionPanel pb={4}>
-                                <Box
-                                  padding="4"
-                                  color="black"
-                                  maxW="container.sm">
-                                  <Text noOfLines={1} textColor="white">
-                                    Calories:{' '}
-                                    {recipe.data.nutrients.calories.toFixed(2)}{' '}
-                                    kCal
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Protein:{' '}
-                                    {recipe.data.nutrients.protein.toFixed(2)}g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Carbs:{' '}
-                                    {recipe.data.nutrients.total_carbohydrate.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Sugar:{' '}
-                                    {recipe.data.nutrients.sugars.toFixed(2)}g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Fat:{' '}
-                                    {recipe.data.nutrients.total_fat.toFixed(2)}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Saturated Fat:{' '}
-                                    {recipe.data.nutrients.saturated_fat.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Cholesterol:{' '}
-                                    {recipe.data.nutrients.cholesterol.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Sodium:{' '}
-                                    {recipe.data.nutrients.sodium.toFixed(2)}g
-                                  </Text>
-                                  <Text noOfLines={1} textColor="white">
-                                    Fiber:{' '}
-                                    {recipe.data.nutrients.dietary_fiber.toFixed(
-                                      2,
-                                    )}
-                                    g
-                                  </Text>
-                                </Box>
-                              </AccordionPanel>
-                            </AccordionItem>
-                          </Accordion>
-                          {/* accordion for the instructions */}
-                          <Accordion allowMultiple>
-                            <AccordionItem>
-                              <h2>
-                                <AccordionButton bg="white">
-                                  <Box as="span" flex="1" textAlign="left">
-                                    <Text as="b" textColor="black">
-                                      Instructions:
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                            {/* accordion for the instructions */}
+                            <Accordion allowMultiple>
+                              <AccordionItem>
+                                <h2>
+                                  <AccordionButton bg="white">
+                                    <Box as="span" flex="1" textAlign="left">
+                                      <Text as="b" textColor="black">
+                                        Instructions:
+                                      </Text>
+                                    </Box>
+                                    <AccordionIcon />
+                                  </AccordionButton>
+                                </h2>
+                                <AccordionPanel pb={4}>
+                                  <Box
+                                    padding="4"
+                                    color="black"
+                                    maxW="container.sm">
+                                    <Text textColor="white">
+                                      {
+                                        // display the instructions
+                                        recipe.data.instructions
+                                      }
                                     </Text>
                                   </Box>
-                                  <AccordionIcon />
-                                </AccordionButton>
-                              </h2>
-                              <AccordionPanel pb={4}>
-                                <Box
-                                  padding="4"
-                                  color="black"
-                                  maxW="container.sm">
-                                  <Text textColor="white">
-                                    {// display the instructions
-                                    recipe.data.instructions}
-                                  </Text>
-                                </Box>
-                              </AccordionPanel>
-                            </AccordionItem>
-                          </Accordion>
-                        </VStack>
-                        <HStack align="right" marginTop={2}>
-                          <Button
-                            boxShadow="xs"
-                            rounded="md"
-                            variant="outline"
-                            padding="4"
-                            colorScheme="teal"
-                            color="white"
-                            maxW="container.sm"
-                            onClick={() => {
-                              //Print Recipe
-                            }}>
-                            <AiFillPrinter />
-                            <Text marginLeft={2}>Print Recipe</Text>
-                          </Button>
-                          <Button
-                            marginLeft={130}
-                            boxShadow="xs"
-                            rounded="md"
-                            padding="4"
-                            bg={'red.400'}
-                            _hover={{
-                              bg: 'red.500',
-                            }}
-                            _focus={{
-                              bg: 'red.500',
-                            }}
-                            maxW="container.sm"
-                            onClick={() => {
-                              // delete button
-                              // on click, popup saying recipe deleted
-                              // remove recipe from DB
-                              toast({
-                                title: 'Recipe removed.',
-                                description:
-                                  'This recipe has been removed from your saved recipes.',
-                                status: 'success',
-                                duration: 3000,
-                                isClosable: true,
-                              });
-                              deleteSavedRecipe(recipe.data.recipe_name);
-                            }}>
-                            <Text textColor="white">Remove Recipe</Text>
-                          </Button>
-                        </HStack>
-                      </Container>
-                    ))
-                  )}
+                                </AccordionPanel>
+                              </AccordionItem>
+                            </Accordion>
+                          </VStack>
+                          <HStack align="right" marginTop={2}>
+                            <Button
+                              boxShadow="xs"
+                              rounded="md"
+                              variant="outline"
+                              padding="4"
+                              colorScheme="teal"
+                              color="white"
+                              maxW="container.sm"
+                              onClick={() => {
+                                //Print Recipe
+                              }}>
+                              <AiFillPrinter />
+                              <Text marginLeft={2}>Print Recipe</Text>
+                            </Button>
+                            <Button
+                              marginLeft={130}
+                              boxShadow="xs"
+                              rounded="md"
+                              padding="4"
+                              bg={'red.400'}
+                              _hover={{
+                                bg: 'red.500',
+                              }}
+                              _focus={{
+                                bg: 'red.500',
+                              }}
+                              maxW="container.sm"
+                              onClick={() => {
+                                // delete button
+                                // on click, popup saying recipe deleted
+                                // remove recipe from DB
+                                toast({
+                                  title: 'Recipe removed.',
+                                  description:
+                                    'This recipe has been removed from your saved recipes.',
+                                  status: 'success',
+                                  duration: 3000,
+                                  isClosable: true,
+                                });
+                                deleteSavedRecipe(recipe.data.recipe_name);
+                              }}>
+                              <Text textColor="white">Remove Recipe</Text>
+                            </Button>
+                          </HStack>
+                        </Container>
+                      ))
+                    )
+                  }
                 </SimpleGrid>
               </Box>
             </HStack>

@@ -191,42 +191,44 @@ const Profile: React.FC = () => {
     const user = auth.currentUser;
     const credential = EmailAuthProvider.credential(email, password);
     if (user) {
-      const authenticated = reauthenticateWithCredential(user, credential).then(async (snap) => 
-      {
-        toast({
-          //
-          title: 'Account Deleted',
-          description:
-            'Your account has been permanently removed',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
+      const authenticated = reauthenticateWithCredential(user, credential)
+        .then(async snap => {
+          toast({
+            //
+            title: 'Account Deleted',
+            description: 'Your account has been permanently removed',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
+          navigate('/login');
+
+          //TODO: Delete User from database
+          await deleteDoc(doc(db, 'users', email));
+          const deleted = user?.delete(); //should delete user
+          console.log(deleted);
+
+          const q = query(
+            collection(db, 'posts/'),
+            where('email', '==', email),
+          );
+          const docs = await getDocs(q);
+          docs.forEach(doc => {
+            deleteDoc(doc.ref);
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          toast({
+            //
+            title: 'Incorrect Password',
+            description: 'This password is incorrect',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
         });
-        navigate('/login');
-  
-        //TODO: Delete User from database
-        await deleteDoc(doc(db, 'users', email));
-        const deleted = user?.delete(); //should delete user
-        console.log(deleted);
-  
-        const q = query(collection(db, 'posts/'), where('email', '==', email));
-        const docs = await getDocs(q);
-        docs.forEach(doc => {
-          deleteDoc(doc.ref);
-        });
-    }).catch((error) => {
-      console.log(error);
-        toast({
-          //
-          title: 'Incorrect Password',
-          description:
-            'This password is incorrect',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-    })
-    } 
+    }
   };
 
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -262,20 +264,21 @@ const Profile: React.FC = () => {
     if (newPassword && oldPassword) {
       const credential = EmailAuthProvider.credential(email, oldPassword);
       if (user) {
-        const reauth = reauthenticateWithCredential(user, credential).then(async () => {
-          updatePassword(user, newPassword);
-          console.log(reauth);
-        }).catch((error) => {
-          toast({
-            //
-            title: 'Incorrect Password',
-            description:
-              'This password is incorrect',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
+        const reauth = reauthenticateWithCredential(user, credential)
+          .then(async () => {
+            updatePassword(user, newPassword);
+            console.log(reauth);
+          })
+          .catch(error => {
+            toast({
+              //
+              title: 'Incorrect Password',
+              description: 'This password is incorrect',
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+            });
           });
-      })
       }
     }
 
@@ -312,13 +315,11 @@ const Profile: React.FC = () => {
     });
   }
 
-  function handleDeletePasswordChange(e: any){
+  function handleDeletePasswordChange(e: any) {
     const password = e.target.value;
     setDeletePassword(password);
   }
-  function handleReauthenticate(password: string) {
-    
-  }
+  function handleReauthenticate(password: string) {}
   return (
     <>
       <Navbar />
@@ -464,7 +465,7 @@ const Profile: React.FC = () => {
               <FormControl id="firstName" isRequired>
                 <FormLabel>First Name</FormLabel>
                 <Input
-                  placeholder="First Name"
+                  placeholder={profile?.name}
                   _placeholder={{color: 'gray.500'}}
                   type="text"
                   value={firstName}
@@ -474,7 +475,7 @@ const Profile: React.FC = () => {
               <FormControl id="LastName" isRequired>
                 <FormLabel>Last Name</FormLabel>
                 <Input
-                  placeholder="Last Name"
+                  placeholder={profile?.name}
                   _placeholder={{color: 'gray.500'}}
                   type="text"
                   value={lastName}
@@ -483,10 +484,10 @@ const Profile: React.FC = () => {
               </FormControl>
             </VStack>
             <VStack w="full">
-              <FormControl id="userName" isRequired>
+              <FormControl isRequired>
                 <FormLabel>User name</FormLabel>
                 <Input
-                  placeholder="UserName"
+                  placeholder={profile?.username}
                   _placeholder={{color: 'gray.500'}}
                   type="text"
                   value={newUsername}
@@ -496,7 +497,7 @@ const Profile: React.FC = () => {
               <FormControl id="oldpassword" isRequired>
                 <FormLabel>Old Password</FormLabel>
                 <Input
-                  placeholder="password"
+                  placeholder="Old Password"
                   _placeholder={{color: 'gray.500'}}
                   type="password"
                   value={oldPassword}
@@ -506,7 +507,7 @@ const Profile: React.FC = () => {
               <FormControl id="newpassword" isRequired>
                 <FormLabel>New Password</FormLabel>
                 <Input
-                  placeholder="password"
+                  placeholder="New Password"
                   _placeholder={{color: 'gray.500'}}
                   type="password"
                   value={newPassword}
@@ -519,7 +520,7 @@ const Profile: React.FC = () => {
             <FormLabel>Biography</FormLabel>
             <Input
               minH={100}
-              placeholder="tell us about yourself"
+              placeholder={profile?.biography}
               _placeholder={{color: 'gray.500'}}
               type="biography"
               value={newBiography}
