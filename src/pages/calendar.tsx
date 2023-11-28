@@ -469,13 +469,17 @@ const CalendarPage: React.FC = () => {
                       onClick={() => {
                         //Deschedule
                         for(let i = 0; i < profile?.events.length; i++){
-                          if(dateSelected == profile?.events[i].date && profile?.events[i].title == recipe.recipe_name){
+                          if(profile?.events[i].date.includes(dateSelected) && profile?.events[i].title == recipe.recipe_name){
                             console.log(dateSelected)
                             console.log(profile?.events[i])
                             console.log(profile?.events[i].title)
                             updateDoc(doc(db, 'users/', email), {
                               events: arrayRemove(profile?.events[i]),
                             })
+                            const tempArray = dateEvents;
+                            const index = tempArray.indexOf(profile?.events[i]);
+                            tempArray.splice(index, 1);
+                            setDateEvents(tempArray);
                           }
                         }
                       }}>
