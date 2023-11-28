@@ -230,8 +230,8 @@ const CalendarPage: React.FC = () => {
 
   const handleSubmit = async (recipe_name: string, date: string) => {
     if (recipes && savedRecipes) {
-      if (date === ""){
-        toast({ 
+      if (date === '') {
+        toast({
           //
           title: 'No Time',
           description: 'Please choose a time for your recipe',
@@ -266,7 +266,7 @@ const CalendarPage: React.FC = () => {
       }
       toast({
         //
-        title: 'Recipe Scheduled',
+        title: 'Recipe Created',
         description: 'Recipe added to your calendar.',
         status: 'success',
         duration: 3000,
@@ -450,23 +450,9 @@ const CalendarPage: React.FC = () => {
                       maxW="container.sm"
                       onClick={() => {
                         //Deschedule
-<<<<<<< Updated upstream
-                        for(let i = 0; i < profile?.events.length; i++){
-                          if(profile?.events[i].date.includes(dateSelected) && profile?.events[i].title == recipe.recipe_name){
-                            console.log(dateSelected)
-                            console.log(profile?.events[i])
-                            console.log(profile?.events[i].title)
-                            updateDoc(doc(db, 'users/', email), {
-                              events: arrayRemove(profile?.events[i]),
-                            })
-                            const tempArray = dateEvents;
-                            const index = tempArray.indexOf(profile?.events[i]);
-                            tempArray.splice(index, 1);
-                            setDateEvents(tempArray);
-=======
                         for (let i = 0; i < profile?.events.length; i++) {
                           if (
-                            dateSelected == profile?.events[i].date &&
+                            profile?.events[i].date.includes(dateSelected) &&
                             profile?.events[i].title == recipe.recipe_name
                           ) {
                             console.log(dateSelected);
@@ -475,7 +461,10 @@ const CalendarPage: React.FC = () => {
                             updateDoc(doc(db, 'users/', email), {
                               events: arrayRemove(profile?.events[i]),
                             });
->>>>>>> Stashed changes
+                            const tempArray = dateEvents;
+                            const index = tempArray.indexOf(profile?.events[i]);
+                            tempArray.splice(index, 1);
+                            setDateEvents(tempArray);
                           }
                         }
                       }}>
@@ -619,18 +608,16 @@ const CalendarPage: React.FC = () => {
               selectAllow={function (selectInfo) {
                 var startDate = selectInfo.start.getDate();
                 var endDate;
-                if (selectInfo.end.getDate() === 1){
+                if (selectInfo.end.getDate() === 1) {
                   endDate = startDate;
-                }
-                else{
+                } else {
                   endDate = selectInfo.end.getDate() - 1;
                 }
                 var startMonth = selectInfo.start.getMonth();
                 var endMonth;
-                if (selectInfo.end.getMonth() === startMonth + 1){
+                if (selectInfo.end.getMonth() === startMonth + 1) {
                   endMonth = startMonth;
-                }
-                else{
+                } else {
                   endMonth = selectInfo.end.getMonth();
                 }
                 console.log(startDate);
