@@ -230,6 +230,17 @@ const CalendarPage: React.FC = () => {
 
   const handleSubmit = async (recipe_name: string, date: string) => {
     if (recipes && savedRecipes) {
+      if (date === ""){
+        toast({
+          //
+          title: 'No Time',
+          description: 'Please choose a time for your recipe',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
       var index = getRecipeIndex(recipes, recipe_name);
       if (index === -1) {
         index = getRecipeIndex(savedRecipes, recipe_name);
