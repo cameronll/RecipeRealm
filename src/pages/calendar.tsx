@@ -231,7 +231,7 @@ const CalendarPage: React.FC = () => {
   const handleSubmit = async (recipe_name: string, date: string) => {
     if (recipes && savedRecipes) {
       if (date === ""){
-        toast({
+        toast({ 
           //
           title: 'No Time',
           description: 'Please choose a time for your recipe',
@@ -618,9 +618,25 @@ const CalendarPage: React.FC = () => {
               }}
               selectAllow={function (selectInfo) {
                 var startDate = selectInfo.start.getDate();
-                var endDate = selectInfo.end.getDate() - 1;
+                var endDate;
+                if (selectInfo.end.getDate() === 1){
+                  endDate = startDate;
+                }
+                else{
+                  endDate = selectInfo.end.getDate() - 1;
+                }
                 var startMonth = selectInfo.start.getMonth();
-                var endMonth = selectInfo.end.getMonth();
+                var endMonth;
+                if (selectInfo.end.getMonth() === startMonth + 1){
+                  endMonth = startMonth;
+                }
+                else{
+                  endMonth = selectInfo.end.getMonth();
+                }
+                console.log(startDate);
+                console.log(endDate);
+                console.log(startMonth);
+                console.log(endMonth);
                 if (startDate == endDate && startMonth == endMonth) {
                   return true;
                 } else {
