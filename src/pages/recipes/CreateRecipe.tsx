@@ -524,7 +524,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
-            {/* cost input */}
+          {/* cost input */}
           Cost per Serving
         </FormLabel>
         <Input
@@ -552,7 +552,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
-            {/* appliances input */}
+          {/* appliances input */}
           Cooking Appliances
         </FormLabel>
         <Input
@@ -581,7 +581,7 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
-            {/* allergens input */}
+          {/* allergens input */}
           Allergens
         </FormLabel>
         <Input
@@ -610,8 +610,8 @@ const Form2 = () => {
             color: 'gray.50',
           }}
           mt="2%">
-            {/* yield input */}
-          Yield (ie. 3 people)
+          {/* yield input */}
+          Servings (ie. 5 servings)
         </FormLabel>
         <Input
           type="text"
@@ -633,18 +633,20 @@ const Form2 = () => {
         textAlign={'center'}
         fontWeight="normal"
         mb="2%">
-          {/* ingredients input */}
+        {/* ingredients input */}
         Ingredient List
       </Heading>
       <Flex>
         <List spacing={3}>
-          {// map the ingredients
-          Array.from({length: ingredientCount}).map((_, index) => (
-            <ListItem>
-              <ListIcon as={MinusIcon} color="green.500" />
-              {ingredientString.at(index)}
-            </ListItem>
-          ))}
+          {
+            // map the ingredients
+            Array.from({length: ingredientCount}).map((_, index) => (
+              <ListItem>
+                <ListIcon as={MinusIcon} color="green.500" />
+                {ingredientString.at(index)}
+              </ListItem>
+            ))
+          }
         </List>
       </Flex>
       <Flex>
@@ -660,6 +662,7 @@ const Form2 = () => {
               // value is set to ingredientName and change calls handler
               value={ingredientName}
               onChange={handleIName}
+              maxLength={12}
               isRequired={true}
             />
           </FormControl>
@@ -699,7 +702,7 @@ const Form2 = () => {
               // value is set to ingredientMeasurement, change calls handler
               value={ingredientMeasurement}
               onChange={handleIMeasurement}>
-                {/* dropdown for options */}
+              {/* dropdown for options */}
               <option> </option>
               <option> </option>
               <option>Ibs</option>
@@ -715,7 +718,7 @@ const Form2 = () => {
       </Flex>
       <Flex>
         <Button
-        // remove ingredient button, decrements count on click
+          // remove ingredient button, decrements count on click
           onClick={decrementCount}
           colorScheme="red"
           variant="solid"
@@ -727,7 +730,7 @@ const Form2 = () => {
           Remove Ingredient <IoIosRemove />
         </Button>
         <Button
-        // add ingredient button, adds to count on click
+          // add ingredient button, adds to count on click
           onClick={incrementCount}
           colorScheme="green"
           variant="solid"
@@ -859,7 +862,8 @@ export default function Multistep() {
   const allergens = JSON.parse(allergensStorage);
   const servingsStorage: any = window.localStorage.getItem('SERVINGS');
   const servings = JSON.parse(servingsStorage);
-  const ingredientsStorage: any = window.localStorage.getItem('INGREDIENTSTRING');
+  const ingredientsStorage: any =
+    window.localStorage.getItem('INGREDIENTSTRING');
   const ingredients = JSON.parse(ingredientsStorage);
   const fileStorage: any = window.localStorage.getItem('FILE');
   const file = JSON.parse(fileStorage);
@@ -885,11 +889,7 @@ export default function Multistep() {
           backgroundPosition={'center center'}
           alignContent={'flex-end'}
           backgroundColor="rgba(0, 128, 128, 0.7)">
-          <VStack
-            w={'full'}
-            px={useBreakpointValue({base: 4, md: 8})}
-            
-          >
+          <VStack w={'full'} px={useBreakpointValue({base: 4, md: 8})}>
             <Stack maxW={'2xl'} spacing={6}>
               <Text textAlign="center" fontSize="6xl" as="b" color="white">
                 Create My Recipe

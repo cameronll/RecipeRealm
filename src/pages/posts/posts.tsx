@@ -104,7 +104,7 @@ async function toDB(
   const username = getUserData?.data()?.username;
   // get the current date
   const date = new Date();
-  
+
   // update the recipe that is being posted
   const recipeDoc = doc(
     db,
@@ -133,7 +133,7 @@ async function toDB(
 const Posts: React.FC = () => {
   // toast for popups
   const toast = useToast();
-  
+
   // useState's to create variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -191,7 +191,19 @@ const Posts: React.FC = () => {
     });
   }
 
-  const isDisabled = () => {};
+  //Disables submit button
+  const isDisabled = () => {
+    if (
+      title === '' ||
+      description === '' ||
+      recipeName === '' ||
+      selectedFile === ''
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   // methods to handle input changes (title, description, recipe)
   // store the updates in local storage and the useStates
@@ -306,11 +318,11 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-                {/* input for the post's caption */}
+              {/* input for the post's caption */}
               Caption
             </FormLabel>
             <Textarea
-              placeholder="Brody's Stuff"
+              placeholder="Add a caption"
               rows={3}
               shadow="sm"
               focusBorderColor="brand.400"
@@ -331,7 +343,7 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-                {/* dropdown to choose recipe */}
+              {/* dropdown to choose recipe */}
               Recipe
             </FormLabel>
             <Select
@@ -365,38 +377,51 @@ const Posts: React.FC = () => {
               _dark={{
                 color: 'gray.50',
               }}>
-                {/* image input */}
+              {/* image input */}
               Image
             </FormLabel>
             <Box>
               <Center>
-                {// display the selectedFile when it loads
-                selectedFile && (
-                  <div>
-                    <Image alt="No Image" width="250px" src={// the src is always selectedFile, updates immediately
-                    selectedFile} />
-                    <br />
-                    <button onClick={// remove button, deletes the file when clicked
-                    () => setSelectedFile(undefined)}>
-                      Remove
-                    </button>
-                  </div>
-                )}
+                {
+                  // display the selectedFile when it loads
+                  selectedFile && (
+                    <div>
+                      <Image
+                        alt="No Image"
+                        width="250px"
+                        src={
+                          // the src is always selectedFile, updates immediately
+                          selectedFile
+                        }
+                      />
+                      <br />
+                      <button
+                        onClick={
+                          // remove button, deletes the file when clicked
+                          () => setSelectedFile(undefined)
+                        }>
+                        Remove
+                      </button>
+                    </div>
+                  )
+                }
               </Center>
             </Box>
             <input
-            // image input!
+              // image input!
               type="file"
               name="myImage"
-              onChange={// when an image is selected...
+              onChange={
+                // when an image is selected...
                 event => {
-                if (event?.target?.files) {
-                  // set the chosen file to selectedFile
-                  setSelectedFile(URL.createObjectURL(event.target.files[0]));
-                  // upload the image
-                  uploadImage(event.target.files[0]);
+                  if (event?.target?.files) {
+                    // set the chosen file to selectedFile
+                    setSelectedFile(URL.createObjectURL(event.target.files[0]));
+                    // upload the image
+                    uploadImage(event.target.files[0]);
+                  }
                 }
-              }}
+              }
             />
           </FormControl>
           <Link to="/recipes">
@@ -405,6 +430,7 @@ const Posts: React.FC = () => {
           <Flex justifyContent="right">
             <Button
               colorScheme="teal"
+              isDisabled={isDisabled()}
               onClick={() => {
                 // when they submit, handleSubmit and give them a popup
                 handleSubmit();
