@@ -598,7 +598,7 @@ const CalendarPage: React.FC = () => {
                 const selectedDate = info.dateStr;
                 var tempEvents: Recipe[] = [];
                 for (let i = 0; i < profile?.events.length; i++) {
-                  if (info.dateStr == profile?.events[i].date) {
+                  if (profile?.events[i].date.includes(info.dateStr)) {
                     tempEvents.push(profile?.events[i].recipe);
                   }
                 }

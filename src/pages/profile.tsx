@@ -65,6 +65,15 @@ import {SmallCloseIcon} from '@chakra-ui/icons';
 import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useDocumentData} from 'react-firebase-hooks/firestore';
 import {FirebaseError} from 'firebase/app';
+
+async function uniqueUsername(username: string): Promise<boolean> {
+  const queryUsernames = await getDocs(collection(db, 'users'));
+  const usernames = queryUsernames.docs.map(doc => doc.data().username);
+  if (usernames.includes(username)) {
+    return false;
+  }
+  return true;
+}
 /**
  * FUnction to populate data onto Profile page
  * @returns
@@ -275,6 +284,18 @@ const Profile: React.FC = () => {
     }
     if (newUsername === null) {
       newUsername = profile?.username;
+    }
+    
+    const unique = await uniqueUsername(newUsername);
+    if (!unique){
+      newUsername = profile?.username;
+      toast({
+        title: 'Username Already Taken',
+        description: 'Please choose a unique username',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
 
     var newName: string = '';
