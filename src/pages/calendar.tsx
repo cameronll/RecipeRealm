@@ -146,8 +146,6 @@ const CalendarPage: React.FC = () => {
     setDateEvents(tempArray);
   }, [profile]);
 
- 
-
   function titleSize(title: string) {
     return 34 - title.length * 0.2 + 'px';
   }
@@ -358,7 +356,7 @@ const CalendarPage: React.FC = () => {
                       <AccordionPanel pb={4}>
                         {recipe.ingredients.map(
                           (ingredient: string, index: number) => (
-                            <Text key={index}>
+                            <Text key={index} textColor="whiteAlpha.900">
                               {' '}
                               <li> {ingredient}</li>
                             </Text>

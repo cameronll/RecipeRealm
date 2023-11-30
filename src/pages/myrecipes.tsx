@@ -488,7 +488,9 @@ const Recipes: React.FC = () => {
                                 <AccordionPanel pb={4}>
                                   {recipe.data.ingredients.map(
                                     (ingredient: string, index: number) => (
-                                      <Text key={index}>
+                                      <Text
+                                        key={index}
+                                        textColor="whiteAlpha.900">
                                         {' '}
                                         <li> {ingredient}</li>
                                       </Text>
