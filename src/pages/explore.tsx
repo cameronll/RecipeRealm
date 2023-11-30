@@ -594,7 +594,7 @@ const Explore: React.FC = () => {
                                               mt={8}
                                               direction={'row'}
                                               spacing={4}>
-                                              <Link to="/FriendsProfile">
+                                              <Link to="/react-pdf/rendererle">
                                                 <Button
                                                   variant="outline"
                                                   flex={1}

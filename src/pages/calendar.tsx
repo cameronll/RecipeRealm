@@ -73,23 +73,6 @@ import {AiFillPrinter} from 'react-icons/ai';
 import {render} from '@testing-library/react';
 import {SelectedElement} from 'rsuite/esm/Picker';
 
-// export default class App extends React.Component {
-//   render() {
-//     return (
-//       <HStack>
-//         <Box>
-//           <FullCalendar
-//             plugins={[ dayGridPlugin ]}
-//             initialView="dayGridMonth"
-//             aspectRatio={3}
-//             handleWindowResize={true}
-//             //height="auto"
-//           />
-//         </Box>
-//       </HStack>
-//     )
-//   }//export default Calendar;
-// }
 type nutrition = {
   calories: number;
   total_fat: number;
@@ -132,29 +115,6 @@ function getRecipeIndex(recipes: any[], recipe_name: string): number {
   return -1;
 }
 
-function getTodoList(date: {getDate: () => any}) {
-  const day = date.getDate();
-
-  switch (day) {
-    case 10:
-      return [
-        {time: '10:30 am', title: 'Meeting'},
-        {time: '12:00 pm', title: 'Lunch'},
-      ];
-    case 15:
-      return [
-        {time: '09:30 pm', title: 'Products Introduction Meeting'},
-        {time: '12:30 pm', title: 'Client entertaining'},
-        {time: '02:00 pm', title: 'Product design discussion'},
-        {time: '05:00 pm', title: 'Product test and acceptance'},
-        {time: '06:30 pm', title: 'Reporting'},
-        {time: '10:00 pm', title: 'Going home to walk the dog'},
-      ];
-    default:
-      return [];
-  }
-}
-
 const CalendarPage: React.FC = () => {
   const toast = useToast();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
@@ -186,48 +146,10 @@ const CalendarPage: React.FC = () => {
     setDateEvents(tempArray);
   }, [profile]);
 
-  // const calendarRef = useRef(null);
-  // useEffect(() => {
-  //   // Get the FullCalendar instance
-  //   const calendar = calendarRef.current;
-
-  //   if (calendar) {
-  //     // Call the select method to programmatically select the date range
-  //     var currentDate = calendar.getDate();
-  //     calendar.select(currentDate, currentDate);
-  //   }
-  // }, [calendarRef.current]);
+ 
 
   function titleSize(title: string) {
     return 34 - title.length * 0.2 + 'px';
-  }
-
-  function renderCell(date: any) {
-    const list = getTodoList(date);
-    const displayList = list.filter((item, index) => index < 2);
-
-    if (list.length) {
-      const moreCount = list.length - displayList.length;
-      const moreItem = (
-        <li>
-          <Whisper
-            placement="top"
-            trigger="click"
-            speaker={
-              <Popover>
-                {list.map((item, index) => (
-                  <p key={index}>
-                    <b>{item.time}</b> - {item.title}
-                  </p>
-                ))}
-              </Popover>
-            }>
-            <a>{moreCount} more</a>
-          </Whisper>
-        </li>
-      );
-    }
-    return null;
   }
 
   const handleRecipeChange = (e: any) => {

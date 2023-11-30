@@ -105,23 +105,6 @@ type Recipe = {
   nutrients: nutrition;
 };
 
-async function saveRecipe(recipe: Recipe, creatorEmail: string) {
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  const docRef = doc(db, 'users', creatorEmail);
-  const docSnap = await getDoc(docRef);
-  if (docSnap) {
-    const username = docSnap.data()?.username;
-    await setDoc(
-      doc(db, 'users/' + email + '/SavedRecipes', recipe.recipe_name),
-      {
-        // name in database: variable
-        data: recipe,
-        creator: username,
-      },
-    );
-  }
-}
-
 const FriendProfile: React.FC = (friend: any) => {
   const toast = useToast();
   const [following, setFollowing] = useState<any[]>([]);

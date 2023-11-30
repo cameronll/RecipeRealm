@@ -525,20 +525,22 @@ const Recipes: React.FC = () => {
                             </Accordion>
                           </VStack>
                           <HStack align="right" marginTop={2}>
-                            <Button
-                              boxShadow="xs"
-                              rounded="md"
-                              variant="outline"
-                              padding="4"
-                              colorScheme="teal"
-                              color="white"
-                              maxW="container.sm"
-                              onClick={() => {
-                                //Print Recipe
-                              }}>
-                              <AiFillPrinter />
-                              <Text marginLeft={2}>Print Recipe</Text>
-                            </Button>
+                            <Link to="/RecipeDetail">
+                              <Button
+                                boxShadow="xs"
+                                rounded="md"
+                                variant="outline"
+                                padding="4"
+                                colorScheme="teal"
+                                color="white"
+                                maxW="container.sm"
+                                onClick={() => {
+                                  //Print Recipe
+                                }}>
+                                <AiFillPrinter />
+                                <Text marginLeft={2}>Print Recipe</Text>
+                              </Button>
+                            </Link>
                             <Button
                               marginLeft={130}
                               boxShadow="xs"
