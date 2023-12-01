@@ -66,6 +66,8 @@ import {
   Badge,
   PopoverHeader,
   Spacer,
+  Drawer,
+  useDisclosure,
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
@@ -116,6 +118,9 @@ const Explore: React.FC = () => {
   // create a listener to the user called: user
   const userQuery = doc(db, 'users/', email);
   const [user, userLoading, userError] = useDocumentData(userQuery);
+
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const btnRef = React.useRef();
 
   // create a listener to the posts database called: allPosts
   // posts are sorted by time descending
@@ -306,6 +311,24 @@ const Explore: React.FC = () => {
     return -1;
   }
 
+  /**
+   * Function that diplays a drawer with a space for the user to comment on the select post and see all the
+   * other comments mades towards the same select post from other users.
+   * @returns 
+   */
+  function displayComments(){
+    
+    return(
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        size={'md'}>
+        
+      </Drawer>
+    )
+  }
+
   return (
     <Box>
       <Navbar />
@@ -419,6 +442,7 @@ const Explore: React.FC = () => {
                           }
                           <Button variant="link" colorScheme="white">
                             <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                            {displayComments()}
                           </Button>
                           {
                             // check if this post has been saved
