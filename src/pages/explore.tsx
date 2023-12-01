@@ -74,7 +74,7 @@ import {
   forEachChild,
 } from 'typescript';
 import {AiFillHeart, AiOutlineHeart} from 'react-icons/ai';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {getDownloadURL, ref} from 'firebase/storage';
 
 // type that holds nutrition facts
@@ -138,6 +138,7 @@ const Explore: React.FC = () => {
   const [savedRecipes, savedRecipesLoading, savedRecipesError] =
     useCollectionData(savedRecipesQuery);
 
+  const navigate = useNavigate();
   // useEffect, when user has loaded, set the following list and the liked list
   useEffect(() => {
     setFollowing(user?.following);
@@ -722,7 +723,11 @@ const Explore: React.FC = () => {
                               marginLeft={2}
                               colorScheme="whiteAlpha"
                               variant="outline"
-                              size="xs">
+                              size="xs"
+                              onClick={() => {
+                                window.localStorage.setItem("VIEWRECIPE", JSON.stringify(post?.recipe.data));
+                                navigate("../recipeDetail");
+                              }}>
                               View Recipe
                             </Button>
                           </Flex>
@@ -1139,7 +1144,11 @@ const Explore: React.FC = () => {
                               marginLeft={2}
                               colorScheme="whiteAlpha"
                               variant="outline"
-                              size="xs">
+                              size="xs"
+                              onClick={() => {
+                                window.localStorage.setItem("VIEWRECIPE", JSON.stringify(post?.recipe.data));
+                                navigate("../recipeDetail");
+                              }}>
                               View Recipe
                             </Button>
                           </Flex>

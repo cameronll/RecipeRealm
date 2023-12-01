@@ -138,6 +138,7 @@ const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<any>([]);
   const [dateSelected, setDateSelected] = useState('');
 
+  /*
   useEffect(() => {
     var tempArray: Recipe[] = [];
     for (let i = 0; i < profile?.events.length; i++) {
@@ -145,6 +146,7 @@ const CalendarPage: React.FC = () => {
     }
     setDateEvents(tempArray);
   }, [profile]);
+  */
 
   function titleSize(title: string) {
     return 34 - title.length * 0.2 + 'px';
@@ -581,10 +583,6 @@ const CalendarPage: React.FC = () => {
                 } else {
                   endMonth = selectInfo.end.getMonth();
                 }
-                console.log(startDate);
-                console.log(endDate);
-                console.log(startMonth);
-                console.log(endMonth);
                 if (startDate == endDate && startMonth == endMonth) {
                   return true;
                 } else {

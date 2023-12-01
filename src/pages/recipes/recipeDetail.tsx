@@ -10,17 +10,19 @@ import {
   Text,
   Container,
 } from '@chakra-ui/react';
-import {useReactToPrint} from 'react-to-print';
+//import {useReactToPrint} from 'react-to-print';
 import Navbar from '../../components/Navbar';
 
 const RecipeDetail: React.FC = () => {
   const componentRef = useRef<HTMLDivElement | null>(null);
 
+  /**
   const handlePrint = useReactToPrint({
     content: () => componentRef.current!,
     documentTitle: 'emp-data',
     onAfterPrint: () => alert('Print Success'),
   });
+  */
 
   return (
     <>
@@ -34,12 +36,12 @@ const RecipeDetail: React.FC = () => {
                 <Box w="100%" bgColor={'teal.500'}>
                   <Image
                     borderRadius="30px"
-                    src="newlogoteal.png"
+                    src={"newlogoteal.png"}
                     alt="Logo"
                     w={120}
                   />
                 </Box>
-                <Heading>Recipe Title</Heading>
+                <Heading>{JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).recipe_name}</Heading>
                 <HStack alignItems={'start'} width="100%" paddingBottom={8}>
                   <Box
                     w="60%"
@@ -64,7 +66,7 @@ const RecipeDetail: React.FC = () => {
                     <Center>
                       <Image
                         borderRadius="30px"
-                        src="Baked-Stuffed-Pork-Chops-square.jpg"
+                        src={JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).pic}
                         alt="Logo"
                         w={480}
                         height={400}
@@ -85,22 +87,22 @@ const RecipeDetail: React.FC = () => {
                     marginBottom={5}>
                     {/* displaying recipe data */}
                     <Text noOfLines={2} fontSize={20}>
-                      Difficulty: recipe.data.difficulty
+                      Difficulty: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).difficulty}
                     </Text>
                     <Text noOfLines={2} fontSize={20}>
-                      Time: recipe.data.cooking_time
+                      Time: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).cooking_time}
                     </Text>
                     <Text noOfLines={2} fontSize={20}>
-                      Servings: recipe.data.servings
+                      Servings: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).servings}
                     </Text>
                     <Text noOfLines={2} fontSize={20}>
-                      Cost Per Serving: recipe.data.cost_per_serving
+                      Cost Per Serving: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).cost}
                     </Text>
                     <Text noOfLines={2} fontSize={20}>
-                      Cooking Applications: recipe.data.cooking_applications
+                      Cooking Applications: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).cooking_applications}
                     </Text>
                     <Text noOfLines={2} fontSize={20}>
-                      Allergens: recipe.data.allergens
+                      Allergens: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).allergens }
                     </Text>
                   </Box>
                   <Box
@@ -128,20 +130,16 @@ const RecipeDetail: React.FC = () => {
                   minHeight="400">
                   {' '}
                   <Text noOfLines={2} fontSize={25} marginBottom={5}>
-                    Ingredients:
+                    Instructions:
                   </Text>
-                  Pink ponies and purple giraffes roamed the field. Cotton candy
-                  grew from the ground as a chocolate river meandered off to the
-                  side. What looked like stones in the pasture were actually
-                  rock candy. Everything in her dream seemed to be perfect
-                  except for the fact that she had no mouth.
+                  {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).instructions}
                 </Box>
               </HStack>
             </Box>
           </Center>
         </Box>
       </Center>
-      <Button onClick={handlePrint}> Print this out</Button>
+      <Button>Print this out</Button>
     </>
   );
 };
