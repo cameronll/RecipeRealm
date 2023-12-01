@@ -138,15 +138,15 @@ const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<any>([]);
   const [dateSelected, setDateSelected] = useState('');
 
-  /*
   useEffect(() => {
-    var tempArray: Recipe[] = [];
+    var tempEvents: Recipe[] = [];
     for (let i = 0; i < profile?.events.length; i++) {
-      tempArray.push(profile?.events[i].recipe);
+      if (profile?.events[i].date.includes(dateSelected)) {
+        tempEvents.push(profile?.events[i].recipe);
+      }
     }
-    setDateEvents(tempArray);
+    setDateEvents(tempEvents)
   }, [profile]);
-  */
 
   function titleSize(title: string) {
     return 34 - title.length * 0.2 + 'px';
@@ -215,12 +215,6 @@ const CalendarPage: React.FC = () => {
    * @returns
    */
   function displayMeals() {
-    var eventsOnSelected;
-
-    if (dateEvents.length == 0) {
-    } else {
-      eventsOnSelected = dateEvents;
-    }
     return (
       <VStack spacing={10}>
         <Box>
@@ -501,10 +495,10 @@ const CalendarPage: React.FC = () => {
                 placeholder="Click to select..."
                 onChange={handleRecipeChange}>
                 {recipes?.map(recipe => (
-                  <option>{recipe?.recipe_name}</option>
+                  <option>{recipe?.data.recipe_name}</option>
                 ))}
                 {savedRecipes?.map(recipe => (
-                  <option>{recipe.recipe_name}</option>
+                  <option>{recipe?.data.recipe_name}</option>
                 ))}
               </Select>
             </DrawerBody>
