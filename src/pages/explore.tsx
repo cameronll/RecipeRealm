@@ -68,6 +68,10 @@ import {
   Spacer,
   Drawer,
   useDisclosure,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
@@ -319,13 +323,27 @@ const Explore: React.FC = () => {
   function displayComments(){
     
     return(
-      <Drawer
-        isOpen={isOpen}
-        placement="right"
-        onClose={onClose}
-        size={'md'}>
-        
-      </Drawer>
+      <>
+        <Drawer
+          isOpen={isOpen}
+          placement="right"
+          onClose={onClose}
+          size={'lg'}
+        >
+          {/* <DrawerOverlay bg={"rgba(0, 0, 0, 0.5)"}/> */}
+          <DrawerContent>
+            <DrawerHeader>
+              <Text>Comments</Text>
+            </DrawerHeader>
+            <DrawerBody>
+              <Text>Hi</Text>
+            </DrawerBody>
+            <DrawerBody>
+              <Text>Hello</Text>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </>
     )
   }
 
@@ -446,10 +464,11 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              <Button variant="link" colorScheme="white">
+                              <Button variant="link" colorScheme="white" onClick={onOpen}>
                                 <BsFillChatDotsFill
                                   style={{fontSize: '34px'}}
                                 />
+                                {displayComments()}
                               </Button>
                               {
                                 // check if this post has been saved
@@ -881,6 +900,7 @@ const Explore: React.FC = () => {
                           }
                           <Button variant="link" colorScheme="white">
                             <BsFillChatDotsFill style={{fontSize: '34px'}} />
+                            {displayComments()}
                           </Button>
                           {
                             // check if the user has saved the recipe
