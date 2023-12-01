@@ -10,19 +10,17 @@ import {
   Text,
   Container,
 } from '@chakra-ui/react';
-//import {useReactToPrint} from 'react-to-print';
+import {useReactToPrint} from 'react-to-print';
 import Navbar from '../../components/Navbar';
 
 const RecipeDetail: React.FC = () => {
   const componentRef = useRef<HTMLDivElement | null>(null);
 
-  /**
   const handlePrint = useReactToPrint({
     content: () => componentRef.current!,
     documentTitle: 'emp-data',
     onAfterPrint: () => alert('Print Success'),
   });
-  */
 
   return (
     <>
