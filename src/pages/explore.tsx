@@ -395,7 +395,7 @@ const Explore: React.FC = () => {
                   variant={'solid'}
                   fontSize={'x-large'}
                   height={160}
-                  width={50}
+                  width={'70px'}
                   aria-label={'Send comment'}
                   onClick={() =>{
                     //save comment to database and update comments with 
