@@ -72,6 +72,10 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerFooter,
+  Divider,
+  Textarea,
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
@@ -79,9 +83,10 @@ import {
   collapseTextChangeRangesAcrossMultipleVersions,
   forEachChild,
 } from 'typescript';
-import {AiFillHeart, AiOutlineHeart} from 'react-icons/ai';
+import {AiFillHeart, AiOutlineHeart, AiOutlineSend} from 'react-icons/ai';
 import {Link, useNavigate} from 'react-router-dom';
 import {getDownloadURL, ref} from 'firebase/storage';
+//import { Divider } from 'rsuite';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -324,23 +329,86 @@ const Explore: React.FC = () => {
     
     return(
       <>
+        <Button variant="link" colorScheme="white" onClick={onOpen}>
+          <BsFillChatDotsFill
+            style={{fontSize: '34px'}}
+          />
+        </Button>
+
         <Drawer
           isOpen={isOpen}
           placement="right"
           onClose={onClose}
           size={'lg'}
         >
-          {/* <DrawerOverlay bg={"rgba(0, 0, 0, 0.5)"}/> */}
+          {/* <DrawerOverlay /> */}
           <DrawerContent>
-            <DrawerHeader>
-              <Text>Comments</Text>
+            <DrawerCloseButton />
+            <DrawerHeader
+              bg={'teal'}
+              paddingTop={'20px'}
+              paddingBottom={'20px'}
+              fontSize={'30px'}
+              textAlign={'center'}
+              color={'white'}
+            >
+              <Text>Comments on @{/** Username */}'s post</Text>
             </DrawerHeader>
-            <DrawerBody>
-              <Text>Hi</Text>
+            <DrawerBody
+              display={'flex'}
+              flexDir={'column'}
+              justifyContent={'space-between'}
+              height={'100%'}
+              overflowY={"auto"}
+            >
+              {/**
+               * get all comments in the database to display in the DrawerBody
+               */}
+              <VStack >
+                {/* commentsOnPost.map((comment) => {the HStack below}) */}
+                <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
+                  <Avatar /* The profile pic of the user whose post it corresponds to *//>
+                  <Divider orientation='vertical'/>
+                  <Text paddingLeft={5}> comment from user stored in the posts db </Text>
+                </HStack>
+              </VStack>
             </DrawerBody>
-            <DrawerBody>
-              <Text>Hello</Text>
-            </DrawerBody>
+            <Divider 
+              orientation='horizontal' 
+              color={'teal'}
+            />
+            <DrawerFooter blockSize={200}>
+              <HStack>
+                <Avatar />
+                <Container width={500}>
+                  <Textarea
+                  placeholder='Type a comment here...'
+                  size={'lg'}
+                  blockSize={150}
+                  resize={'none'}
+                  width={"100%"}
+                />
+                </Container>
+                <Button 
+                  bg={"teal"} 
+                  color={"white"} 
+                  variant={'solid'}
+                  fontSize={'x-large'}
+                  height={160}
+                  width={50}
+                  aria-label={'Send comment'}
+                  onClick={() =>{
+                    //save comment to database and update comments with 
+                    // latest post at top
+                  }}
+                >
+                  <AiOutlineSend />
+                  {/* AiOutlineComment -> <AiOutlineComment />
+                  */}
+                </Button>
+              </HStack>
+              
+            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       </>
@@ -464,12 +532,15 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              <Button variant="link" colorScheme="white" onClick={onOpen}>
+                              {/* <Button variant="link" colorScheme="white" onClick={onOpen}>
                                 <BsFillChatDotsFill
                                   style={{fontSize: '34px'}}
                                 />
-                                {displayComments()}
-                              </Button>
+                              </Button> */}
+
+                              {// Displays the button that can be clicked to type and 
+                               // see comments for a specific post
+                              displayComments()}
                               {
                                 // check if this post has been saved
                                 isSaved(post.recipe.data) ? (
@@ -898,10 +969,13 @@ const Explore: React.FC = () => {
                               </Button>
                             )
                           }
-                          <Button variant="link" colorScheme="white">
+                          {/* <Button variant="link" colorScheme="white">
                             <BsFillChatDotsFill style={{fontSize: '34px'}} />
-                            {displayComments()}
-                          </Button>
+                          </Button> */}
+
+                          {// Displays the button that can be clicked to type and 
+                           // see comments for a specific post
+                          displayComments()}
                           {
                             // check if the user has saved the recipe
                             isSaved(post.recipe.data) ? (
