@@ -674,7 +674,7 @@ const Form2 = () => {
             </FormLabel>
             <NumberInput
               max={999}
-              min={1}
+              min={0.000000001}
               // value is set to ingredientAmount, change calls handler
               value={ingredientAmount}
               onChange={handleIAmount}
