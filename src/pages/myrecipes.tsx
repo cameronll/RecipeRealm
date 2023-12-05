@@ -71,7 +71,7 @@ import {
   TabPanels,
   Spacer,
 } from '@chakra-ui/react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {
   useCollection,
   useCollectionData,
@@ -82,8 +82,20 @@ import {getDownloadURL, ref} from 'firebase/storage';
 const Recipes: React.FC = () => {
   // toast for popups
   const toast = useToast();
-  // email from local storage to get the current user
+  const navigate = useNavigate();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  // email from local storage to get the current user
+  /*
+  console.log(email)
+  useEffect(() => {
+    console.log(email);
+    if (email === null){
+      console.clear();
+      console.log("navigate!")
+      navigate("/login");
+    }
+  }, [email])
+  */
 
   // get all the recipes and create a listener to the DB
   const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));

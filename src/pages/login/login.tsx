@@ -56,6 +56,9 @@ const googleSignIn = async () => {
  * @returns 
  */
 const Login = () => {
+  useEffect(() => {
+    localStorage.removeItem('EMAIL')
+  }, [])
   const [email, setEmail] = useState('');//establishes email in the database
   const [password, setPassword] = useState('');//establishes the password in the database
   const [show, setShow] = React.useState(false);//allows the option to view password

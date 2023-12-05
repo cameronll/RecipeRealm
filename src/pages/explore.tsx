@@ -320,12 +320,33 @@ const Explore: React.FC = () => {
     return -1;
   }
 
+  const handleCommentChange = (e: any) => {
+    window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
+  }
+
+  async function addComment(datetime: any){
+    // update the post
+    const q = query(
+      collection(db, 'posts/'),
+      where('date_time', '==', datetime),
+    );
+    const docs = await getDocs(q);
+    // add a like to the post
+    docs.forEach(doc => {
+      console.log(doc.data())
+      updateDoc(doc.ref, {
+        comments: arrayUnion(JSON.parse(window.localStorage.getItem('COMMENT') as string))
+      });
+    });
+    window.localStorage.removeItem('COMMENT');
+  }
+
   /**
    * Function that diplays a drawer with a space for the user to comment on the select post and see all the
    * other comments mades towards the same select post from other users.
    * @returns 
    */
-  function displayComments(){
+  function displayComments(post: any){
     
     return(
       <>
@@ -352,7 +373,7 @@ const Explore: React.FC = () => {
               textAlign={'center'}
               color={'white'}
             >
-              <Text>Comments on @{/** Username */}'s post</Text>
+              <Text>Comments on @{post.username}'s post</Text>
             </DrawerHeader>
             <DrawerBody
               display={'flex'}
@@ -387,6 +408,8 @@ const Explore: React.FC = () => {
                   blockSize={150}
                   resize={'none'}
                   width={"100%"}
+                  value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                  onChange={handleCommentChange}
                 />
                 </Container>
                 <Button 
@@ -398,7 +421,9 @@ const Explore: React.FC = () => {
                   width={'70px'}
                   aria-label={'Send comment'}
                   onClick={() =>{
-                    //save comment to database and update comments with 
+                    console.log(post);
+                    addComment(post?.date_time)
+                    // save comment to database and update comments with 
                     // latest post at top
                   }}
                 >
@@ -532,15 +557,100 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              {/* <Button variant="link" colorScheme="white" onClick={onOpen}>
+                              {/**
+                              <Button variant="link" colorScheme="white" onClick={onOpen()}>
                                 <BsFillChatDotsFill
                                   style={{fontSize: '34px'}}
                                 />
-                              </Button> */}
+                              </Button>
+                            */}
 
-                              {// Displays the button that can be clicked to type and 
-                               // see comments for a specific post
-                              displayComments()}
+<Button variant="link" colorScheme="white" onClick={onOpen}>
+          <BsFillChatDotsFill
+            style={{fontSize: '34px'}}
+          />
+        </Button>
+
+        <Drawer
+          isOpen={isOpen}
+          placement="right"
+          onClose={onClose}
+          size={'lg'}
+        >
+          {/* <DrawerOverlay /> */}
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader
+              bg={'teal'}
+              paddingTop={'20px'}
+              paddingBottom={'20px'}
+              fontSize={'30px'}
+              textAlign={'center'}
+              color={'white'}
+            >
+              <Text>Comments on @{post.username}'s post</Text>
+            </DrawerHeader>
+            <DrawerBody
+              display={'flex'}
+              flexDir={'column'}
+              justifyContent={'space-between'}
+              height={'100%'}
+              overflowY={"auto"}
+            >
+              {/**
+               * get all comments in the database to display in the DrawerBody
+               */}
+              <VStack >
+                {/* commentsOnPost.map((comment) => {the HStack below}) */}
+                <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
+                  <Avatar /* The profile pic of the user whose post it corresponds to *//>
+                  <Divider orientation='vertical'/>
+                  <Text paddingLeft={5}> comment from user stored in the posts db </Text>
+                </HStack>
+              </VStack>
+            </DrawerBody>
+            <Divider 
+              orientation='horizontal' 
+              color={'teal'}
+            />
+            <DrawerFooter blockSize={200}>
+              <HStack>
+                <Avatar />
+                <Container width={500}>
+                  <Textarea
+                  placeholder='Type a comment here...'
+                  size={'lg'}
+                  blockSize={150}
+                  resize={'none'}
+                  width={"100%"}
+                  value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                  onChange={handleCommentChange}
+                />
+                </Container>
+                <Button 
+                  bg={"teal"} 
+                  color={"white"} 
+                  variant={'solid'}
+                  fontSize={'x-large'}
+                  height={160}
+                  width={'70px'}
+                  aria-label={'Send comment'}
+                  onClick={() =>{
+                    console.log(post);
+                    addComment(post?.date_time)
+                    // save comment to database and update comments with 
+                    // latest post at top
+                  }}
+                >
+                  <AiOutlineSend />
+                  {/* AiOutlineComment -> <AiOutlineComment />
+                  */}
+                </Button>
+              </HStack>
+              
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
                               {
                                 // check if this post has been saved
                                 isSaved(post.recipe.data) ? (
@@ -973,9 +1083,92 @@ const Explore: React.FC = () => {
                             <BsFillChatDotsFill style={{fontSize: '34px'}} />
                           </Button> */}
 
-                          {// Displays the button that can be clicked to type and 
-                           // see comments for a specific post
-                          displayComments()}
+<Button variant="link" colorScheme="white" onClick={onOpen}>
+          <BsFillChatDotsFill
+            style={{fontSize: '34px'}}
+          />
+        </Button>
+
+        <Drawer
+          isOpen={isOpen}
+          placement="right"
+          onClose={onClose}
+          size={'lg'}
+        >
+          {/* <DrawerOverlay /> */}
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader
+              bg={'teal'}
+              paddingTop={'20px'}
+              paddingBottom={'20px'}
+              fontSize={'30px'}
+              textAlign={'center'}
+              color={'white'}
+            >
+              <Text>Comments on @{post.username}'s post</Text>
+            </DrawerHeader>
+            <DrawerBody
+              display={'flex'}
+              flexDir={'column'}
+              justifyContent={'space-between'}
+              height={'100%'}
+              overflowY={"auto"}
+            >
+              {/**
+               * get all comments in the database to display in the DrawerBody
+               */}
+              <VStack >
+                {/* commentsOnPost.map((comment) => {the HStack below}) */}
+                <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
+                  <Avatar /* The profile pic of the user whose post it corresponds to *//>
+                  <Divider orientation='vertical'/>
+                  <Text paddingLeft={5}> comment from user stored in the posts db </Text>
+                </HStack>
+              </VStack>
+            </DrawerBody>
+            <Divider 
+              orientation='horizontal' 
+              color={'teal'}
+            />
+            <DrawerFooter blockSize={200}>
+              <HStack>
+                <Avatar />
+                <Container width={500}>
+                  <Textarea
+                  placeholder='Type a comment here...'
+                  size={'lg'}
+                  blockSize={150}
+                  resize={'none'}
+                  width={"100%"}
+                  value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                  onChange={handleCommentChange}
+                />
+                </Container>
+                <Button 
+                  bg={"teal"} 
+                  color={"white"} 
+                  variant={'solid'}
+                  fontSize={'x-large'}
+                  height={160}
+                  width={'70px'}
+                  aria-label={'Send comment'}
+                  onClick={() =>{
+                    console.log(post);
+                    addComment(post?.date_time)
+                    // save comment to database and update comments with 
+                    // latest post at top
+                  }}
+                >
+                  <AiOutlineSend />
+                  {/* AiOutlineComment -> <AiOutlineComment />
+                  */}
+                </Button>
+              </HStack>
+              
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
                           {
                             // check if the user has saved the recipe
                             isSaved(post.recipe.data) ? (
