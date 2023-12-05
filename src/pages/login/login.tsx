@@ -53,25 +53,25 @@ const googleSignIn = async () => {
 };
 /**
  * Function to login in to website
- * @returns 
+ * @returns
  */
 const Login = () => {
   useEffect(() => {
-    localStorage.removeItem('EMAIL')
-  }, [])
-  const [email, setEmail] = useState('');//establishes email in the database
-  const [password, setPassword] = useState('');//establishes the password in the database
-  const [show, setShow] = React.useState(false);//allows the option to view password
+    localStorage.removeItem('EMAIL');
+  }, []);
+  const [email, setEmail] = useState(''); //establishes email in the database
+  const [password, setPassword] = useState(''); //establishes the password in the database
+  const [show, setShow] = React.useState(false); //allows the option to view password
   const handleClick = () => setShow(!show);
   const navigate = useNavigate();
   const toast = useToast();
-/**
- * controls for to allow fo rsign in authorization
- * @param e 
- */
+  /**
+   * controls for to allow fo rsign in authorization
+   * @param e
+   */
   const signIn = (e: React.FormEvent) => {
     e.preventDefault(); // doesnt reload page
-    signInWithEmailAndPassword(auth, email, password)//method that passes in established values to login to website
+    signInWithEmailAndPassword(auth, email, password) //method that passes in established values to login to website
       .then(userCredential => {
         const user = userCredential.user;
 
@@ -129,7 +129,7 @@ const Login = () => {
           </Center>
           <form onSubmit={signIn}>
             <Input
-              placeholder="Username"
+              placeholder="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               variant="filled"
@@ -162,7 +162,7 @@ const Login = () => {
             </InputGroup>
 
             <Flex>
-            <Link to="/signup">
+              <Link to="/signup">
                 <Button
                   color="teal"
                   colorScheme="white"
@@ -171,11 +171,9 @@ const Login = () => {
                   <Text color="teal">Sign up</Text>
                 </Button>
               </Link>
-            
 
               <Spacer />
 
-              
               <Link to="/Recipes">
                 <Button colorScheme="teal" size="lg" onClick={signIn}>
                   Login

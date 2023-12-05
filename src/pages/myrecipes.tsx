@@ -97,6 +97,8 @@ const Recipes: React.FC = () => {
   }, [email])
   */
 
+  const [followingProfiles, setFollowingProfiles] = useState<any[]>([]);
+
   // get all the recipes and create a listener to the DB
   const recipesQuery = query(collection(db, 'users/' + email + '/Recipes'));
   const [recipes, recipesLoading, recipesError] =
@@ -140,6 +142,23 @@ const Recipes: React.FC = () => {
     // delete from db
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
+
+  // useEffect(() => {
+  //   friends();
+  // }, []);
+
+  // //funciton to get friends data
+  // async function friends() {
+  //   const tempArray: any[] = [];
+  //   for (let i = 0; i < profile?.following.length; i++) {
+  //     console.log(profile?.following[i]);
+  //     const docRef = doc(db, 'users', profile?.following[i]);
+  //     const docSnap = await getDoc(docRef);
+  //     tempArray.push(docSnap?.data());
+  //     console.log(tempArray);
+  //   }
+  //   setFollowingProfiles(tempArray);
+  // }
 
   //Functions to adjust Title Size
   function titleSize(title: string) {
@@ -654,7 +673,10 @@ const Recipes: React.FC = () => {
                               color="black"
                               padding={1}>
                               <Center>
-                                <Text as="b" fontSize="34px" textColor="white">
+                                <Text
+                                  as="b"
+                                  fontSize={titleSize(recipe.data.recipe_name)}
+                                  textColor="white">
                                   {
                                     // display the recipe name
                                     recipe.data.recipe_name
@@ -934,88 +956,98 @@ const Recipes: React.FC = () => {
             )}
           </TabPanel>
           <TabPanel minH="100vh">
+            <Text>{followingProfiles.length}</Text>
+            <Text>{profile?.following.length}</Text>
+            <Text>THEOILFEIEj</Text>
             <VStack>
-              <Container
-                boxShadow={'2xl'}
-                minW="container.md"
-                borderRadius="lg"
-                overflow="hidden"
-                justify-content="space-between"
-                bg="teal"
-                minH="auto"
-                display="flex"
-                flexDirection="column"
-                rounded="md"
-                padding={4}
-                margin={4}
-                marginRight={10}
-                marginLeft={10}
-                shadow={'dark-lg'}>
-                <VStack align="2x1">
-                  <HStack>
-                    <Avatar
-                      size="2xl"
-                      name="Kola Tioluwani"
-                      src="https://bit.ly/tioluwani-kolawole"
-                    />
-                    <VStack marginLeft={10}>
-                      <Heading> User's Page</Heading>
-                      <Text>Uesr's Recipes</Text>
-                      <Text>User's Posts</Text>
-                      <Text color={'black'} fontSize={'lg'}>
-                        {profile?.biography}
-                      </Text>
+              {profile?.following.length === 0 ? (
+                <Text> You have zero friends</Text>
+              ) : (
+                followingProfiles.map(friend => (
+                  <Container
+                    boxShadow={'2xl'}
+                    minW="container.md"
+                    borderRadius="lg"
+                    overflow="hidden"
+                    justifyContent="space-between"
+                    bg="teal"
+                    minH="auto"
+                    display="flex"
+                    flexDirection="column"
+                    rounded="md"
+                    padding={4}
+                    margin={4}
+                    marginRight={10}
+                    marginLeft={10}
+                    shadow={'dark-lg'}>
+                    <VStack align="2x1">
+                      <HStack>
+                        <Avatar
+                          size="2xl"
+                          name="Kola Tioluwani"
+                          src="https://bit.ly/tioluwani-kolawole"
+                        />
+                        <VStack marginLeft={10}>
+                          <Heading>{friend}'s Page</Heading>
+                          <Text>{}</Text>
+                          <Text>User's Recipes</Text>
+                          <Text>User's Posts</Text>
+                          <Text color={'black'} fontSize={'lg'}>
+                            {/* Use friend here instead of profile */}
+                            {friend.biography}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      <Button
+                        variant="link"
+                        rounded="md"
+                        as="h3"
+                        size="lg"
+                        color="black"
+                        padding={1}>
+                        <Center>
+                          <Text as="b" fontSize="34px" textColor="white"></Text>
+                        </Center>
+                      </Button>
+                      <Box
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="white"
+                        color="black"
+                        maxW="container.md"></Box>
                     </VStack>
-                  </HStack>
-                  <Button
-                    variant="link"
-                    rounded="md"
-                    as="h3"
-                    size="lg"
-                    color="black"
-                    padding={1}>
-                    <Center>
-                      <Text as="b" fontSize="34px" textColor="white"></Text>
-                    </Center>
-                  </Button>
-
-                  <Box
-                    boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="white"
-                    color="black"
-                    maxW="container.md"></Box>
-                </VStack>
-                <HStack align="right" marginTop={2}>
-                  <Button
-                    boxShadow="xs"
-                    rounded="md"
-                    variant="outline"
-                    padding="4"
-                    colorScheme="teal"
-                    color="white"
-                    maxW="container.400"
-                    onClick={() => {
-                      //Print Recipe
-                    }}>
-                    <BsPersonPlusFill />
-                    <Text marginLeft={2}>Follow</Text>
-                  </Button>
-                  <Link to="/FriendsProfile">
-                    <Button
-                      variant="outline"
-                      flex={1}
-                      fontSize={'sm'}
-                      _focus={{
-                        bg: 'gray.200',
-                      }}
-                      onClick={() => {}}>
-                      <Text textColor="white">View Recipes</Text>
-                    </Button>
-                  </Link>
-                </HStack>
-              </Container>
+                    <HStack align="right" marginTop={2}>
+                      <Button
+                        boxShadow="xs"
+                        rounded="md"
+                        variant="outline"
+                        padding="4"
+                        colorScheme="teal"
+                        color="white"
+                        maxW="container.400"
+                        onClick={() => {
+                          // Print Recipe
+                        }}>
+                        <BsPersonPlusFill />
+                        <Text marginLeft={2}>Follow</Text>
+                      </Button>
+                      <Link to="/FriendsProfile">
+                        <Button
+                          variant="outline"
+                          flex={1}
+                          fontSize={'sm'}
+                          _focus={{
+                            bg: 'gray.200',
+                          }}
+                          onClick={() => {}}>
+                          <Text textColor="white">View Recipes</Text>
+                        </Button>
+                      </Link>
+                    </HStack>
+                  </Container>
+                ))
+              )}
             </VStack>
           </TabPanel>
         </TabPanels>
