@@ -76,6 +76,7 @@ import {
   DrawerFooter,
   Divider,
   Textarea,
+  PopoverArrow,
 } from '@chakra-ui/react';
 
 import {CopyIcon} from '@chakra-ui/icons';
@@ -551,113 +552,88 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              {/**
-                              <Button variant="link" colorScheme="white" onClick={onOpen()}>
-                                <BsFillChatDotsFill
-                                  style={{fontSize: '34px'}}
-                                />
-                              </Button>
-                            */}
-
-                              <Button
-                                variant="link"
-                                colorScheme="white"
-                                onClick={onOpen}>
-                                <BsFillChatDotsFill
-                                  style={{fontSize: '34px'}}
-                                />
-                              </Button>
-
-                              <Drawer
-                                isOpen={isOpen}
-                                placement="right"
-                                onClose={onClose}
-                                size={'lg'}>
-                                {/* <DrawerOverlay /> */}
-                                <DrawerContent>
-                                  <DrawerCloseButton />
-                                  <DrawerHeader
-                                    bg={'teal'}
-                                    paddingTop={'20px'}
-                                    paddingBottom={'20px'}
-                                    fontSize={'30px'}
-                                    textAlign={'center'}
-                                    color={'white'}>
-                                    <Text>
-                                      Comments on @{post.username}'s post
-                                    </Text>
-                                  </DrawerHeader>
-                                  <DrawerBody
-                                    display={'flex'}
-                                    flexDir={'column'}
-                                    justifyContent={'space-between'}
-                                    height={'100%'}
-                                    overflowY={'auto'}>
-                                    {/**
-                                     * get all comments in the database to display in the DrawerBody
-                                     */}
-                                    <VStack>
-                                      {/* commentsOnPost.map((comment) => {the HStack below}) */}
-                                      <HStack
-                                        width={'105%'}
-                                        minH={'60px'}
+                              {// Comments button for each post.
+                              }
+                              <Popover placement='right' initialFocusRef={initRef}>
+                                <PopoverTrigger>
+                                  <Button variant="link" colorScheme="white" /*onClick={onOpen}*/>
+                                    <BsFillChatDotsFill style={{fontSize: '34px'}}/>
+                                  </Button>
+                                </PopoverTrigger>
+                                <Portal>
+                                  <PopoverContent minWidth={'825px'}>
+                                    <PopoverArrow/>
+                                      <PopoverHeader
                                         bg={'teal'}
-                                        rounded={'md'}>
-                                        <Avatar /* The profile pic of the user whose post it corresponds to */
-                                        />
-                                        <Divider orientation="vertical" />
-                                        <Text paddingLeft={5}>
-                                          {' '}
-                                          comment from user stored in the posts
-                                          db{' '}
-                                        </Text>
-                                      </HStack>
-                                    </VStack>
-                                  </DrawerBody>
-                                  <Divider
-                                    orientation="horizontal"
-                                    color={'teal'}
-                                  />
-                                  <DrawerFooter blockSize={200}>
-                                    <HStack>
-                                      <Avatar />
-                                      <Container width={500}>
-                                        <Textarea
-                                          placeholder="Type a comment here..."
-                                          size={'lg'}
-                                          blockSize={150}
-                                          resize={'none'}
-                                          width={'100%'}
-                                          value={JSON.parse(
-                                            window.localStorage.getItem(
-                                              'COMMENTS',
-                                            ) as string,
-                                          )}
-                                          onChange={handleCommentChange}
-                                        />
-                                      </Container>
-                                      <Button
-                                        bg={'teal'}
+                                        paddingTop={'20px'}
+                                        paddingBottom={'20px'}
+                                        fontSize={'30px'}
+                                        textAlign={'center'}
                                         color={'white'}
-                                        variant={'solid'}
-                                        fontSize={'x-large'}
-                                        height={160}
-                                        width={'70px'}
-                                        aria-label={'Send comment'}
-                                        onClick={() => {
-                                          console.log(post);
-                                          addComment(post?.date_time);
-                                          // save comment to database and update comments with
-                                          // latest post at top
-                                        }}>
-                                        <AiOutlineSend />
-                                        {/* AiOutlineComment -> <AiOutlineComment />
-                                         */}
-                                      </Button>
-                                    </HStack>
-                                  </DrawerFooter>
-                                </DrawerContent>
-                              </Drawer>
+                                      >
+                                        Comments on @{profiles[getIndex(profiles, post.email)]?.username}'s post
+                                      </PopoverHeader>
+                                      <PopoverCloseButton />
+                                      <PopoverBody
+                                        display={'flex'}
+                                        flexDir={'column'}
+                                        justifyContent={'space-between'}
+                                        height={'100%'}
+                                        minH={'645px'}
+                                        maxH={'645px'}
+                                        overflowY={"auto"}
+                                      >
+                                        <VStack >
+                                          {// commentsOnPost.map((comment) => {the HStack below}) 
+                                          }
+                                          <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
+                                            <Avatar // The profile pic of the user whose post it corresponds to 
+                                            />
+                                            <Divider orientation='vertical'/>
+                                            <Text paddingLeft={5}> comments from users </Text>
+                                          </HStack>
+                                        </VStack>
+                                      </PopoverBody>
+                                      <Divider 
+                                        orientation='horizontal' 
+                                        color={'teal'}
+                                      />
+                                      <PopoverFooter blockSize={200}>
+                                        <HStack>
+                                          <Avatar />
+                                          <Container width={500}>
+                                            <Textarea
+                                            placeholder='Type a comment here...'
+                                            size={'lg'}
+                                            blockSize={150}
+                                            resize={'none'}
+                                            width={"100%"}
+                                            value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                                            onChange={handleCommentChange}
+                                          />
+                                          </Container>
+                                          <Button 
+                                            bg={"teal"} 
+                                            color={"white"} 
+                                            variant={'solid'}
+                                            fontSize={'x-large'}
+                                            height={160}
+                                            width={'70px'}
+                                            aria-label={'Send comment'}
+                                            onClick={() =>{
+                                              console.log(post);
+                                              addComment(post?.date_time)
+                                              // save comment to database and update comments with 
+                                              // latest post at top
+                                            }}
+                                          >
+                                            <AiOutlineSend />
+                                          </Button>
+                                        </HStack>
+                                      </PopoverFooter>
+                                  </PopoverContent>
+                                </Portal>
+                              </Popover>
                               {
                                 // check if this post has been saved
                                 isSaved(post.recipe.data) ? (
@@ -1090,113 +1066,88 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              {/**
-                              <Button variant="link" colorScheme="white" onClick={onOpen()}>
-                                <BsFillChatDotsFill
-                                  style={{fontSize: '34px'}}
-                                />
-                              </Button>
-                            */}
-
-                              <Button
-                                variant="link"
-                                colorScheme="white"
-                                onClick={onOpen}>
-                                <BsFillChatDotsFill
-                                  style={{fontSize: '34px'}}
-                                />
-                              </Button>
-
-                              <Drawer
-                                isOpen={isOpen}
-                                placement="right"
-                                onClose={onClose}
-                                size={'lg'}>
-                                {/* <DrawerOverlay /> */}
-                                <DrawerContent>
-                                  <DrawerCloseButton />
-                                  <DrawerHeader
-                                    bg={'teal'}
-                                    paddingTop={'20px'}
-                                    paddingBottom={'20px'}
-                                    fontSize={'30px'}
-                                    textAlign={'center'}
-                                    color={'white'}>
-                                    <Text>
-                                      Comments on @{post.username}'s post
-                                    </Text>
-                                  </DrawerHeader>
-                                  <DrawerBody
-                                    display={'flex'}
-                                    flexDir={'column'}
-                                    justifyContent={'space-between'}
-                                    height={'100%'}
-                                    overflowY={'auto'}>
-                                    {/**
-                                     * get all comments in the database to display in the DrawerBody
-                                     */}
-                                    <VStack>
-                                      {/* commentsOnPost.map((comment) => {the HStack below}) */}
-                                      <HStack
-                                        width={'105%'}
-                                        minH={'60px'}
+                              {// Comments button for each post.
+                              }
+                              <Popover placement='right' initialFocusRef={initRef}>
+                                <PopoverTrigger>
+                                  <Button variant="link" colorScheme="white" /*onClick={onOpen}*/>
+                                    <BsFillChatDotsFill style={{fontSize: '34px'}}/>
+                                  </Button>
+                                </PopoverTrigger>
+                                <Portal>
+                                  <PopoverContent minWidth={'825px'}>
+                                    <PopoverArrow/>
+                                      <PopoverHeader
                                         bg={'teal'}
-                                        rounded={'md'}>
-                                        <Avatar /* The profile pic of the user whose post it corresponds to */
-                                        />
-                                        <Divider orientation="vertical" />
-                                        <Text paddingLeft={5}>
-                                          {' '}
-                                          comment from user stored in the posts
-                                          db{' '}
-                                        </Text>
-                                      </HStack>
-                                    </VStack>
-                                  </DrawerBody>
-                                  <Divider
-                                    orientation="horizontal"
-                                    color={'teal'}
-                                  />
-                                  <DrawerFooter blockSize={200}>
-                                    <HStack>
-                                      <Avatar />
-                                      <Container width={500}>
-                                        <Textarea
-                                          placeholder="Type a comment here..."
-                                          size={'lg'}
-                                          blockSize={150}
-                                          resize={'none'}
-                                          width={'100%'}
-                                          value={JSON.parse(
-                                            window.localStorage.getItem(
-                                              'COMMENTS',
-                                            ) as string,
-                                          )}
-                                          onChange={handleCommentChange}
-                                        />
-                                      </Container>
-                                      <Button
-                                        bg={'teal'}
+                                        paddingTop={'20px'}
+                                        paddingBottom={'20px'}
+                                        fontSize={'30px'}
+                                        textAlign={'center'}
                                         color={'white'}
-                                        variant={'solid'}
-                                        fontSize={'x-large'}
-                                        height={160}
-                                        width={'70px'}
-                                        aria-label={'Send comment'}
-                                        onClick={() => {
-                                          console.log(post);
-                                          addComment(post?.date_time);
-                                          // save comment to database and update comments with
-                                          // latest post at top
-                                        }}>
-                                        <AiOutlineSend />
-                                        {/* AiOutlineComment -> <AiOutlineComment />
-                                         */}
-                                      </Button>
-                                    </HStack>
-                                  </DrawerFooter>
-                                </DrawerContent>
-                              </Drawer>
+                                      >
+                                        Comments on @{profiles[getIndex(profiles, post.email)]?.username}'s post
+                                      </PopoverHeader>
+                                      <PopoverCloseButton />
+                                      <PopoverBody
+                                        display={'flex'}
+                                        flexDir={'column'}
+                                        justifyContent={'space-between'}
+                                        height={'100%'}
+                                        minH={'645px'}
+                                        maxH={'645px'}
+                                        overflowY={"auto"}
+                                      >
+                                        <VStack >
+                                          {// commentsOnPost.map((comment) => {the HStack below}) 
+                                          }
+                                          <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
+                                            <Avatar // The profile pic of the user whose post it corresponds to 
+                                            />
+                                            <Divider orientation='vertical'/>
+                                            <Text paddingLeft={5}> comments from users </Text>
+                                          </HStack>
+                                        </VStack>
+                                      </PopoverBody>
+                                      <Divider 
+                                        orientation='horizontal' 
+                                        color={'teal'}
+                                      />
+                                      <PopoverFooter blockSize={200}>
+                                        <HStack>
+                                          <Avatar />
+                                          <Container width={500}>
+                                            <Textarea
+                                            placeholder='Type a comment here...'
+                                            size={'lg'}
+                                            blockSize={150}
+                                            resize={'none'}
+                                            width={"100%"}
+                                            value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                                            onChange={handleCommentChange}
+                                          />
+                                          </Container>
+                                          <Button 
+                                            bg={"teal"} 
+                                            color={"white"} 
+                                            variant={'solid'}
+                                            fontSize={'x-large'}
+                                            height={160}
+                                            width={'70px'}
+                                            aria-label={'Send comment'}
+                                            onClick={() =>{
+                                              console.log(post);
+                                              addComment(post?.date_time)
+                                              // save comment to database and update comments with 
+                                              // latest post at top
+                                            }}
+                                          >
+                                            <AiOutlineSend />
+                                          </Button>
+                                        </HStack>
+                                      </PopoverFooter>
+                                  </PopoverContent>
+                                </Portal>
+                              </Popover>
                               {
                                 // check if this post has been saved
                                 isSaved(post.recipe.data) ? (
