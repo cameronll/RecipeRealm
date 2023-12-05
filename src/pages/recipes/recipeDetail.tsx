@@ -50,14 +50,11 @@ const RecipeDetail: React.FC = () => {
                     bg="white"
                     color="black"
                     minHeight="400">
-                    <Text noOfLines={2} fontSize={25} marginBottom={5}>
-                      Ingredients:
+                    {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).ingredients.map((ingredient: string) => (
+                      <Text noOfLines={2} fontSize={25} marginBottom={5}>
+                        <li>{ingredient}</li>
                     </Text>
-                    <ul>
-                      <li>Ingredient 1</li>Ingredient 1<li>Ingredient 1</li>
-                      Ingredient 1<li>Ingredient 1</li>Ingredient 1
-                      <li>Ingredient 1</li>
-                    </ul>
+                    ))}
                   </Box>
 
                   <Container>

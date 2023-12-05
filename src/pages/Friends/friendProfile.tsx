@@ -77,6 +77,7 @@ import {Link} from 'react-router-dom';
 import {FaUserFriends} from 'react-icons/fa';
 import {FiBookOpen} from 'react-icons/fi';
 import {RiPagesLine} from 'react-icons/ri';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -113,6 +114,11 @@ const FriendProfile: React.FC = (friend: any) => {
   const [numFriends, setNumFriends] = useState(0);
   const [profile, setProfile] = useState<any>();
   const [email, setEmail] = useState('');
+  const userEmail = JSON.parse(window.localStorage.getItem('EMAIL') as string);
+  // get the current user's profile and create a listener to the db
+  const [userProfile, userProfileLoading, userProfileError] = useDocumentData(
+    doc(db, 'users/', userEmail),
+  );
 
   useEffect(() => {
     async function getEmail() {
@@ -151,7 +157,6 @@ const FriendProfile: React.FC = (friend: any) => {
       const profileSnapshot = onSnapshot(doc(db, 'users/', email), doc => {
         setProfile(doc.data());
       });
-      console.log(email);
     }
   }, [email]);
 
@@ -161,21 +166,21 @@ const FriendProfile: React.FC = (friend: any) => {
   }
 
   // function to check if someone is in the current user's following list
-  function isFollowing(followingEmail: string) {
-    if (following?.includes(followingEmail)) {
+  function isFollowing() {
+    if (userProfile?.following.includes(email)) {
       return true;
     }
     return false;
   }
 
   // function to add a follower to your following list
-  async function addFollowing(followingEmail: string) {
+  async function addFollowing() {
     // if you don't follow them...
-    if (!isFollowing(followingEmail)) {
-      const getUser = doc(db, 'users/', email);
+    if (!isFollowing()) {
+      const getUser = doc(db, 'users/', userEmail);
       // update the user's doc, append their email to the end
       await updateDoc(getUser, {
-        following: arrayUnion(followingEmail),
+        following: arrayUnion(email),
       });
     } else {
       console.log('Already following');
@@ -183,13 +188,13 @@ const FriendProfile: React.FC = (friend: any) => {
   }
 
   // function to remove a follower from your following list
-  async function removeFollowing(followingEmail: string) {
+  async function removeFollowing() {
     // if you DO follow them...
-    if (isFollowing(followingEmail)) {
-      const getUser = doc(db, 'users/', email);
+    if (isFollowing()) {
+      const getUser = doc(db, 'users/', userEmail);
       // remove their name from your list
       await updateDoc(getUser, {
-        following: arrayRemove(followingEmail),
+        following: arrayRemove(email),
       });
     }
   }
@@ -288,15 +293,71 @@ const FriendProfile: React.FC = (friend: any) => {
               ) : (
 
               )} */}
-              <Link to="/CreateRecipe">
-                <Button
-                  w="300px"
-                  rightIcon={<FaUserPlus />}
-                  colorScheme="green"
-                  onClick={() => {}}>
-                  Follow
-                </Button>
-              </Link>
+              {
+                  // check if the poster is in the user's following list
+                  isFollowing() ? (
+                    <Button
+                      flex={1}
+                      fontSize={'sm'}
+                      rounded={'full'}
+                      bg={'red.400'}
+                      color={'white'}
+                      boxShadow={
+                        '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                      }
+                      _hover={{
+                        bg: 'red.500',
+                      }}
+                      _focus={{
+                        bg: 'red.500',
+                      }}
+                      onClick={() => {
+                        // if you follow this person,
+                        // unfollow them on click
+                        toast({
+                          title: 'Unfollowed',
+                          description:
+                            'Removed from your friends',
+                          status: 'error',
+                          duration: 3000,
+                          isClosable: true,
+                        });
+                        removeFollowing();
+                      }}>
+                      Unfollow
+                    </Button>
+                  ) : (
+                    <Button
+                      flex={1}
+                      fontSize={'sm'}
+                      rounded={'full'}
+                      bg={'green.400'}
+                      color={'white'}
+                      boxShadow={
+                        '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                      }
+                      _hover={{
+                        bg: 'green.500',
+                      }}
+                      _focus={{
+                        bg: 'green.500',
+                      }}
+                      onClick={() => {
+                          // add this person to your following list
+                          addFollowing();
+                          toast({
+                            title: 'Followed',
+                            description:
+                              'Added to your friends',
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                          });
+                      }}>
+                      Follow
+                    </Button>
+                  )
+                }
             </HStack>
           </VStack>
         </HStack>
@@ -312,11 +373,6 @@ const FriendProfile: React.FC = (friend: any) => {
             {' '}
             <FiBookOpen />
             <Text marginLeft={2}>Recipe Book</Text>
-          </Tab>
-          <Tab>
-            {' '}
-            <BsBookmarks />
-            <Text marginLeft={2}>Saved Recipes</Text>
           </Tab>
         </TabList>
         <TabPanels>

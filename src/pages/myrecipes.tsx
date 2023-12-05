@@ -24,6 +24,7 @@ import {
   getCountFromServer,
   onSnapshot,
   deleteDoc,
+  orderBy,
 } from 'firebase/firestore';
 import {
   browserLocalPersistence,
@@ -84,6 +85,7 @@ const Recipes: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+  const [liked, setLiked] = useState<any[]>([]);
   // email from local storage to get the current user
   /*
   console.log(email)
@@ -122,6 +124,28 @@ const Recipes: React.FC = () => {
   const [posts, postsLoading, postsError] = useCollectionData(postsQuery);
   // number of posts
   const numPosts = posts?.length;
+
+  // useEffect, when user has loaded, set the following list and the liked list
+  useEffect(() => {
+    //setLiked(profile?.liked);
+    async function getLikedPosts(){
+        const likedPostsQuery = query(
+          collection(db, 'posts'),
+          where('date_time', 'in', profile?.liked),
+          orderBy('date_time', 'desc')
+        );
+      const querySnapshot = await getDocs(likedPostsQuery)
+      const tempArray:any[] = [];
+      querySnapshot.forEach((doc) => {
+        tempArray.push(doc.data());
+      });
+      console.log(tempArray);
+      setLiked(tempArray);
+    }
+    if (profile){
+      getLikedPosts();
+    }
+  }, [profile]);
 
   // function to delete a recipe
   async function deleteMyRecipe(recipeName: string) {
@@ -295,6 +319,13 @@ const Recipes: React.FC = () => {
             {' '}
             <RiPagesLine />
             <Text marginLeft={2}>My Posts</Text>
+          </Tab>
+          <Tab>
+            {' '}
+            <AiOutlineHeart
+              style={{fontSize: '34px'}}
+            />
+            <Text marginLeft={2}>Liked Posts</Text>
           </Tab>
           <Tab>
             {' '}
@@ -853,6 +884,89 @@ const Recipes: React.FC = () => {
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
             {posts?.map(post => 
+            <Container
+              // minH="100vh"
+              shadow={1000}
+              maxW="container.lg"
+              color="white"
+              display="flex"
+              flexDirection="column"
+              padding={1}
+              rounded="lg"
+              boxShadow="dark-lg"
+              backgroundColor="rgba(0, 128, 128, 1)">
+              <Box
+                padding={4}
+                rounded="md"
+                maxW="container.lg"
+                backgroundColor="rgba(0, 128, 128, 1)"
+                color="white"
+                minH="350"
+                display="flex"
+                flexDirection="column">
+                <div style={{flex: 1, fontSize: '24px'}}>
+                  {post?.recipe.data.recipe_name}
+                </div>
+                <Center>
+                  <Image
+                    borderRadius="30px"
+                    src={
+                      post.pic
+                    }
+                    alt="No Picture"
+                    w={300}
+                    mb={15}
+                  />
+                </Center>
+                <Stack
+                  direction="row"
+                  spacing={4}
+                  align="stretch"
+                  marginBottom={3}>
+                  <Spacer />
+                  <Text>{post?.date_time.toDate().toString()}</Text>
+                </Stack>
+
+                <Box
+                  // boxShadow="xs"
+                  rounded="md"
+                  padding="4"
+                  bg="teal"
+                  maxW="container.lg"
+                  // bgColor="#4fb9af"
+                >
+                  <Flex>
+                    <Text fontSize={18}>Posted by: </Text>
+                    <Text fontSize={18} marginLeft={2}>
+                      {profile?.username}
+                    </Text>
+
+                    <Button
+                      marginLeft={2}
+                      colorScheme="whiteAlpha"
+                      variant="outline"
+                      size="xs"
+                      onClick={() => {
+                        window.localStorage.setItem(
+                          'VIEWRECIPE',
+                          JSON.stringify(post?.recipe.data),
+                        );
+                        navigate('../recipeDetail');
+                      }}>
+                      View Recipe
+                    </Button>
+                  </Flex>
+
+                  <Text fontSize={20}>Caption:</Text>
+                  <Text>{post.description}</Text>
+                </Box>
+              </Box>
+            </Container>
+            )}
+          </TabPanel>
+          <TabPanel minH="100vh">
+            {/* posts display, incomplete */}
+            {liked?.map(post => 
             <Container
               // minH="100vh"
               shadow={1000}
