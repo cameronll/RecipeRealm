@@ -549,7 +549,10 @@ const Recipes: React.FC = () => {
                                 color="white"
                                 maxW="container.sm"
                                 onClick={() => {
-                                  //Print Recipe
+                                  window.localStorage.setItem(
+                                    'VIEWRECIPE',
+                                    JSON.stringify(recipe.data),
+                                  );
                                 }}>
                                 <AiFillPrinter />
                                 <Text marginLeft={2}>Print Recipe</Text>
