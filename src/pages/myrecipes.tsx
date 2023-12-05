@@ -852,6 +852,7 @@ const Recipes: React.FC = () => {
           </TabPanel>
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
+            {posts?.map(post => 
             <Container
               // minH="100vh"
               shadow={1000}
@@ -873,13 +874,13 @@ const Recipes: React.FC = () => {
                 display="flex"
                 flexDirection="column">
                 <div style={{flex: 1, fontSize: '24px'}}>
-                  post?.recipe.data.recipe_name
+                  {post?.recipe.data.recipe_name}
                 </div>
                 <Center>
                   <Image
                     borderRadius="30px"
                     src={
-                      'default-image-icon-missing-picture-page-vector-40546530.jpg'
+                      post.pic
                     }
                     alt="No Picture"
                     w={300}
@@ -892,7 +893,7 @@ const Recipes: React.FC = () => {
                   align="stretch"
                   marginBottom={3}>
                   <Spacer />
-                  <Text>post?.date_time.toDate().toString()</Text>
+                  <Text>{post?.date_time.toDate().toString()}</Text>
                 </Stack>
 
                 <Box
@@ -906,23 +907,31 @@ const Recipes: React.FC = () => {
                   <Flex>
                     <Text fontSize={18}>Posted by: </Text>
                     <Text fontSize={18} marginLeft={2}>
-                      profiles[getIndex(profiles, post.email)]?.username
+                      {profile?.username}
                     </Text>
 
                     <Button
                       marginLeft={2}
                       colorScheme="whiteAlpha"
                       variant="outline"
-                      size="xs">
+                      size="xs"
+                      onClick={() => {
+                        window.localStorage.setItem(
+                          'VIEWRECIPE',
+                          JSON.stringify(post?.recipe.data),
+                        );
+                        navigate('../recipeDetail');
+                      }}>
                       View Recipe
                     </Button>
                   </Flex>
 
                   <Text fontSize={20}>Caption:</Text>
-                  <Text>post.description</Text>
+                  <Text>{post.description}</Text>
                 </Box>
               </Box>
             </Container>
+            )}
           </TabPanel>
           <TabPanel minH="100vh">
             <VStack>
