@@ -987,6 +987,89 @@ const Recipes: React.FC = () => {
             )}
           </TabPanel>
           <TabPanel minH="100vh">
+            {/* posts display, incomplete */}
+            {liked?.map(post => 
+            <Container
+              // minH="100vh"
+              shadow={1000}
+              maxW="container.lg"
+              color="white"
+              display="flex"
+              flexDirection="column"
+              padding={1}
+              rounded="lg"
+              boxShadow="dark-lg"
+              backgroundColor="rgba(0, 128, 128, 1)">
+              <Box
+                padding={4}
+                rounded="md"
+                maxW="container.lg"
+                backgroundColor="rgba(0, 128, 128, 1)"
+                color="white"
+                minH="350"
+                display="flex"
+                flexDirection="column">
+                <div style={{flex: 1, fontSize: '24px'}}>
+                  {post?.recipe.data.recipe_name}
+                </div>
+                <Center>
+                  <Image
+                    borderRadius="30px"
+                    src={
+                      post.pic
+                    }
+                    alt="No Picture"
+                    w={300}
+                    mb={15}
+                  />
+                </Center>
+                <Stack
+                  direction="row"
+                  spacing={4}
+                  align="stretch"
+                  marginBottom={3}>
+                  <Spacer />
+                  <Text>{post?.date_time.toDate().toString()}</Text>
+                </Stack>
+
+                <Box
+                  // boxShadow="xs"
+                  rounded="md"
+                  padding="4"
+                  bg="teal"
+                  maxW="container.lg"
+                  // bgColor="#4fb9af"
+                >
+                  <Flex>
+                    <Text fontSize={18}>Posted by: </Text>
+                    <Text fontSize={18} marginLeft={2}>
+                      {profile?.username}
+                    </Text>
+
+                    <Button
+                      marginLeft={2}
+                      colorScheme="whiteAlpha"
+                      variant="outline"
+                      size="xs"
+                      onClick={() => {
+                        window.localStorage.setItem(
+                          'VIEWRECIPE',
+                          JSON.stringify(post?.recipe.data),
+                        );
+                        navigate('../recipeDetail');
+                      }}>
+                      View Recipe
+                    </Button>
+                  </Flex>
+
+                  <Text fontSize={20}>Caption:</Text>
+                  <Text>{post.description}</Text>
+                </Box>
+              </Box>
+            </Container>
+            )}
+          </TabPanel>
+          <TabPanel minH="100vh">
             <VStack>
               {profile?.following.length === 0 ? (
                 <Text> You have zero friends</Text>
