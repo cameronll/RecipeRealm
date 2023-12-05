@@ -130,21 +130,21 @@ const Recipes: React.FC = () => {
   // useEffect, when user has loaded, set the following list and the liked list
   useEffect(() => {
     //setLiked(profile?.liked);
-    async function getLikedPosts(){
-        const likedPostsQuery = query(
-          collection(db, 'posts'),
-          where('date_time', 'in', profile?.liked),
-          orderBy('date_time', 'desc')
-        );
-      const querySnapshot = await getDocs(likedPostsQuery)
-      const tempArray:any[] = [];
-      querySnapshot.forEach((doc) => {
+    async function getLikedPosts() {
+      const likedPostsQuery = query(
+        collection(db, 'posts'),
+        where('date_time', 'in', profile?.liked),
+        orderBy('date_time', 'desc'),
+      );
+      const querySnapshot = await getDocs(likedPostsQuery);
+      const tempArray: any[] = [];
+      querySnapshot.forEach(doc => {
         tempArray.push(doc.data());
       });
       console.log(tempArray);
       setLiked(tempArray);
     }
-    if (profile){
+    if (profile) {
       getLikedPosts();
     }
   }, [profile]);
@@ -341,9 +341,7 @@ const Recipes: React.FC = () => {
           </Tab>
           <Tab>
             {' '}
-            <AiOutlineHeart
-              style={{fontSize: '34px'}}
-            />
+            <AiOutlineHeart style={{fontSize: '34px'}} />
             <Text marginLeft={2}>Liked Posts</Text>
           </Tab>
           <Tab>
@@ -851,20 +849,25 @@ const Recipes: React.FC = () => {
                             </Accordion>
                           </VStack>
                           <HStack align="right" marginTop={2}>
-                            <Button
-                              boxShadow="xs"
-                              rounded="md"
-                              variant="outline"
-                              padding="4"
-                              colorScheme="teal"
-                              color="white"
-                              maxW="container.sm"
-                              onClick={() => {
-                                //Print Recipe
-                              }}>
-                              <AiFillPrinter />
-                              <Text marginLeft={2}>Print Recipe</Text>
-                            </Button>
+                            <Link to="/RecipeDetail">
+                              <Button
+                                boxShadow="xs"
+                                rounded="md"
+                                variant="outline"
+                                padding="4"
+                                colorScheme="teal"
+                                color="white"
+                                maxW="container.sm"
+                                onClick={() => {
+                                  window.localStorage.setItem(
+                                    'VIEWRECIPE',
+                                    JSON.stringify(recipe.data),
+                                  );
+                                }}>
+                                <AiFillPrinter />
+                                <Text marginLeft={2}>Print Recipe</Text>
+                              </Button>
+                            </Link>
                             <Button
                               marginLeft={130}
                               boxShadow="xs"
@@ -905,169 +908,165 @@ const Recipes: React.FC = () => {
           </TabPanel>
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
-            {posts?.map(post => 
-            <Container
-              // minH="100vh"
-              shadow={1000}
-              maxW="container.lg"
-              color="white"
-              display="flex"
-              flexDirection="column"
-              padding={1}
-              rounded="lg"
-              boxShadow="dark-lg"
-              backgroundColor="rgba(0, 128, 128, 1)">
-              <Box
-                padding={4}
-                rounded="md"
+            {posts?.map(post => (
+              <Container
+                // minH="100vh"
+                shadow={1000}
                 maxW="container.lg"
-                backgroundColor="rgba(0, 128, 128, 1)"
                 color="white"
-                minH="350"
                 display="flex"
-                flexDirection="column">
-                <div style={{flex: 1, fontSize: '24px'}}>
-                  {post?.recipe.data.recipe_name}
-                </div>
-                <Center>
-                  <Image
-                    borderRadius="30px"
-                    src={
-                      post.pic
-                    }
-                    alt="No Picture"
-                    w={300}
-                    mb={15}
-                  />
-                </Center>
-                <Stack
-                  direction="row"
-                  spacing={4}
-                  align="stretch"
-                  marginBottom={3}>
-                  <Spacer />
-                  <Text>{post?.date_time.toDate().toString()}</Text>
-                </Stack>
-
+                flexDirection="column"
+                padding={1}
+                rounded="lg"
+                boxShadow="dark-lg"
+                backgroundColor="rgba(0, 128, 128, 1)">
                 <Box
-                  // boxShadow="xs"
+                  padding={4}
                   rounded="md"
-                  padding="4"
-                  bg="teal"
                   maxW="container.lg"
-                  // bgColor="#4fb9af"
-                >
-                  <Flex>
-                    <Text fontSize={18}>Posted by: </Text>
-                    <Text fontSize={18} marginLeft={2}>
-                      {profile?.username}
-                    </Text>
+                  backgroundColor="rgba(0, 128, 128, 1)"
+                  color="white"
+                  minH="350"
+                  display="flex"
+                  flexDirection="column">
+                  <div style={{flex: 1, fontSize: '24px'}}>
+                    {post?.recipe.data.recipe_name}
+                  </div>
+                  <Center>
+                    <Image
+                      borderRadius="30px"
+                      src={post.pic}
+                      alt="No Picture"
+                      w={300}
+                      mb={15}
+                    />
+                  </Center>
+                  <Stack
+                    direction="row"
+                    spacing={4}
+                    align="stretch"
+                    marginBottom={3}>
+                    <Spacer />
+                    <Text>{post?.date_time.toDate().toString()}</Text>
+                  </Stack>
 
-                    <Button
-                      marginLeft={2}
-                      colorScheme="whiteAlpha"
-                      variant="outline"
-                      size="xs"
-                      onClick={() => {
-                        window.localStorage.setItem(
-                          'VIEWRECIPE',
-                          JSON.stringify(post?.recipe.data),
-                        );
-                        navigate('../recipeDetail');
-                      }}>
-                      View Recipe
-                    </Button>
-                  </Flex>
+                  <Box
+                    // boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="teal"
+                    maxW="container.lg"
+                    // bgColor="#4fb9af"
+                  >
+                    <Flex>
+                      <Text fontSize={18}>Posted by: </Text>
+                      <Text fontSize={18} marginLeft={2}>
+                        {profile?.username}
+                      </Text>
 
-                  <Text fontSize={20}>Caption:</Text>
-                  <Text>{post.description}</Text>
+                      <Button
+                        marginLeft={2}
+                        colorScheme="whiteAlpha"
+                        variant="outline"
+                        size="xs"
+                        onClick={() => {
+                          window.localStorage.setItem(
+                            'VIEWRECIPE',
+                            JSON.stringify(post?.recipe.data),
+                          );
+                          navigate('../recipeDetail');
+                        }}>
+                        View Recipe
+                      </Button>
+                    </Flex>
+
+                    <Text fontSize={20}>Caption:</Text>
+                    <Text>{post.description}</Text>
+                  </Box>
                 </Box>
-              </Box>
-            </Container>
-            )}
+              </Container>
+            ))}
           </TabPanel>
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
-            {liked?.map(post => 
-            <Container
-              // minH="100vh"
-              shadow={1000}
-              maxW="container.lg"
-              color="white"
-              display="flex"
-              flexDirection="column"
-              padding={1}
-              rounded="lg"
-              boxShadow="dark-lg"
-              backgroundColor="rgba(0, 128, 128, 1)">
-              <Box
-                padding={4}
-                rounded="md"
+            {liked?.map(post => (
+              <Container
+                // minH="100vh"
+                shadow={1000}
                 maxW="container.lg"
-                backgroundColor="rgba(0, 128, 128, 1)"
                 color="white"
-                minH="350"
                 display="flex"
-                flexDirection="column">
-                <div style={{flex: 1, fontSize: '24px'}}>
-                  {post?.recipe.data.recipe_name}
-                </div>
-                <Center>
-                  <Image
-                    borderRadius="30px"
-                    src={
-                      post.pic
-                    }
-                    alt="No Picture"
-                    w={300}
-                    mb={15}
-                  />
-                </Center>
-                <Stack
-                  direction="row"
-                  spacing={4}
-                  align="stretch"
-                  marginBottom={3}>
-                  <Spacer />
-                  <Text>{post?.date_time.toDate().toString()}</Text>
-                </Stack>
-
+                flexDirection="column"
+                padding={1}
+                rounded="lg"
+                boxShadow="dark-lg"
+                backgroundColor="rgba(0, 128, 128, 1)">
                 <Box
-                  // boxShadow="xs"
+                  padding={4}
                   rounded="md"
-                  padding="4"
-                  bg="teal"
                   maxW="container.lg"
-                  // bgColor="#4fb9af"
-                >
-                  <Flex>
-                    <Text fontSize={18}>Posted by: </Text>
-                    <Text fontSize={18} marginLeft={2}>
-                      {profile?.username}
-                    </Text>
+                  backgroundColor="rgba(0, 128, 128, 1)"
+                  color="white"
+                  minH="350"
+                  display="flex"
+                  flexDirection="column">
+                  <div style={{flex: 1, fontSize: '24px'}}>
+                    {post?.recipe.data.recipe_name}
+                  </div>
+                  <Center>
+                    <Image
+                      borderRadius="30px"
+                      src={post.pic}
+                      alt="No Picture"
+                      w={300}
+                      mb={15}
+                    />
+                  </Center>
+                  <Stack
+                    direction="row"
+                    spacing={4}
+                    align="stretch"
+                    marginBottom={3}>
+                    <Spacer />
+                    <Text>{post?.date_time.toDate().toString()}</Text>
+                  </Stack>
 
-                    <Button
-                      marginLeft={2}
-                      colorScheme="whiteAlpha"
-                      variant="outline"
-                      size="xs"
-                      onClick={() => {
-                        window.localStorage.setItem(
-                          'VIEWRECIPE',
-                          JSON.stringify(post?.recipe.data),
-                        );
-                        navigate('../recipeDetail');
-                      }}>
-                      View Recipe
-                    </Button>
-                  </Flex>
+                  <Box
+                    // boxShadow="xs"
+                    rounded="md"
+                    padding="4"
+                    bg="teal"
+                    maxW="container.lg"
+                    // bgColor="#4fb9af"
+                  >
+                    <Flex>
+                      <Text fontSize={18}>Posted by: </Text>
+                      <Text fontSize={18} marginLeft={2}>
+                        {profile?.username}
+                      </Text>
 
-                  <Text fontSize={20}>Caption:</Text>
-                  <Text>{post.description}</Text>
+                      <Button
+                        marginLeft={2}
+                        colorScheme="whiteAlpha"
+                        variant="outline"
+                        size="xs"
+                        onClick={() => {
+                          window.localStorage.setItem(
+                            'VIEWRECIPE',
+                            JSON.stringify(post?.recipe.data),
+                          );
+                          navigate('../recipeDetail');
+                        }}>
+                        View Recipe
+                      </Button>
+                    </Flex>
+
+                    <Text fontSize={20}>Caption:</Text>
+                    <Text>{post.description}</Text>
+                  </Box>
                 </Box>
-              </Box>
-            </Container>
-            )}
+              </Container>
+            ))}
           </TabPanel>
           <TabPanel minH="100vh">
             <VStack>

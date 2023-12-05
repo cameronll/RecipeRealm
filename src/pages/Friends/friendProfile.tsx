@@ -77,7 +77,7 @@ import {Link} from 'react-router-dom';
 import {FaUserFriends} from 'react-icons/fa';
 import {FiBookOpen} from 'react-icons/fi';
 import {RiPagesLine} from 'react-icons/ri';
-import { useDocumentData } from 'react-firebase-hooks/firestore';
+import {useDocumentData} from 'react-firebase-hooks/firestore';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -294,70 +294,70 @@ const FriendProfile: React.FC = (friend: any) => {
 
               )} */}
               {
-                  // check if the poster is in the user's following list
-                  isFollowing() ? (
-                    <Button
-                      flex={1}
-                      fontSize={'sm'}
-                      rounded={'full'}
-                      bg={'red.400'}
-                      color={'white'}
-                      boxShadow={
-                        '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-                      }
-                      _hover={{
-                        bg: 'red.500',
-                      }}
-                      _focus={{
-                        bg: 'red.500',
-                      }}
-                      onClick={() => {
-                        // if you follow this person,
-                        // unfollow them on click
-                        toast({
-                          title: 'Unfollowed',
-                          description:
-                            'Removed from your friends',
-                          status: 'error',
-                          duration: 3000,
-                          isClosable: true,
-                        });
-                        removeFollowing();
-                      }}>
-                      Unfollow
-                    </Button>
-                  ) : (
-                    <Button
-                      flex={1}
-                      fontSize={'sm'}
-                      rounded={'full'}
-                      bg={'green.400'}
-                      color={'white'}
-                      boxShadow={
-                        '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
-                      }
-                      _hover={{
-                        bg: 'green.500',
-                      }}
-                      _focus={{
-                        bg: 'green.500',
-                      }}
-                      onClick={() => {
-                          // add this person to your following list
-                          addFollowing();
-                          toast({
-                            title: 'Followed',
-                            description:
-                              'Added to your friends',
-                            status: 'success',
-                            duration: 3000,
-                            isClosable: true,
-                          });
-                      }}>
-                      Follow
-                    </Button>
-                  )
-                }
+                // check if the poster is in the user's following list
+                isFollowing() ? (
+                  <Button
+                    flex={1}
+                    fontSize={'sm'}
+                    rounded={'full'}
+                    bg={'red.400'}
+                    color={'white'}
+                    width={'600px'}
+                    boxShadow={
+                      '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                    }
+                    _hover={{
+                      bg: 'red.500',
+                    }}
+                    _focus={{
+                      bg: 'red.500',
+                    }}
+                    onClick={() => {
+                      // if you follow this person,
+                      // unfollow them on click
+                      toast({
+                        title: 'Unfollowed',
+                        description: 'Removed from your friends',
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true,
+                      });
+                      removeFollowing();
+                    }}>
+                    Unfollow
+                  </Button>
+                ) : (
+                  <Button
+                    flex={1}
+                    fontSize={'sm'}
+                    rounded={'full'}
+                    bg={'green.400'}
+                    width={'600px'}
+                    color={'white'}
+                    boxShadow={
+                      '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                    }
+                    _hover={{
+                      bg: 'green.500',
+                    }}
+                    _focus={{
+                      bg: 'green.500',
+                    }}
+                    onClick={() => {
+                      // add this person to your following list
+                      addFollowing();
+                      toast({
+                        title: 'Followed',
+                        description: 'Added to your friends',
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                      });
+                    }}>
+                    Follow
+                  </Button>
+                )
+              }
             </HStack>
           </VStack>
         </HStack>
@@ -610,20 +610,25 @@ const FriendProfile: React.FC = (friend: any) => {
                             </Accordion>
                           </VStack>
                           <HStack align="right" marginTop={2}>
-                            <Button
-                              boxShadow="xs"
-                              rounded="md"
-                              variant="outline"
-                              padding="4"
-                              colorScheme="teal"
-                              color="white"
-                              maxW="container.sm"
-                              onClick={() => {
-                                //Print Recipe
-                              }}>
-                              <AiFillPrinter />
-                              <Text marginLeft={2}>Print Recipe</Text>
-                            </Button>
+                            <Link to="/RecipeDetail">
+                              <Button
+                                boxShadow="xs"
+                                rounded="md"
+                                variant="outline"
+                                padding="4"
+                                colorScheme="teal"
+                                color="white"
+                                maxW="container.sm"
+                                onClick={() => {
+                                  window.localStorage.setItem(
+                                    'VIEWRECIPE',
+                                    JSON.stringify(recipe.data),
+                                  );
+                                }}>
+                                <AiFillPrinter />
+                                <Text marginLeft={2}>Print Recipe</Text>
+                              </Button>
+                            </Link>
                           </HStack>
                         </Container>
                       ))
@@ -772,7 +777,7 @@ const FriendProfile: React.FC = (friend: any) => {
                     padding="4"
                     colorScheme="teal"
                     color="white"
-                    maxW="container.400"
+                    maxW="container.lg"
                     onClick={() => {
                       //Print Recipe
                     }}>

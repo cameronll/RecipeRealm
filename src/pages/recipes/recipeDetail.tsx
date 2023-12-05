@@ -86,11 +86,20 @@ const RecipeDetail: React.FC = () => {
                     <Text noOfLines={2} fontSize={25} marginBottom={5}>
                       Ingredients:
                     </Text>
-                    <ul>
-                      <li>Ingredient 1</li>Ingredient 1<li>Ingredient 1</li>
-                      Ingredient 1<li>Ingredient 1</li>Ingredient 1
-                      <li>Ingredient 1</li>
-                    </ul>
+                    {JSON.parse(
+                      window.localStorage.getItem('VIEWRECIPE') as string,
+                    ).ingredients.map((ingredient: string) => (
+                      <Text
+                        noOfLines={2}
+                        fontSize={recipeSize(
+                          JSON.parse(
+                            window.localStorage.getItem('VIEWRECIPE') as string,
+                          ).ingredients.length,
+                        )}
+                        marginBottom={5}>
+                        <li>{ingredient}</li>
+                      </Text>
+                    ))}
                   </Box>
 
                   <Container>
