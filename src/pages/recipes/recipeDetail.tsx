@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import {useReactToPrint} from 'react-to-print';
 import Navbar from '../../components/Navbar';
+import {AiFillPrinter} from 'react-icons/ai';
 
 const RecipeDetail: React.FC = () => {
   const componentRef = useRef<HTMLDivElement | null>(null);
@@ -22,24 +23,56 @@ const RecipeDetail: React.FC = () => {
     onAfterPrint: () => alert('Print Success'),
   });
 
+  function recipeSize(ing: number) {
+    return 17 - ing * 0.2 + 'px';
+  }
+
   return (
     <>
       <Navbar />
       {/* <Box ref={componentRef}> Bigger page of all Details of Recipe</Box> */}
       <Center>
-        <Box w="60%" p={4}>
+        <Button
+          marginTop={3}
+          boxShadow="xs"
+          rounded="md"
+          variant="solid"
+          colorScheme="teal"
+          marginBottom={3}
+          padding={5}
+          width={1000}
+          maxW="container.lg"
+          onClick={handlePrint}>
+          <AiFillPrinter />
+          <Text marginLeft={2}>Print Recipe</Text>
+        </Button>
+      </Center>
+      <Center>
+        <Box w="60%" p={4} rounded={40}>
           <Center>
-            <Box ref={componentRef} bg="lightgray" w="100%" p={4} color="white">
+            <Box
+              ref={componentRef}
+              bg="lightgray"
+              w="100%"
+              p={4}
+              color="white"
+              rounded={40}>
               <VStack>
-                <Box w="100%" bgColor={'teal.500'}>
+                <Box w="100%" bgColor={'#36989c'} rounded={40}>
                   <Image
                     borderRadius="30px"
-                    src={"newlogoteal.png"}
+                    src={'newlogoteal.png'}
                     alt="Logo"
                     w={120}
                   />
                 </Box>
-                <Heading>{JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).recipe_name}</Heading>
+                <Heading>
+                  {
+                    JSON.parse(
+                      window.localStorage.getItem('VIEWRECIPE') as string,
+                    ).recipe_name
+                  }
+                </Heading>
                 <HStack alignItems={'start'} width="100%" paddingBottom={8}>
                   <Box
                     w="60%"
@@ -50,18 +83,25 @@ const RecipeDetail: React.FC = () => {
                     bg="white"
                     color="black"
                     minHeight="400">
-                    {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).ingredients.map((ingredient: string) => (
-                      <Text noOfLines={2} fontSize={25} marginBottom={5}>
-                        <li>{ingredient}</li>
+                    <Text noOfLines={2} fontSize={25} marginBottom={5}>
+                      Ingredients:
                     </Text>
-                    ))}
+                    <ul>
+                      <li>Ingredient 1</li>Ingredient 1<li>Ingredient 1</li>
+                      Ingredient 1<li>Ingredient 1</li>Ingredient 1
+                      <li>Ingredient 1</li>
+                    </ul>
                   </Box>
 
                   <Container>
                     <Center>
                       <Image
                         borderRadius="30px"
-                        src={JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).pic}
+                        src={
+                          JSON.parse(
+                            window.localStorage.getItem('VIEWRECIPE') as string,
+                          ).pic
+                        }
                         alt="Logo"
                         w={480}
                         height={400}
@@ -79,25 +119,56 @@ const RecipeDetail: React.FC = () => {
                     bg="white"
                     color="black"
                     width="90%"
-                    marginBottom={5}>
+                    marginBottom={5}
+                    padding={5}>
                     {/* displaying recipe data */}
-                    <Text noOfLines={2} fontSize={20}>
-                      Difficulty: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).difficulty}
+                    <Text noOfLines={2} fontSize={17}>
+                      Difficulty:{' '}
+                      {
+                        JSON.parse(
+                          window.localStorage.getItem('VIEWRECIPE') as string,
+                        ).difficulty
+                      }
                     </Text>
-                    <Text noOfLines={2} fontSize={20}>
-                      Time: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).cooking_time}
+                    <Text noOfLines={2} fontSize={17}>
+                      Time:{' '}
+                      {
+                        JSON.parse(
+                          window.localStorage.getItem('VIEWRECIPE') as string,
+                        ).cooking_time
+                      }
                     </Text>
-                    <Text noOfLines={2} fontSize={20}>
-                      Servings: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).servings}
+                    <Text noOfLines={2} fontSize={17}>
+                      Servings:{' '}
+                      {
+                        JSON.parse(
+                          window.localStorage.getItem('VIEWRECIPE') as string,
+                        ).servings
+                      }
                     </Text>
-                    <Text noOfLines={2} fontSize={20}>
-                      Cost Per Serving: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).cost}
+                    <Text noOfLines={2} fontSize={17}>
+                      Cost Per Serving:{' '}
+                      {
+                        JSON.parse(
+                          window.localStorage.getItem('VIEWRECIPE') as string,
+                        ).cost
+                      }
                     </Text>
-                    <Text noOfLines={2} fontSize={20}>
-                      Cooking Applications: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).cooking_applications}
+                    <Text noOfLines={2} fontSize={17}>
+                      Cooking Applications:{' '}
+                      {
+                        JSON.parse(
+                          window.localStorage.getItem('VIEWRECIPE') as string,
+                        ).cooking_applications
+                      }
                     </Text>
-                    <Text noOfLines={2} fontSize={20}>
-                      Allergens: {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).allergens }
+                    <Text noOfLines={2} fontSize={17}>
+                      Allergens:{' '}
+                      {
+                        JSON.parse(
+                          window.localStorage.getItem('VIEWRECIPE') as string,
+                        ).allergens
+                      }
                     </Text>
                   </Box>
                   <Box
@@ -107,15 +178,17 @@ const RecipeDetail: React.FC = () => {
                     bg="white"
                     color="black"
                     width="90%"
-                    height="170px"
+                    height="188px"
                     marginBottom={5}
+                    padding={5}
                     paddingBlock={2}>
-                    Notes
-                    <Text noOfLines={2} fontSize={20}></Text>
+                    <Text noOfLines={2} fontSize={20}>
+                      Notes
+                    </Text>
                   </Box>
                 </VStack>
                 <Box
-                  w="50%"
+                  w="60%"
                   padding="8"
                   boxShadow="xs"
                   rounded="md"
@@ -127,14 +200,17 @@ const RecipeDetail: React.FC = () => {
                   <Text noOfLines={2} fontSize={25} marginBottom={5}>
                     Instructions:
                   </Text>
-                  {JSON.parse(window.localStorage.getItem('VIEWRECIPE') as string).instructions}
+                  {
+                    JSON.parse(
+                      window.localStorage.getItem('VIEWRECIPE') as string,
+                    ).instructions
+                  }
                 </Box>
               </HStack>
             </Box>
           </Center>
         </Box>
       </Center>
-      <Button>Print this out</Button>
     </>
   );
 };

@@ -322,9 +322,9 @@ const Explore: React.FC = () => {
 
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
-  }
+  };
 
-  async function addComment(datetime: any){
+  async function addComment(datetime: any) {
     // update the post
     const q = query(
       collection(db, 'posts/'),
@@ -333,9 +333,11 @@ const Explore: React.FC = () => {
     const docs = await getDocs(q);
     // add a like to the post
     docs.forEach(doc => {
-      console.log(doc.data())
+      console.log(doc.data());
       updateDoc(doc.ref, {
-        comments: arrayUnion(JSON.parse(window.localStorage.getItem('COMMENT') as string))
+        comments: arrayUnion(
+          JSON.parse(window.localStorage.getItem('COMMENT') as string),
+        ),
       });
     });
     window.localStorage.removeItem('COMMENT');
@@ -344,24 +346,16 @@ const Explore: React.FC = () => {
   /**
    * Function that diplays a drawer with a space for the user to comment on the select post and see all the
    * other comments mades towards the same select post from other users.
-   * @returns 
+   * @returns
    */
-  function displayComments(post: any){
-    
-    return(
+  function displayComments(post: any) {
+    return (
       <>
         <Button variant="link" colorScheme="white" onClick={onOpen}>
-          <BsFillChatDotsFill
-            style={{fontSize: '34px'}}
-          />
+          <BsFillChatDotsFill style={{fontSize: '34px'}} />
         </Button>
 
-        <Drawer
-          isOpen={isOpen}
-          placement="right"
-          onClose={onClose}
-          size={'lg'}
-        >
+        <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={'lg'}>
           {/* <DrawerOverlay /> */}
           <DrawerContent>
             <DrawerCloseButton />
@@ -371,8 +365,7 @@ const Explore: React.FC = () => {
               paddingBottom={'20px'}
               fontSize={'30px'}
               textAlign={'center'}
-              color={'white'}
-            >
+              color={'white'}>
               <Text>Comments on @{post.username}'s post</Text>
             </DrawerHeader>
             <DrawerBody
@@ -380,64 +373,64 @@ const Explore: React.FC = () => {
               flexDir={'column'}
               justifyContent={'space-between'}
               height={'100%'}
-              overflowY={"auto"}
-            >
+              overflowY={'auto'}>
               {/**
                * get all comments in the database to display in the DrawerBody
                */}
-              <VStack >
+              <VStack>
                 {/* commentsOnPost.map((comment) => {the HStack below}) */}
                 <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                  <Avatar /* The profile pic of the user whose post it corresponds to *//>
-                  <Divider orientation='vertical'/>
-                  <Text paddingLeft={5}> comment from user stored in the posts db </Text>
+                  <Avatar /* The profile pic of the user whose post it corresponds to */
+                  />
+                  <Divider orientation="vertical" />
+                  <Text paddingLeft={5}>
+                    {' '}
+                    comment from user stored in the posts db{' '}
+                  </Text>
                 </HStack>
               </VStack>
             </DrawerBody>
-            <Divider 
-              orientation='horizontal' 
-              color={'teal'}
-            />
+            <Divider orientation="horizontal" color={'teal'} />
             <DrawerFooter blockSize={200}>
               <HStack>
                 <Avatar />
                 <Container width={500}>
                   <Textarea
-                  placeholder='Type a comment here...'
-                  size={'lg'}
-                  blockSize={150}
-                  resize={'none'}
-                  width={"100%"}
-                  value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
-                  onChange={handleCommentChange}
-                />
+                    placeholder="Type a comment here..."
+                    size={'lg'}
+                    blockSize={150}
+                    resize={'none'}
+                    width={'100%'}
+                    value={JSON.parse(
+                      window.localStorage.getItem('COMMENTS') as string,
+                    )}
+                    onChange={handleCommentChange}
+                  />
                 </Container>
-                <Button 
-                  bg={"teal"} 
-                  color={"white"} 
+                <Button
+                  bg={'teal'}
+                  color={'white'}
                   variant={'solid'}
                   fontSize={'x-large'}
                   height={160}
                   width={'70px'}
                   aria-label={'Send comment'}
-                  onClick={() =>{
+                  onClick={() => {
                     console.log(post);
-                    addComment(post?.date_time)
-                    // save comment to database and update comments with 
+                    addComment(post?.date_time);
+                    // save comment to database and update comments with
                     // latest post at top
-                  }}
-                >
+                  }}>
                   <AiOutlineSend />
                   {/* AiOutlineComment -> <AiOutlineComment />
-                  */}
+                   */}
                 </Button>
               </HStack>
-              
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
       </>
-    )
+    );
   }
 
   return (
@@ -529,12 +522,13 @@ const Explore: React.FC = () => {
                               />
                             </Center>
                           </VStack>
-                          <VStack width="60%">
+                          <VStack width="60%" align="flex-start">
                             <Stack
                               direction="row"
                               spacing={4}
                               align="stretch"
-                              marginBottom={3}>
+                              marginBottom={3}
+                              paddingLeft="4">
                               {
                                 // check if the post has been liked
                                 isLiked(post.date_time) ? (
@@ -565,92 +559,105 @@ const Explore: React.FC = () => {
                               </Button>
                             */}
 
-<Button variant="link" colorScheme="white" onClick={onOpen}>
-          <BsFillChatDotsFill
-            style={{fontSize: '34px'}}
-          />
-        </Button>
+                              <Button
+                                variant="link"
+                                colorScheme="white"
+                                onClick={onOpen}>
+                                <BsFillChatDotsFill
+                                  style={{fontSize: '34px'}}
+                                />
+                              </Button>
 
-        <Drawer
-          isOpen={isOpen}
-          placement="right"
-          onClose={onClose}
-          size={'lg'}
-        >
-          {/* <DrawerOverlay /> */}
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader
-              bg={'teal'}
-              paddingTop={'20px'}
-              paddingBottom={'20px'}
-              fontSize={'30px'}
-              textAlign={'center'}
-              color={'white'}
-            >
-              <Text>Comments on @{post.username}'s post</Text>
-            </DrawerHeader>
-            <DrawerBody
-              display={'flex'}
-              flexDir={'column'}
-              justifyContent={'space-between'}
-              height={'100%'}
-              overflowY={"auto"}
-            >
-              {/**
-               * get all comments in the database to display in the DrawerBody
-               */}
-              <VStack >
-                {/* commentsOnPost.map((comment) => {the HStack below}) */}
-                <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                  <Avatar /* The profile pic of the user whose post it corresponds to *//>
-                  <Divider orientation='vertical'/>
-                  <Text paddingLeft={5}> comment from user stored in the posts db </Text>
-                </HStack>
-              </VStack>
-            </DrawerBody>
-            <Divider 
-              orientation='horizontal' 
-              color={'teal'}
-            />
-            <DrawerFooter blockSize={200}>
-              <HStack>
-                <Avatar />
-                <Container width={500}>
-                  <Textarea
-                  placeholder='Type a comment here...'
-                  size={'lg'}
-                  blockSize={150}
-                  resize={'none'}
-                  width={"100%"}
-                  value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
-                  onChange={handleCommentChange}
-                />
-                </Container>
-                <Button 
-                  bg={"teal"} 
-                  color={"white"} 
-                  variant={'solid'}
-                  fontSize={'x-large'}
-                  height={160}
-                  width={'70px'}
-                  aria-label={'Send comment'}
-                  onClick={() =>{
-                    console.log(post);
-                    addComment(post?.date_time)
-                    // save comment to database and update comments with 
-                    // latest post at top
-                  }}
-                >
-                  <AiOutlineSend />
-                  {/* AiOutlineComment -> <AiOutlineComment />
-                  */}
-                </Button>
-              </HStack>
-              
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+                              <Drawer
+                                isOpen={isOpen}
+                                placement="right"
+                                onClose={onClose}
+                                size={'lg'}>
+                                {/* <DrawerOverlay /> */}
+                                <DrawerContent>
+                                  <DrawerCloseButton />
+                                  <DrawerHeader
+                                    bg={'teal'}
+                                    paddingTop={'20px'}
+                                    paddingBottom={'20px'}
+                                    fontSize={'30px'}
+                                    textAlign={'center'}
+                                    color={'white'}>
+                                    <Text>
+                                      Comments on @{post.username}'s post
+                                    </Text>
+                                  </DrawerHeader>
+                                  <DrawerBody
+                                    display={'flex'}
+                                    flexDir={'column'}
+                                    justifyContent={'space-between'}
+                                    height={'100%'}
+                                    overflowY={'auto'}>
+                                    {/**
+                                     * get all comments in the database to display in the DrawerBody
+                                     */}
+                                    <VStack>
+                                      {/* commentsOnPost.map((comment) => {the HStack below}) */}
+                                      <HStack
+                                        width={'105%'}
+                                        minH={'60px'}
+                                        bg={'teal'}
+                                        rounded={'md'}>
+                                        <Avatar /* The profile pic of the user whose post it corresponds to */
+                                        />
+                                        <Divider orientation="vertical" />
+                                        <Text paddingLeft={5}>
+                                          {' '}
+                                          comment from user stored in the posts
+                                          db{' '}
+                                        </Text>
+                                      </HStack>
+                                    </VStack>
+                                  </DrawerBody>
+                                  <Divider
+                                    orientation="horizontal"
+                                    color={'teal'}
+                                  />
+                                  <DrawerFooter blockSize={200}>
+                                    <HStack>
+                                      <Avatar />
+                                      <Container width={500}>
+                                        <Textarea
+                                          placeholder="Type a comment here..."
+                                          size={'lg'}
+                                          blockSize={150}
+                                          resize={'none'}
+                                          width={'100%'}
+                                          value={JSON.parse(
+                                            window.localStorage.getItem(
+                                              'COMMENTS',
+                                            ) as string,
+                                          )}
+                                          onChange={handleCommentChange}
+                                        />
+                                      </Container>
+                                      <Button
+                                        bg={'teal'}
+                                        color={'white'}
+                                        variant={'solid'}
+                                        fontSize={'x-large'}
+                                        height={160}
+                                        width={'70px'}
+                                        aria-label={'Send comment'}
+                                        onClick={() => {
+                                          console.log(post);
+                                          addComment(post?.date_time);
+                                          // save comment to database and update comments with
+                                          // latest post at top
+                                        }}>
+                                        <AiOutlineSend />
+                                        {/* AiOutlineComment -> <AiOutlineComment />
+                                         */}
+                                      </Button>
+                                    </HStack>
+                                  </DrawerFooter>
+                                </DrawerContent>
+                              </Drawer>
                               {
                                 // check if this post has been saved
                                 isSaved(post.recipe.data) ? (
@@ -1083,18 +1090,18 @@ const Explore: React.FC = () => {
                             <BsFillChatDotsFill style={{fontSize: '34px'}} />
                           </Button> */}
 
-                  <Button variant="link" colorScheme="white" onClick={onOpen}>
-                            <BsFillChatDotsFill
-                              style={{fontSize: '34px'}}
-                            />
+                          <Button
+                            variant="link"
+                            colorScheme="white"
+                            onClick={onOpen}>
+                            <BsFillChatDotsFill style={{fontSize: '34px'}} />
                           </Button>
 
                           <Drawer
                             isOpen={isOpen}
                             placement="right"
                             onClose={onClose}
-                            size={'lg'}
-                          >
+                            size={'lg'}>
                             {/* <DrawerOverlay /> */}
                             <DrawerContent>
                               <DrawerCloseButton />
@@ -1104,8 +1111,7 @@ const Explore: React.FC = () => {
                                 paddingBottom={'20px'}
                                 fontSize={'30px'}
                                 textAlign={'center'}
-                                color={'white'}
-                              >
+                                color={'white'}>
                                 <Text>Comments on @{post.username}'s post</Text>
                               </DrawerHeader>
                               <DrawerBody
@@ -1113,22 +1119,29 @@ const Explore: React.FC = () => {
                                 flexDir={'column'}
                                 justifyContent={'space-between'}
                                 height={'100%'}
-                                overflowY={"auto"}
-                              >
+                                overflowY={'auto'}>
                                 {/**
-                                * get all comments in the database to display in the DrawerBody
-                                */}
-                                <VStack >
+                                 * get all comments in the database to display in the DrawerBody
+                                 */}
+                                <VStack>
                                   {/* commentsOnPost.map((comment) => {the HStack below}) */}
-                                  <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                                    <Avatar /* The profile pic of the user whose post it corresponds to *//>
-                                    <Divider orientation='vertical'/>
-                                    <Text paddingLeft={5}> comment from user stored in the posts db </Text>
+                                  <HStack
+                                    width={'105%'}
+                                    minH={'60px'}
+                                    bg={'teal'}
+                                    rounded={'md'}>
+                                    <Avatar /* The profile pic of the user whose post it corresponds to */
+                                    />
+                                    <Divider orientation="vertical" />
+                                    <Text paddingLeft={5}>
+                                      {' '}
+                                      comment from user stored in the posts db{' '}
+                                    </Text>
                                   </HStack>
                                 </VStack>
                               </DrawerBody>
-                              <Divider 
-                                orientation='horizontal' 
+                              <Divider
+                                orientation="horizontal"
                                 color={'teal'}
                               />
                               <DrawerFooter blockSize={200}>
@@ -1136,36 +1149,38 @@ const Explore: React.FC = () => {
                                   <Avatar />
                                   <Container width={500}>
                                     <Textarea
-                                    placeholder='Type a comment here...'
-                                    size={'lg'}
-                                    blockSize={150}
-                                    resize={'none'}
-                                    width={"100%"}
-                                    value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
-                                    onChange={handleCommentChange}
-                                  />
+                                      placeholder="Type a comment here..."
+                                      size={'lg'}
+                                      blockSize={150}
+                                      resize={'none'}
+                                      width={'100%'}
+                                      value={JSON.parse(
+                                        window.localStorage.getItem(
+                                          'COMMENTS',
+                                        ) as string,
+                                      )}
+                                      onChange={handleCommentChange}
+                                    />
                                   </Container>
-                                  <Button 
-                                    bg={"teal"} 
-                                    color={"white"} 
+                                  <Button
+                                    bg={'teal'}
+                                    color={'white'}
                                     variant={'solid'}
                                     fontSize={'x-large'}
                                     height={160}
                                     width={'70px'}
                                     aria-label={'Send comment'}
-                                    onClick={() =>{
+                                    onClick={() => {
                                       console.log(post);
-                                      addComment(post?.date_time)
-                                      // save comment to database and update comments with 
+                                      addComment(post?.date_time);
+                                      // save comment to database and update comments with
                                       // latest post at top
-                                    }}
-                                  >
+                                    }}>
                                     <AiOutlineSend />
                                     {/* AiOutlineComment -> <AiOutlineComment />
-                                    */}
+                                     */}
                                   </Button>
                                 </HStack>
-                                
                               </DrawerFooter>
                             </DrawerContent>
                           </Drawer>
