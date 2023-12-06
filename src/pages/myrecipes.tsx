@@ -167,6 +167,19 @@ const Recipes: React.FC = () => {
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
 
+  async function deletePost(datetime: any){
+    // update the post
+    const q = query(
+      collection(db, 'posts/'),
+      where('date_time', '==', datetime),
+    );
+    const docs = await getDocs(q);
+    // add a like to the post
+    docs.forEach(async doc => {
+      await deleteDoc(doc.ref);
+    });
+  }
+
   // useEffect(() => {
   //   friends();
   // }, []);
@@ -950,10 +963,11 @@ const Recipes: React.FC = () => {
                         // delete button
                         // on click, popup saying recipe deleted
                         // remove recipe from DB
+                        deletePost(post?.date_time)
                         toast({
-                          title: 'Post removed.',
+                          title: 'Post Deleted',
                           description:
-                            'This post has been removed from your posts list.',
+                            'This post has been permanently removed',
                           status: 'success',
                           duration: 3000,
                           isClosable: true,
