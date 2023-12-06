@@ -131,19 +131,19 @@ const Recipes: React.FC = () => {
   useEffect(() => {
     //setLiked(profile?.liked);
     async function getLikedPosts() {
-        const likedPostsQuery = query(
-          collection(db, 'posts'),
-          where('date_time', 'in', profile?.liked),
-          orderBy('date_time', 'desc'),
-        );
-        const querySnapshot = await getDocs(likedPostsQuery);
-        const tempArray: any[] = [];
-        querySnapshot?.forEach(doc => {
-          tempArray.push(doc.data());
-        });
-        console.log(tempArray);
-        setLiked(tempArray);
-      }
+      const likedPostsQuery = query(
+        collection(db, 'posts'),
+        where('date_time', 'in', profile?.liked),
+        orderBy('date_time', 'desc'),
+      );
+      const querySnapshot = await getDocs(likedPostsQuery);
+      const tempArray: any[] = [];
+      querySnapshot?.forEach(doc => {
+        tempArray.push(doc.data());
+      });
+      console.log(tempArray);
+      setLiked(tempArray);
+    }
     if (profile) {
       getLikedPosts();
     }
@@ -929,9 +929,39 @@ const Recipes: React.FC = () => {
                   minH="350"
                   display="flex"
                   flexDirection="column">
-                  <div style={{flex: 1, fontSize: '24px'}}>
-                    {post?.recipe.data.recipe_name}
-                  </div>
+                  <HStack>
+                    <div style={{flex: 1, fontSize: '24px'}}>
+                      {post?.recipe.data.recipe_name}
+                    </div>
+                    <Button
+                      marginLeft={130}
+                      boxShadow="xs"
+                      rounded="md"
+                      padding="4"
+                      bg={'red.400'}
+                      _hover={{
+                        bg: 'red.500',
+                      }}
+                      _focus={{
+                        bg: 'red.500',
+                      }}
+                      maxW="container.sm"
+                      onClick={() => {
+                        // delete button
+                        // on click, popup saying recipe deleted
+                        // remove recipe from DB
+                        toast({
+                          title: 'Post removed.',
+                          description:
+                            'This post has been removed from your posts list.',
+                          status: 'success',
+                          duration: 3000,
+                          isClosable: true,
+                        });
+                      }}>
+                      <Text textColor="white">Delete Post</Text>
+                    </Button>
+                  </HStack>
                   <Center>
                     <Image
                       borderRadius="30px"
