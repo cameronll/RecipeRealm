@@ -117,6 +117,12 @@ type Recipe = {
   nutrients: nutrition;
 };
 
+type Comment = {
+  date_time: any;
+  comment: string;
+  username: string;
+};
+
 const Explore: React.FC = () => {
   // email from local storage, used to identify current user
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
@@ -325,7 +331,13 @@ const Explore: React.FC = () => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
   };
 
-  async function addComment(datetime: any) {
+  async function addComment(datetime: any, username: string) {
+    const date = new Date();
+    const newComment:Comment = {
+      date_time: date,
+      username: username,
+      comment: JSON.parse(window.localStorage.getItem('COMMENT') as string)
+    };
     // update the post
     const q = query(
       collection(db, 'posts/'),
@@ -336,102 +348,10 @@ const Explore: React.FC = () => {
     docs.forEach(doc => {
       console.log(doc.data());
       updateDoc(doc.ref, {
-        comments: arrayUnion(
-          JSON.parse(window.localStorage.getItem('COMMENT') as string),
-        ),
+        comments: arrayUnion(newComment)
       });
     });
     window.localStorage.removeItem('COMMENT');
-  }
-
-  /**
-   * Function that diplays a drawer with a space for the user to comment on the select post and see all the
-   * other comments mades towards the same select post from other users.
-   * @returns
-   */
-  function displayComments(post: any) {
-    return (
-      <>
-        <Button variant="link" colorScheme="white" onClick={onOpen}>
-          <BsFillChatDotsFill style={{fontSize: '34px'}} />
-        </Button>
-
-        <Drawer isOpen={isOpen} placement="right" onClose={onClose} size={'lg'}>
-          {/* <DrawerOverlay /> */}
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader
-              bg={'teal'}
-              paddingTop={'20px'}
-              paddingBottom={'20px'}
-              fontSize={'30px'}
-              textAlign={'center'}
-              color={'white'}>
-              <Text>Comments on @{post.username}'s post</Text>
-            </DrawerHeader>
-            <DrawerBody
-              display={'flex'}
-              flexDir={'column'}
-              justifyContent={'space-between'}
-              height={'100%'}
-              overflowY={'auto'}>
-              {/**
-               * get all comments in the database to display in the DrawerBody
-               */}
-              <VStack>
-                {/* commentsOnPost.map((comment) => {the HStack below}) */}
-                <HStack width={'105%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                  <Avatar /* The profile pic of the user whose post it corresponds to */
-                  />
-                  <Divider orientation="vertical" />
-                  <Text paddingLeft={5}>
-                    {' '}
-                    comment from user stored in the posts db{' '}
-                  </Text>
-                </HStack>
-              </VStack>
-            </DrawerBody>
-            <Divider orientation="horizontal" color={'teal'} />
-            <DrawerFooter blockSize={200}>
-              <HStack>
-                <Avatar />
-                <Container width={500}>
-                  <Textarea
-                    placeholder="Type a comment here..."
-                    size={'lg'}
-                    blockSize={150}
-                    resize={'none'}
-                    width={'100%'}
-                    value={JSON.parse(
-                      window.localStorage.getItem('COMMENTS') as string,
-                    )}
-                    onChange={handleCommentChange}
-                  />
-                </Container>
-                <Button
-                  bg={'teal'}
-                  color={'white'}
-                  variant={'solid'}
-                  fontSize={'x-large'}
-                  height={160}
-                  width={'70px'}
-                  aria-label={'Send comment'}
-                  onClick={() => {
-                    console.log(post);
-                    addComment(post?.date_time);
-                    // save comment to database and update comments with
-                    // latest post at top
-                  }}>
-                  <AiOutlineSend />
-                  {/* AiOutlineComment -> <AiOutlineComment />
-                   */}
-                </Button>
-              </HStack>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
-      </>
-    );
   }
 
   return (
@@ -622,7 +542,8 @@ const Explore: React.FC = () => {
                                             aria-label={'Send comment'}
                                             onClick={() =>{
                                               console.log(post);
-                                              addComment(post?.date_time)
+                                              addComment(post?.date_time, profiles[getIndex(profiles, post.email)]
+                                              ?.username)
                                               // save comment to database and update comments with 
                                               // latest post at top
                                             }}
@@ -1136,7 +1057,8 @@ const Explore: React.FC = () => {
                                             aria-label={'Send comment'}
                                             onClick={() =>{
                                               console.log(post);
-                                              addComment(post?.date_time)
+                                              addComment(post?.date_time, profiles[getIndex(profiles, post.email)]
+                                              ?.username)
                                               // save comment to database and update comments with 
                                               // latest post at top
                                             }}

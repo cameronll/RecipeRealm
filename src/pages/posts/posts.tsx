@@ -117,6 +117,7 @@ async function toDB(
   const updated = await updateDoc(recipeDoc, {
     posted: true,
   });
+  const comments:any[] = [];
   // create a document, assign these variables
   await addDoc(collection(db, 'posts'), {
     // name in database: variable
@@ -128,6 +129,7 @@ async function toDB(
     recipe: recipe,
     likes: 0,
     pic: pic,
+    comments: comments
   });
 }
 const Posts: React.FC = () => {
