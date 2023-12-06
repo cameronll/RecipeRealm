@@ -64,6 +64,8 @@ const SignUp = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   const following: string[] = [];
+  const liked: any[] = ["non-empty"];
+  const events: any[] = [];
   const profilePic =
     'https://firebasestorage.googleapis.com' +
     '/v0/b/reciperealm-cbc4f.appspot.com/o/default.jpeg?alt=media&token=e68e229a-2860-495a-8ced-8480f6c79b7f';
@@ -91,6 +93,7 @@ const SignUp = () => {
               username: values.username,
               following: following,
               profilePic: profilePic,
+              liked: liked
             });
           });
 

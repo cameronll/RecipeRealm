@@ -173,6 +173,13 @@ const FriendProfile: React.FC = (friend: any) => {
     return false;
   }
 
+  function myProfile() {
+    if (userEmail.localeCompare(email) === 0){
+      return true;
+    }
+    return false;
+  }
+
   // function to add a follower to your following list
   async function addFollowing() {
     // if you don't follow them...
@@ -299,6 +306,7 @@ const FriendProfile: React.FC = (friend: any) => {
                   <Button
                     flex={1}
                     fontSize={'sm'}
+                    isDisabled={myProfile()}
                     rounded={'full'}
                     bg={'red.400'}
                     color={'white'}
@@ -330,6 +338,7 @@ const FriendProfile: React.FC = (friend: any) => {
                   <Button
                     flex={1}
                     fontSize={'sm'}
+                    isDisabled={myProfile()}
                     rounded={'full'}
                     bg={'green.400'}
                     width={'600px'}

@@ -131,19 +131,19 @@ const Recipes: React.FC = () => {
   useEffect(() => {
     //setLiked(profile?.liked);
     async function getLikedPosts() {
-      const likedPostsQuery = query(
-        collection(db, 'posts'),
-        where('date_time', 'in', profile?.liked),
-        orderBy('date_time', 'desc'),
-      );
-      const querySnapshot = await getDocs(likedPostsQuery);
-      const tempArray: any[] = [];
-      querySnapshot.forEach(doc => {
-        tempArray.push(doc.data());
-      });
-      console.log(tempArray);
-      setLiked(tempArray);
-    }
+        const likedPostsQuery = query(
+          collection(db, 'posts'),
+          where('date_time', 'in', profile?.liked),
+          orderBy('date_time', 'desc'),
+        );
+        const querySnapshot = await getDocs(likedPostsQuery);
+        const tempArray: any[] = [];
+        querySnapshot?.forEach(doc => {
+          tempArray.push(doc.data());
+        });
+        console.log(tempArray);
+        setLiked(tempArray);
+      }
     if (profile) {
       getLikedPosts();
     }

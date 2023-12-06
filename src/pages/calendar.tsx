@@ -141,7 +141,7 @@ const CalendarPage: React.FC = () => {
   useEffect(() => {
     var tempEvents: Recipe[] = [];
     for (let i = 0; i < profile?.events.length; i++) {
-      if (profile?.events[i].date.includes(dateSelected)) {
+      if (profile?.events[i].date?.includes(dateSelected)) {
         tempEvents.push(profile?.events[i].recipe);
       }
     }
