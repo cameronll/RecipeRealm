@@ -120,6 +120,7 @@ type Recipe = {
 type Comment = {
   date_time: any;
   comment: string;
+  pic: any;
   username: string;
 };
 
@@ -129,7 +130,6 @@ const Explore: React.FC = () => {
   // useState to create constants
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
-  const [comment, setComment] = useState("");
   // toast for popups
   const toast = useToast();
   // create a listener to the user called: user
@@ -330,7 +330,6 @@ const Explore: React.FC = () => {
 
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
-    setComment(e.target.value);
   };
 
   async function addComment(datetime: any) {
@@ -338,6 +337,7 @@ const Explore: React.FC = () => {
     const newComment:Comment = {
       date_time: date,
       username: user?.username,
+      pic: user?.profilePic,
       comment: JSON.parse(window.localStorage.getItem('COMMENT') as string)
     };
     // update the post
@@ -353,7 +353,6 @@ const Explore: React.FC = () => {
         comments: arrayUnion(newComment)
       });
     });
-    setComment("");
     window.localStorage.setItem('COMMENT', "");
   }
 
@@ -507,14 +506,21 @@ const Explore: React.FC = () => {
                                         overflowY={"auto"}
                                       >
                                         <VStack >
-                                          {// commentsOnPost.map((comment) => {the HStack below}) 
-                                          }
+                                          {post?.comments.map((comment:Comment) => {
                                           <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                                            <Avatar // The profile pic of the user whose post it corresponds to 
+                                            <Avatar
+                                            size={'xl'}
+                                            src={
+                                              // the picture of the person who posted it, gotten with getIndex
+                                              comment.pic
+                                            }
                                             />
                                             <Divider orientation='vertical'/>
-                                            <Text paddingLeft={5}> comments from users </Text>
+                                            <Text paddingLeft={5}>{comment.username}</Text>
+                                            <Text paddingLeft={5}>{comment.comment}</Text>
+                                            <Text paddingLeft={5}>{comment.date_time}</Text>
                                           </HStack>
+                                          })}
                                         </VStack>
                                       </PopoverBody>
                                       <Divider 
@@ -531,7 +537,6 @@ const Explore: React.FC = () => {
                                             blockSize={150}
                                             resize={'none'}
                                             width={"100%"}
-                                            value={comment}
                                             onChange={handleCommentChange}
                                           />
                                           </Container>
@@ -543,7 +548,6 @@ const Explore: React.FC = () => {
                                             height={160}
                                             width={'70px'}
                                             aria-label={'Send comment'}
-                                            value={comment}
                                             onClick={() =>{
                                               console.log(post);
                                               addComment(post?.date_time)
@@ -1021,15 +1025,22 @@ const Explore: React.FC = () => {
                                         maxH={'645px'}
                                         overflowY={"auto"}
                                       >
-                                        <VStack >
-                                          {// commentsOnPost.map((comment) => {the HStack below}) 
-                                          }
+                                        <VStack>
+                                        {post?.comments.map((comment:Comment) => {
                                           <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                                            <Avatar // The profile pic of the user whose post it corresponds to 
+                                            <Avatar
+                                            size={'xl'}
+                                            src={
+                                              // the picture of the person who posted it, gotten with getIndex
+                                              comment.pic
+                                            }
                                             />
                                             <Divider orientation='vertical'/>
-                                            <Text paddingLeft={5}> comments from users </Text>
+                                            <Text paddingLeft={5}>{comment.username}</Text>
+                                            <Text paddingLeft={5}>{comment.comment}</Text>
+                                            <Text paddingLeft={5}>{comment.date_time}</Text>
                                           </HStack>
+                                          })}
                                         </VStack>
                                       </PopoverBody>
                                       <Divider 
