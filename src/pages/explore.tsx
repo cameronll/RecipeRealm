@@ -129,6 +129,7 @@ const Explore: React.FC = () => {
   // useState to create constants
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
+  const [comment, setComment] = useState("");
   // toast for popups
   const toast = useToast();
   // create a listener to the user called: user
@@ -329,13 +330,14 @@ const Explore: React.FC = () => {
 
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
+    setComment(e.target.value);
   };
 
-  async function addComment(datetime: any, username: string) {
+  async function addComment(datetime: any) {
     const date = new Date();
     const newComment:Comment = {
       date_time: date,
-      username: username,
+      username: user?.username,
       comment: JSON.parse(window.localStorage.getItem('COMMENT') as string)
     };
     // update the post
@@ -351,7 +353,8 @@ const Explore: React.FC = () => {
         comments: arrayUnion(newComment)
       });
     });
-    window.localStorage.removeItem('COMMENT');
+    setComment("");
+    window.localStorage.setItem('COMMENT', "");
   }
 
   return (
@@ -528,7 +531,7 @@ const Explore: React.FC = () => {
                                             blockSize={150}
                                             resize={'none'}
                                             width={"100%"}
-                                            value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                                            value={comment}
                                             onChange={handleCommentChange}
                                           />
                                           </Container>
@@ -540,10 +543,10 @@ const Explore: React.FC = () => {
                                             height={160}
                                             width={'70px'}
                                             aria-label={'Send comment'}
+                                            value={comment}
                                             onClick={() =>{
                                               console.log(post);
-                                              addComment(post?.date_time, profiles[getIndex(profiles, post.email)]
-                                              ?.username)
+                                              addComment(post?.date_time)
                                               // save comment to database and update comments with 
                                               // latest post at top
                                             }}
@@ -1057,8 +1060,7 @@ const Explore: React.FC = () => {
                                             aria-label={'Send comment'}
                                             onClick={() =>{
                                               console.log(post);
-                                              addComment(post?.date_time, profiles[getIndex(profiles, post.email)]
-                                              ?.username)
+                                              addComment(post?.date_time)
                                               // save comment to database and update comments with 
                                               // latest post at top
                                             }}
