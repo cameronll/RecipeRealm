@@ -72,6 +72,7 @@ import {
 import {AiFillPrinter} from 'react-icons/ai';
 import {render} from '@testing-library/react';
 import {SelectedElement} from 'rsuite/esm/Picker';
+import {Link} from 'react-router-dom';
 
 type nutrition = {
   calories: number;
@@ -145,7 +146,7 @@ const CalendarPage: React.FC = () => {
         tempEvents.push(profile?.events[i].recipe);
       }
     }
-    setDateEvents(tempEvents)
+    setDateEvents(tempEvents);
   }, [profile]);
 
   function titleSize(title: string) {
@@ -386,20 +387,25 @@ const CalendarPage: React.FC = () => {
                   </Accordion>
                 </VStack>
                 <HStack align="right" marginTop={2}>
-                  <Button
-                    boxShadow="xs"
-                    rounded="md"
-                    variant="outline"
-                    padding="4"
-                    colorScheme="teal"
-                    color="white"
-                    maxW="container.sm"
-                    onClick={() => {
-                      //Print Recipe
-                    }}>
-                    <AiFillPrinter />
-                    <Text marginLeft={2}>Print Recipe</Text>
-                  </Button>
+                  <Link to="/RecipeDetail">
+                    <Button
+                      boxShadow="xs"
+                      rounded="md"
+                      variant="outline"
+                      padding="4"
+                      colorScheme="teal"
+                      color="white"
+                      maxW="container.sm"
+                      onClick={() => {
+                        window.localStorage.setItem(
+                          'VIEWRECIPE',
+                          JSON.stringify(recipe),
+                        );
+                      }}>
+                      <AiFillPrinter />
+                      <Text marginLeft={2}>Print Recipe</Text>
+                    </Button>
+                  </Link>
                   <Spacer />
                   <Flex>
                     <Button

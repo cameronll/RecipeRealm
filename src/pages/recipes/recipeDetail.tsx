@@ -20,7 +20,6 @@ const RecipeDetail: React.FC = () => {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current!,
     documentTitle: 'emp-data',
-    onAfterPrint: () => alert('Print Success'),
   });
 
   function recipeSize(ing: number) {
@@ -113,7 +112,6 @@ const RecipeDetail: React.FC = () => {
                         }
                         alt="Logo"
                         w={480}
-                        height={400}
                       />
                     </Center>
                   </Container>
