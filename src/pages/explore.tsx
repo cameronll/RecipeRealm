@@ -478,12 +478,12 @@ const Explore: React.FC = () => {
                               }
                               <Popover placement='right' initialFocusRef={initRef}>
                                 <PopoverTrigger>
-                                  <Button variant="link" colorScheme="white" /*onClick={onOpen}*/>
+                                  <Button variant="link" colorScheme="white">
                                     <BsFillChatDotsFill style={{fontSize: '34px'}}/>
                                   </Button>
                                 </PopoverTrigger>
                                 <Portal>
-                                  <PopoverContent minWidth={'825px'}>
+                                  <PopoverContent minW={'600px'} >
                                     <PopoverArrow/>
                                       <PopoverHeader
                                         bg={'teal'}
@@ -510,17 +510,17 @@ const Explore: React.FC = () => {
                                           <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
                                             <Avatar
                                             size={'xl'}
-                                            src={
-                                              // the picture of the person who posted it, gotten with getIndex
-                                              comment.pic
-                                            }
+                                             src={
+                                               // the picture of the person who posted it, gotten with getIndex
+                                               comment.pic
+                                             }
                                             />
                                             <Divider orientation='vertical'/>
                                             <Text paddingLeft={5}>{comment.username}</Text>
                                             <Text paddingLeft={5}>{comment.comment}</Text>
                                             <Text paddingLeft={5}>{comment.date_time}</Text>
                                           </HStack>
-                                          })}
+                                          })} 
                                         </VStack>
                                       </PopoverBody>
                                       <Divider 
