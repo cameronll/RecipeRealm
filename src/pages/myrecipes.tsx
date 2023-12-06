@@ -977,7 +977,14 @@ const Recipes: React.FC = () => {
                     align="stretch"
                     marginBottom={3}>
                     <Spacer />
-                    <Text>{post?.date_time.toDate().toString()}</Text>
+                    <Text fontSize={20}>
+                      {
+                        // formatting the time to look nice
+                        post?.date_time.toDate().getMonth()
+                      }
+                      /{post?.date_time.toDate().getDay()}/
+                      {post?.date_time.toDate().getFullYear()}
+                    </Text>
                   </Stack>
 
                   <Box
@@ -1058,7 +1065,14 @@ const Recipes: React.FC = () => {
                     align="stretch"
                     marginBottom={3}>
                     <Spacer />
-                    <Text>{post?.date_time.toDate().toString()}</Text>
+                    <Text fontSize={20}>
+                      {
+                        // formatting the time to look nice
+                        post?.date_time.toDate().getMonth()
+                      }
+                      /{post?.date_time.toDate().getDay()}/
+                      {post?.date_time.toDate().getFullYear()}
+                    </Text>
                   </Stack>
 
                   <Box
