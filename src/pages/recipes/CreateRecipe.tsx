@@ -202,7 +202,6 @@ async function getTotalNutrients(ingredients: string[]): Promise<nutrition> {
     return nullNutrients;
   }
 }
-
 /*
   function to send all data to the database
   adds recipe information to the currently logged in user's recipe list
@@ -254,6 +253,7 @@ async function toDB(
 
 const Form1 = () => {
   // useState to create variables
+  const [titleCheck, setTitleCheck] = useState(false);
   const [recipeName, setRecipeName] = useState('');
   const [cookingTime, setCookingTime] = useState('');
 
@@ -273,6 +273,7 @@ const Form1 = () => {
   const handleNameChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('RECIPENAME', JSON.stringify(name));
+    // setTitleCheck(true);
     setRecipeName(name);
   };
 
@@ -844,7 +845,12 @@ export default function Multistep() {
   const [progress, setProgress] = useState(33.33);
   // get ALL THE DATA from local storage
   const recipeFromStorage: any = window.localStorage.getItem('RECIPENAME');
+  // const recipeName = '';
+  // if (recipeFromStorage) {
   const recipeName = JSON.parse(recipeFromStorage);
+  // } else {
+  //   const recipeName = 'Recipe Title';
+  // }
   const cookingTimeStorage: any = window.localStorage.getItem('COOKINGTIME');
   const cookingTime = JSON.parse(cookingTimeStorage);
   const difficultyStorage: any = window.localStorage.getItem('DIFFICULTY');
@@ -931,7 +937,12 @@ export default function Multistep() {
                     </Button>
                     <Button
                       w="7rem"
-                      isDisabled={step === 3}
+                      isDisabled={
+                        step === 3 ||
+                        (step === 2 &&
+                          window.localStorage.getItem('RECIPENAME') ===
+                            (null || ''))
+                      }
                       onClick={() => {
                         // keep track of the step and progress on the next
                         setStep(step + 1);

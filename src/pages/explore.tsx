@@ -403,6 +403,7 @@ const Explore: React.FC = () => {
                             <Center>
                               <Image
                                 borderRadius="30px"
+                                paddingTop={3}
                                 src={
                                   // the picture attached to the post
                                   post.pic
@@ -483,31 +484,47 @@ const Explore: React.FC = () => {
                                       overflowY={'auto'}>
                                       <VStack>
                                         {post?.comments.map(
-                                          (comment: Comment) => {
+                                          (comment: Comment) => (
                                             <HStack
+                                              key={comment.date_time}
                                               width={'103%'}
                                               minH={'60px'}
                                               bg={'teal'}
                                               rounded={'md'}>
-                                              <Avatar
-                                                size={'xl'}
-                                                src={
-                                                  // the picture of the person who posted it, gotten with getIndex
-                                                  comment.pic
-                                                }
-                                              />
-                                              <Divider orientation="vertical" />
-                                              <Text paddingLeft={5}>
-                                                {comment.username}
-                                              </Text>
-                                              <Text paddingLeft={5}>
+                                              <VStack paddingLeft={3}>
+                                                <Center>
+                                                  <Avatar
+                                                    paddingTop={2}
+                                                    size={'xl'}
+                                                    src={comment.pic}
+                                                  />
+                                                </Center>
+                                                <Divider orientation="vertical" />
+                                                <Center>
+                                                  <Text
+                                                    textColor={'white'}
+                                                    paddingBottom={3}>
+                                                    @{comment.username}
+                                                  </Text>
+                                                </Center>
+                                              </VStack>
+                                              <Text
+                                                paddingLeft={5}
+                                                width="65%"
+                                                textColor={'white'}>
                                                 {comment.comment}
                                               </Text>
-                                              <Text paddingLeft={5}>
-                                                {comment.date_time}
+                                              <Text
+                                                paddingLeft={5}
+                                                textColor={'white'}>
+                                                {comment.date_time.seconds &&
+                                                  new Date(
+                                                    comment.date_time.seconds *
+                                                      1000,
+                                                  ).toLocaleString()}
                                               </Text>
-                                            </HStack>;
-                                          },
+                                            </HStack>
+                                          ),
                                         )}
                                       </VStack>
                                     </PopoverBody>
@@ -517,7 +534,7 @@ const Explore: React.FC = () => {
                                     />
                                     <PopoverFooter blockSize={200}>
                                       <HStack>
-                                        <Avatar />
+                                        <Avatar src={user?.profilePic} />
                                         <Container width={500}>
                                           <Textarea
                                             placeholder="Type a comment here..."
@@ -540,7 +557,7 @@ const Explore: React.FC = () => {
                                             console.log(post);
                                             addComment(post?.date_time);
                                             // save comment to database and update comments with
-                                            // latest post at top
+                                            // the latest post at the top
                                           }}>
                                           <AiOutlineSend />
                                         </Button>
@@ -549,6 +566,7 @@ const Explore: React.FC = () => {
                                   </PopoverContent>
                                 </Portal>
                               </Popover>
+
                               {
                                 // check if this post has been saved
                                 isSaved(post.recipe.data) ? (

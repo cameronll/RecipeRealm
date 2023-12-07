@@ -102,7 +102,7 @@ async function toDB(
   const updated = await updateDoc(recipeDoc, {
     posted: true,
   });
-  const comments:any[] = [];
+  const comments: any[] = [];
   // create a document, assign these variables
   await addDoc(collection(db, 'posts'), {
     // name in database: variable
@@ -114,7 +114,7 @@ async function toDB(
     recipe: recipe,
     likes: 0,
     pic: pic,
-    comments: comments
+    comments: comments,
   });
 }
 const Posts: React.FC = () => {
@@ -411,10 +411,11 @@ const Posts: React.FC = () => {
               }
             />
           </FormControl>
-          <Link to="/recipes">
-            <Button colorScheme="red.500">Back</Button>
-          </Link>
-          <Flex justifyContent="right">
+
+          <Flex justifyContent="right" paddingTop={3}>
+            <Link to="/recipes">
+              <Button colorScheme="red">Back</Button>
+            </Link>
             <Button
               colorScheme="teal"
               isDisabled={isDisabled()}

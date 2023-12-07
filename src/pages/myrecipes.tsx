@@ -143,7 +143,7 @@ const Recipes: React.FC = () => {
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
 
-  async function deletePost(datetime: any){
+  async function deletePost(datetime: any) {
     // update the post
     const q = query(
       collection(db, 'posts/'),
@@ -647,7 +647,9 @@ const Recipes: React.FC = () => {
                   {
                     // if they have no recipes, display nothing
                     savedRecipes?.length === 0 ? (
-                      <Heading textAlign="center">You have 0 recipes</Heading>
+                      <Heading textAlign="center">
+                        You have 0 saved recipes
+                      </Heading>
                     ) : (
                       // when savedRecipes loads, map savedRecipes individually
                       savedRecipes &&
@@ -897,210 +899,225 @@ const Recipes: React.FC = () => {
           </TabPanel>
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
-            {posts?.map(post => (
-              <Container
-                // minH="100vh"
-                shadow={1000}
-                maxW="container.lg"
-                color="white"
-                display="flex"
-                flexDirection="column"
-                padding={1}
-                rounded="lg"
-                boxShadow="dark-lg"
-                backgroundColor="rgba(0, 128, 128, 1)">
-                <Box
-                  padding={4}
-                  rounded="md"
+            {posts?.length === 0 ? (
+              <Heading textAlign="left" padding="6">
+                You have 0 posts
+              </Heading>
+            ) : (
+              posts?.map(post => (
+                <Container
+                  // minH="100vh"
+                  shadow={1000}
                   maxW="container.lg"
-                  backgroundColor="rgba(0, 128, 128, 1)"
                   color="white"
-                  minH="350"
                   display="flex"
-                  flexDirection="column">
-                  <HStack>
-                    <div style={{flex: 1, fontSize: '24px'}}>
-                      {post?.recipe.data.recipe_name}
-                    </div>
-                    <Button
-                      marginLeft={130}
-                      boxShadow="xs"
+                  flexDirection="column"
+                  padding={1}
+                  rounded="lg"
+                  boxShadow="dark-lg"
+                  backgroundColor="rgba(0, 128, 128, 1)">
+                  <Box
+                    padding={4}
+                    rounded="md"
+                    maxW="container.lg"
+                    backgroundColor="rgba(0, 128, 128, 1)"
+                    color="white"
+                    minH="350"
+                    display="flex"
+                    flexDirection="column">
+                    <HStack>
+                      <div style={{flex: 1, fontSize: '24px'}}>
+                        {post?.recipe.data.recipe_name}
+                      </div>
+                      <Button
+                        marginLeft={130}
+                        boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg={'red.400'}
+                        _hover={{
+                          bg: 'red.500',
+                        }}
+                        _focus={{
+                          bg: 'red.500',
+                        }}
+                        maxW="container.sm"
+                        onClick={() => {
+                          // delete button
+                          // on click, popup saying recipe deleted
+                          // remove recipe from DB
+                          deletePost(post?.date_time);
+                          toast({
+                            title: 'Post Deleted',
+                            description:
+                              'This post has been permanently removed',
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                          });
+                        }}>
+                        <Text textColor="white">Delete Post</Text>
+                      </Button>
+                    </HStack>
+                    <Center>
+                      <Image
+                        borderRadius="30px"
+                        src={post.pic}
+                        alt="No Picture"
+                        w={300}
+                        mb={15}
+                      />
+                    </Center>
+                    <Stack
+                      direction="row"
+                      spacing={4}
+                      align="stretch"
+                      marginBottom={3}>
+                      <Spacer />
+                      <Text fontSize={20}>
+                        {
+                          // formatting the time to look nice
+                          post?.date_time.toDate().getMonth()
+                        }
+                        /{post?.date_time.toDate().getDay()}/
+                        {post?.date_time.toDate().getFullYear()}
+                      </Text>
+                    </Stack>
+
+                    <Box
+                      // boxShadow="xs"
                       rounded="md"
                       padding="4"
-                      bg={'red.400'}
-                      _hover={{
-                        bg: 'red.500',
-                      }}
-                      _focus={{
-                        bg: 'red.500',
-                      }}
-                      maxW="container.sm"
-                      onClick={() => {
-                        // delete button
-                        // on click, popup saying recipe deleted
-                        // remove recipe from DB
-                        deletePost(post?.date_time)
-                        toast({
-                          title: 'Post Deleted',
-                          description:
-                            'This post has been permanently removed',
-                          status: 'success',
-                          duration: 3000,
-                          isClosable: true,
-                        });
-                      }}>
-                      <Text textColor="white">Delete Post</Text>
-                    </Button>
-                  </HStack>
-                  <Center>
-                    <Image
-                      borderRadius="30px"
-                      src={post.pic}
-                      alt="No Picture"
-                      w={300}
-                      mb={15}
-                    />
-                  </Center>
-                  <Stack
-                    direction="row"
-                    spacing={4}
-                    align="stretch"
-                    marginBottom={3}>
-                    <Spacer />
-                    <Text fontSize={20}>
-                      {
-                        // formatting the time to look nice
-                        post?.date_time.toDate().getMonth()
-                      }
-                      /{post?.date_time.toDate().getDay()}/
-                      {post?.date_time.toDate().getFullYear()}
-                    </Text>
-                  </Stack>
+                      bg="teal"
+                      maxW="container.lg"
+                      // bgColor="#4fb9af"
+                    >
+                      <Flex>
+                        <Text fontSize={18}>Posted by: </Text>
+                        <Text fontSize={18} marginLeft={2}>
+                          {profile?.username}
+                        </Text>
 
-                  <Box
-                    // boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="teal"
-                    maxW="container.lg"
-                    // bgColor="#4fb9af"
-                  >
-                    <Flex>
-                      <Text fontSize={18}>Posted by: </Text>
-                      <Text fontSize={18} marginLeft={2}>
-                        {profile?.username}
-                      </Text>
+                        <Button
+                          marginLeft={2}
+                          colorScheme="whiteAlpha"
+                          variant="outline"
+                          size="xs"
+                          onClick={() => {
+                            window.localStorage.setItem(
+                              'VIEWRECIPE',
+                              JSON.stringify(post?.recipe.data),
+                            );
+                            navigate('../recipeDetail');
+                          }}>
+                          View Recipe
+                        </Button>
+                      </Flex>
 
-                      <Button
-                        marginLeft={2}
-                        colorScheme="whiteAlpha"
-                        variant="outline"
-                        size="xs"
-                        onClick={() => {
-                          window.localStorage.setItem(
-                            'VIEWRECIPE',
-                            JSON.stringify(post?.recipe.data),
-                          );
-                          navigate('../recipeDetail');
-                        }}>
-                        View Recipe
-                      </Button>
-                    </Flex>
-
-                    <Text fontSize={20}>Caption:</Text>
-                    <Text>{post.description}</Text>
+                      <Text fontSize={20}>Caption:</Text>
+                      <Text>{post.description}</Text>
+                    </Box>
                   </Box>
-                </Box>
-              </Container>
-            ))}
+                </Container>
+              ))
+            )}
           </TabPanel>
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
-            {liked?.map(post => (
-              <Container
-                // minH="100vh"
-                shadow={1000}
-                maxW="container.lg"
-                color="white"
-                display="flex"
-                flexDirection="column"
-                padding={1}
-                rounded="lg"
-                boxShadow="dark-lg"
-                backgroundColor="rgba(0, 128, 128, 1)">
-                <Box
-                  padding={4}
-                  rounded="md"
-                  maxW="container.lg"
-                  backgroundColor="rgba(0, 128, 128, 1)"
-                  color="white"
-                  minH="350"
-                  display="flex"
-                  flexDirection="column">
-                  <div style={{flex: 1, fontSize: '24px'}}>
-                    {post?.recipe.data.recipe_name}
-                  </div>
-                  <Center>
-                    <Image
-                      borderRadius="30px"
-                      src={post.pic}
-                      alt="No Picture"
-                      w={300}
-                      mb={15}
-                    />
-                  </Center>
-                  <Stack
-                    direction="row"
-                    spacing={4}
-                    align="stretch"
-                    marginBottom={3}>
-                    <Spacer />
-                    <Text fontSize={20}>
-                      {
-                        // formatting the time to look nice
-                        post?.date_time.toDate().getMonth()
-                      }
-                      /{post?.date_time.toDate().getDay()}/
-                      {post?.date_time.toDate().getFullYear()}
-                    </Text>
-                  </Stack>
-
-                  <Box
-                    // boxShadow="xs"
-                    rounded="md"
-                    padding="4"
-                    bg="teal"
+            {
+              // if they have no recipes, display nothing
+              liked?.length === 0 ? (
+                <Heading textAlign="left" padding="6">
+                  You have 0 liked posts
+                </Heading>
+              ) : (
+                liked?.map(post => (
+                  <Container
+                    // minH="100vh"
+                    shadow={1000}
                     maxW="container.lg"
-                    // bgColor="#4fb9af"
-                  >
-                    <Flex>
-                      <Text fontSize={18}>Posted by: </Text>
-                      <Text fontSize={18} marginLeft={2}>
-                        {profile?.username}
-                      </Text>
+                    color="white"
+                    display="flex"
+                    flexDirection="column"
+                    padding={1}
+                    rounded="lg"
+                    boxShadow="dark-lg"
+                    backgroundColor="rgba(0, 128, 128, 1)">
+                    <Box
+                      padding={4}
+                      rounded="md"
+                      maxW="container.lg"
+                      backgroundColor="rgba(0, 128, 128, 1)"
+                      color="white"
+                      minH="350"
+                      display="flex"
+                      flexDirection="column">
+                      <div style={{flex: 1, fontSize: '24px'}}>
+                        {post?.recipe.data.recipe_name}
+                      </div>
+                      <Center>
+                        <Image
+                          borderRadius="30px"
+                          src={post.pic}
+                          alt="No Picture"
+                          w={300}
+                          mb={15}
+                        />
+                      </Center>
+                      <Stack
+                        direction="row"
+                        spacing={4}
+                        align="stretch"
+                        marginBottom={3}>
+                        <Spacer />
+                        <Text fontSize={20}>
+                          {
+                            // formatting the time to look nice
+                            post?.date_time.toDate().getMonth()
+                          }
+                          /{post?.date_time.toDate().getDay()}/
+                          {post?.date_time.toDate().getFullYear()}
+                        </Text>
+                      </Stack>
 
-                      <Button
-                        marginLeft={2}
-                        colorScheme="whiteAlpha"
-                        variant="outline"
-                        size="xs"
-                        onClick={() => {
-                          window.localStorage.setItem(
-                            'VIEWRECIPE',
-                            JSON.stringify(post?.recipe.data),
-                          );
-                          navigate('../recipeDetail');
-                        }}>
-                        View Recipe
-                      </Button>
-                    </Flex>
+                      <Box
+                        // boxShadow="xs"
+                        rounded="md"
+                        padding="4"
+                        bg="teal"
+                        maxW="container.lg"
+                        // bgColor="#4fb9af"
+                      >
+                        <Flex>
+                          <Text fontSize={18}>Posted by: </Text>
+                          <Text fontSize={18} marginLeft={2}>
+                            {profile?.username}
+                          </Text>
 
-                    <Text fontSize={20}>Caption:</Text>
-                    <Text>{post.description}</Text>
-                  </Box>
-                </Box>
-              </Container>
-            ))}
+                          <Button
+                            marginLeft={2}
+                            colorScheme="whiteAlpha"
+                            variant="outline"
+                            size="xs"
+                            onClick={() => {
+                              window.localStorage.setItem(
+                                'VIEWRECIPE',
+                                JSON.stringify(post?.recipe.data),
+                              );
+                              navigate('../recipeDetail');
+                            }}>
+                            View Recipe
+                          </Button>
+                        </Flex>
+
+                        <Text fontSize={20}>Caption:</Text>
+                        <Text>{post.description}</Text>
+                      </Box>
+                    </Box>
+                  </Container>
+                ))
+              )
+            }
           </TabPanel>
           <TabPanel minH="100vh">
             <VStack>
