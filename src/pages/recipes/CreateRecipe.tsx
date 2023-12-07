@@ -253,7 +253,7 @@ async function toDB(
 
 function recipeHasName(){
   if (JSON.parse(localStorage.getItem('RECIPENAME') as string) === null 
-  || (JSON.parse(localStorage.getItem('RECIPENAME') as string)).localeCompare("") === true){
+  || (JSON.parse(localStorage.getItem('RECIPENAME') as string)).localeCompare("") === 0){
     return true;
   }
   return false;
