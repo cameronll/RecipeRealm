@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {
   Box,
   Button,
@@ -31,6 +31,7 @@ const RecipeDetail: React.FC = () => {
       <Navbar />
       {/* <Box ref={componentRef}> Bigger page of all Details of Recipe</Box> */}
       <Center>
+        {/* //Button to print recipe */}
         <Button
           marginTop={3}
           boxShadow="xs"
@@ -58,6 +59,7 @@ const RecipeDetail: React.FC = () => {
               rounded={40}>
               <VStack>
                 <Box w="100%" bgColor={'#36989c'} rounded={40}>
+                  {/* //Display Image of Logoe */}
                   <Image
                     borderRadius="30px"
                     src={'newlogoteal.png'}
@@ -66,6 +68,7 @@ const RecipeDetail: React.FC = () => {
                   />
                 </Box>
                 <Heading>
+                  {/* //Show Recipe Name */}
                   {
                     JSON.parse(
                       window.localStorage.getItem('VIEWRECIPE') as string,
@@ -82,6 +85,7 @@ const RecipeDetail: React.FC = () => {
                     bg="white"
                     color="black"
                     minHeight="400">
+                    {/* //Show Ingredients */}
                     <Text noOfLines={2} fontSize={25} marginBottom={5}>
                       Ingredients:
                     </Text>
@@ -103,6 +107,7 @@ const RecipeDetail: React.FC = () => {
 
                   <Container>
                     <Center>
+                      {/* //Show Recipe Image */}
                       <Image
                         borderRadius="30px"
                         src={
@@ -178,6 +183,7 @@ const RecipeDetail: React.FC = () => {
                       }
                     </Text>
                   </Box>
+                  {/* //Add Notes Columns for user */}
                   <Box
                     boxShadow="xs"
                     rounded="md"
@@ -204,6 +210,7 @@ const RecipeDetail: React.FC = () => {
                   color="black"
                   minHeight="400">
                   {' '}
+                  {/* //Print Instructions */}
                   <Text noOfLines={2} fontSize={25} marginBottom={5}>
                     Instructions:
                   </Text>

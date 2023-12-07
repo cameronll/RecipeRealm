@@ -1,52 +1,37 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {db, storage} from '../../firebaseConfig';
 import {
   collection,
   addDoc,
   doc,
-  setDoc,
   getDoc,
-  getDocs,
   updateDoc,
   onSnapshot,
   query,
 } from 'firebase/firestore';
 import {useNavigate} from 'react-router-dom';
-import {
-  browserLocalPersistence,
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-} from 'firebase/auth';
 import Navbar from '../../components/Navbar';
-import {BsUpload} from 'react-icons/bs';
 import {useToast} from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 import {
   Box,
-  useColorModeValue,
   Stack,
-  Avatar,
   Text,
   Button,
   Flex,
   Input,
   Heading,
   Center,
-  Badge,
-  SimpleGrid,
   FormControl,
   FormLabel,
   Textarea,
   FormHelperText,
-  AbsoluteCenter,
   Select,
   HStack,
   Image,
   VStack,
   useBreakpointValue,
 } from '@chakra-ui/react';
-import {Header} from 'rsuite';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
 // function to get the index of a recipe using its name

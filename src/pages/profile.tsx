@@ -1,37 +1,21 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Navbar from '../components/Navbar';
-import {auth, db, storage} from '../firebaseConfig';
-import {useDownloadURL, useUploadFile} from 'react-firebase-hooks/storage';
-import {
-  getBlob,
-  getDownloadURL,
-  getStream,
-  ref,
-  uploadBytes,
-} from 'firebase/storage';
-import {BsUpload} from 'react-icons/bs';
+import {db, storage} from '../firebaseConfig';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import {FaTrashAlt} from 'react-icons/fa';
 import {
   collection,
-  addDoc,
   doc,
-  setDoc,
-  getDoc,
   getDocs,
   where,
   query,
-  orderBy,
   updateDoc,
-  onSnapshot,
   deleteDoc,
 } from 'firebase/firestore';
 import {
-  AuthCredential,
   EmailAuthProvider,
   getAuth,
-  onAuthStateChanged,
   reauthenticateWithCredential,
-  updateEmail,
   updatePassword,
 } from 'firebase/auth';
 import {
@@ -44,9 +28,6 @@ import {
   Stack,
   useColorModeValue,
   HStack,
-  Avatar,
-  AvatarBadge,
-  IconButton,
   Center,
   useToast,
   AlertDialog,
@@ -61,10 +42,8 @@ import {
   Text,
   Spacer,
 } from '@chakra-ui/react';
-import {SmallCloseIcon} from '@chakra-ui/icons';
-import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useDocumentData} from 'react-firebase-hooks/firestore';
-import {FirebaseError} from 'firebase/app';
+import {useNavigate} from 'react-router-dom';
 
 async function uniqueUsername(username: string): Promise<boolean> {
   const queryUsernames = await getDocs(collection(db, 'users'));
@@ -88,9 +67,7 @@ const Profile: React.FC = () => {
   const [deletePassword, setDeletePassword] = useState('');
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const toast = useToast();
-  const [profile, profileLoading, profileError] = useDocumentData(
-    doc(db, 'users/', email),
-  );
+  const [profile] = useDocumentData(doc(db, 'users/', email));
   const navigate = useNavigate();
 
   const [selectedFile, setSelectedFile] = useState<any>();
@@ -234,13 +211,6 @@ const Profile: React.FC = () => {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement | null>(null);
 
-  const enableDeleteButton = () => {
-    if (1 != Math.random()) {
-      return false;
-    }
-    return true;
-  };
-
   /**
    * function call that updates the database with the specified parameters
    * @param newBiography //biography added to the database
@@ -281,16 +251,16 @@ const Profile: React.FC = () => {
           });
       }
     }
-
+    //Check to see updating site
     if (newBiography === null) {
       newBiography = profile?.biography;
     }
     if (newUsername === null) {
       newUsername = profile?.username;
     }
-    
+
     const unique = await uniqueUsername(newUsername);
-    if (!unique){
+    if (!unique) {
       newUsername = profile?.username;
       toast({
         title: 'Username Already Taken',
@@ -319,7 +289,6 @@ const Profile: React.FC = () => {
     const password = e.target.value;
     setDeletePassword(password);
   }
-  function handleReauthenticate(password: string) {}
   return (
     <>
       <Navbar />
@@ -330,12 +299,9 @@ const Profile: React.FC = () => {
         backgroundPosition={'center center'}
         alignContent={'flex-end'}
         backgroundColor="rgba(0, 128, 128, 0.7)">
-        <VStack
-          w={'full'}
-          px={useBreakpointValue({base: 4, md: 8})}
-          // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
-        >
+        <VStack w={'full'} px={useBreakpointValue({base: 4, md: 8})}>
           <Stack maxW={'2xl'} spacing={6}>
+            {/* //Profile Page Title */}
             <Text textAlign="center" fontSize="6xl" as="b" color="white">
               Profile Page
             </Text>
@@ -354,10 +320,12 @@ const Profile: React.FC = () => {
           boxShadow={'lg'}
           p={6}
           my={12}>
+          {/* //Editing Profile Heading */}
           <Heading lineHeight={1.1} fontSize={{base: '2xl', sm: '3xl'}}>
             Edit Profile
           </Heading>
           <FormControl id="userName">
+            {/* //User Icon */}
             <FormLabel>User Icon</FormLabel>
 
             <Stack direction={['column', 'row']}>
@@ -372,6 +340,7 @@ const Profile: React.FC = () => {
                 </Center>
                 <HStack>
                   <Center w="full">
+                    {/* //Handle change profile picture */}
                     <input
                       type="file"
                       name="myImage"
@@ -387,6 +356,7 @@ const Profile: React.FC = () => {
                       }}
                     />
                   </Center>
+                  {/* //Remove Picture */}
                   <Button
                     colorScheme="red"
                     onClick={() => setSelectedFile(undefined)}>
@@ -395,6 +365,7 @@ const Profile: React.FC = () => {
                 </HStack>
               </VStack>
               <VStack alignSelf="end">
+                {/* //Delete Account Button */}
                 <Button alignSelf="end" colorScheme="red" onClick={onOpen}>
                   Delete Acccount
                 </Button>
@@ -424,6 +395,7 @@ const Profile: React.FC = () => {
                             {/* Passsword input */}
                             Enter Password
                           </FormLabel>
+                          {/* //Handle Delete check */}
                           <Input
                             type="text"
                             name="costPerServing"
@@ -462,6 +434,7 @@ const Profile: React.FC = () => {
           </FormControl>
           <HStack>
             <VStack w="full">
+              {/* //Handle First Name change */}
               <FormControl id="firstName" isRequired>
                 <FormLabel>First Name</FormLabel>
                 <Input
@@ -474,6 +447,7 @@ const Profile: React.FC = () => {
               </FormControl>
               <FormControl id="LastName" isRequired>
                 <FormLabel>Last Name</FormLabel>
+                {/* //Handle Last Name Change */}
                 <Input
                   placeholder={profile?.name}
                   _placeholder={{color: 'gray.500'}}
@@ -485,6 +459,7 @@ const Profile: React.FC = () => {
             </VStack>
             <VStack w="full">
               <FormControl isRequired>
+                {/* //Handle Username Change */}
                 <FormLabel>User name</FormLabel>
                 <Input
                   placeholder={profile?.username}
@@ -495,6 +470,7 @@ const Profile: React.FC = () => {
                 />
               </FormControl>
               <FormControl id="oldpassword" isRequired>
+                {/* //Password check */}
                 <FormLabel>Old Password</FormLabel>
                 <Input
                   placeholder="Old Password"
@@ -505,6 +481,7 @@ const Profile: React.FC = () => {
                 />
               </FormControl>
               <FormControl id="newpassword" isRequired>
+                {/* New Password input */}
                 <FormLabel>New Password</FormLabel>
                 <Input
                   placeholder="New Password"
@@ -517,6 +494,7 @@ const Profile: React.FC = () => {
             </VStack>
           </HStack>
           <FormControl id="biography" isRequired>
+            {/* //Biography Check handle change */}
             <FormLabel>Biography</FormLabel>
             <Input
               minH={100}
@@ -537,6 +515,7 @@ const Profile: React.FC = () => {
               }}>
               Cancel
             </Button>
+            {/* //Apply handle Change Button */}
             <Button
               bg={'green.400'}
               color={'white'}

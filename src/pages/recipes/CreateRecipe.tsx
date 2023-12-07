@@ -17,11 +17,9 @@ import {
   Image,
   Select,
   SimpleGrid,
-  InputLeftAddon,
   InputGroup,
   Textarea,
   FormHelperText,
-  InputRightElement,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -35,7 +33,6 @@ import {
   Text,
   useBreakpointValue,
   HStack,
-  Center,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
 
@@ -332,8 +329,6 @@ const Form2 = () => {
   const [allergens, setAllergens] = useState(' ');
   const [servings, setServings] = useState(' ');
 
-  // toast for popups
-  const toast = useToast();
   // ingredient variables
   const [ingredientCount, setcount] = useState(1);
   const [ingredientString, setIngredientString] = useState<string[]>([]);
@@ -418,7 +413,7 @@ const Form2 = () => {
     return false;
   };
   const disableRemove = (): boolean | undefined => {
-    if (ingredientCount == 1) {
+    if (ingredientCount === 1) {
       return true;
     }
     return false;

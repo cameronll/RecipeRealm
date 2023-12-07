@@ -1,42 +1,20 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {db} from '../../firebaseConfig';
-import {AiOutlineConsoleSql, AiOutlineHeart} from 'react-icons/ai';
-import {CgBowl} from 'react-icons/cg';
-import {
-  BsWindow,
-  BsFillChatDotsFill,
-  BsKanbanFill,
-  BsBookmarks,
-  BsPeople,
-  BsPersonPlusFill,
-} from 'react-icons/bs';
 import {AiFillPrinter} from 'react-icons/ai';
-import {FaUserPlus} from 'react-icons/fa';
 import {
   collection,
-  addDoc,
   doc,
-  setDoc,
-  getDoc,
   getDocs,
   where,
   query,
-  getCountFromServer,
   onSnapshot,
   arrayRemove,
   arrayUnion,
   updateDoc,
 } from 'firebase/firestore';
-import {
-  browserLocalPersistence,
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-} from 'firebase/auth';
 import Navbar from '../../components/Navbar';
 import {
   Box,
-  useColorModeValue,
   Stack,
   Avatar,
   Text,
@@ -46,19 +24,9 @@ import {
   Flex,
   SimpleGrid,
   HStack,
-  Input,
   Heading,
   Center,
-  Badge,
-  FormControl,
-  FormLabel,
-  Textarea,
-  FormHelperText,
-  AbsoluteCenter,
-  Select,
-  Icon,
   Image,
-  StackDivider,
   Accordion,
   AccordionButton,
   AccordionIcon,
@@ -71,12 +39,9 @@ import {
   TabList,
   TabPanels,
   useBreakpointValue,
-  Spacer,
 } from '@chakra-ui/react';
 import {Link} from 'react-router-dom';
-import {FaUserFriends} from 'react-icons/fa';
 import {FiBookOpen} from 'react-icons/fi';
-import {RiPagesLine} from 'react-icons/ri';
 import {useDocumentData} from 'react-firebase-hooks/firestore';
 
 // type that holds nutrition facts
@@ -91,7 +56,7 @@ type nutrition = {
   sugars: number;
   protein: number;
 };
-
+//Type that holds recipe data
 type Recipe = {
   recipe_name: string;
   servings: string;
@@ -106,7 +71,9 @@ type Recipe = {
   nutrients: nutrition;
 };
 
+//Holds Component
 const FriendProfile: React.FC = (friend: any) => {
+  //Necessary Hooks
   const toast = useToast();
   const [following, setFollowing] = useState<any[]>([]);
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -119,7 +86,7 @@ const FriendProfile: React.FC = (friend: any) => {
   const [userProfile, userProfileLoading, userProfileError] = useDocumentData(
     doc(db, 'users/', userEmail),
   );
-
+  //Fetch Data on Open
   useEffect(() => {
     async function getEmail() {
       const username = JSON.parse(localStorage.getItem('USERNAME') as string);
@@ -134,7 +101,7 @@ const FriendProfile: React.FC = (friend: any) => {
     }
     getEmail();
   }, []);
-
+  //Fetch Data on Open
   useEffect(() => {
     if (email) {
       const recipesQuery = query(
@@ -174,7 +141,7 @@ const FriendProfile: React.FC = (friend: any) => {
   }
 
   function myProfile() {
-    if (userEmail.localeCompare(email) === 0){
+    if (userEmail.localeCompare(email) === 0) {
       return true;
     }
     return false;
@@ -216,11 +183,7 @@ const FriendProfile: React.FC = (friend: any) => {
         backgroundPosition={'center center'}
         alignContent={'flex-end'}
         backgroundColor="rgba(0, 128, 128)">
-        <VStack
-          w={'full'}
-          px={useBreakpointValue({base: 4, md: 8})}
-          // bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
-        >
+        <VStack w={'full'} px={useBreakpointValue({base: 4, md: 8})}>
           <Stack minW={'2xl'} spacing={6}>
             <Text textAlign="center" fontSize="6xl" as="b" color="white">
               @
@@ -452,6 +415,7 @@ const FriendProfile: React.FC = (friend: any) => {
                               <Center>
                                 <Text
                                   as="b"
+                                  //Show size of Title
                                   fontSize={titleSize(recipe.data.recipe_name)}
                                   textColor="white">
                                   {
@@ -579,10 +543,13 @@ const FriendProfile: React.FC = (friend: any) => {
                                     <AccordionIcon />
                                   </AccordionButton>
                                 </h2>
+                                {/* //MapIngredients */}
                                 <AccordionPanel pb={4}>
                                   {recipe.data.ingredients.map(
                                     (ingredient: string, index: number) => (
-                                      <Text key={index}>
+                                      <Text
+                                        key={index}
+                                        textColor="whiteAlpha.900">
                                         {' '}
                                         <li> {ingredient}</li>
                                       </Text>
@@ -635,6 +602,7 @@ const FriendProfile: React.FC = (friend: any) => {
                                   );
                                 }}>
                                 <AiFillPrinter />
+                                {/* //Print Recipe Details */}
                                 <Text marginLeft={2}>Print Recipe</Text>
                               </Button>
                             </Link>
@@ -647,12 +615,13 @@ const FriendProfile: React.FC = (friend: any) => {
               </Box>
             </HStack>
           </TabPanel>
+          {/* //Unused Panel */}
           <TabPanel minH="100vh">
             <HStack spacing={10}></HStack>
           </TabPanel>
           <TabPanel minH="100vh">
             {/* posts display, incomplete */}
-            <Container
+            {/* <Container
               // minH="100vh"
               shadow={1000}
               maxW="container.lg"
@@ -695,14 +664,7 @@ const FriendProfile: React.FC = (friend: any) => {
                   <Text>post?.date_time.toDate().toString()</Text>
                 </Stack>
 
-                <Box
-                  // boxShadow="xs"
-                  rounded="md"
-                  padding="4"
-                  bg="teal"
-                  maxW="container.lg"
-                  // bgColor="#4fb9af"
-                >
+                <Box rounded="md" padding="4" bg="teal" maxW="container.lg">
                   <Flex>
                     <Text fontSize={18}>Posted by: </Text>
                     <Text fontSize={18} marginLeft={2}>
@@ -722,10 +684,11 @@ const FriendProfile: React.FC = (friend: any) => {
                   <Text>post.description</Text>
                 </Box>
               </Box>
-            </Container>
+            </Container> */}
           </TabPanel>
+          {/* //UnusedPanel, Left for future use */}
           <TabPanel minH="100vh">
-            <VStack>
+            {/* <VStack>
               <Container
                 boxShadow={'2xl'}
                 minW="container.md"
@@ -807,7 +770,7 @@ const FriendProfile: React.FC = (friend: any) => {
                   </Link>
                 </HStack>
               </Container>
-            </VStack>
+            </VStack> */}
           </TabPanel>
         </TabPanels>
       </Tabs>

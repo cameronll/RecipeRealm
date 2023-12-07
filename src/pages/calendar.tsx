@@ -1,37 +1,18 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {db, storage} from '../firebaseConfig';
-import {Whisper, Popover, Badge} from 'rsuite';
+import React, {useEffect, useState} from 'react';
+import {db} from '../firebaseConfig';
 import {
   collection,
-  addDoc,
   doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  where,
   query,
-  getCountFromServer,
-  onSnapshot,
-  deleteDoc,
   updateDoc,
   arrayUnion,
-  deleteField,
-  Firestore,
-  FieldValue,
   arrayRemove,
 } from 'firebase/firestore';
-import firebase from 'firebase/app';
 import Navbar from '../components/Navbar';
 import {
   Box,
   Button,
-  ButtonGroup,
   Container,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   useToast,
   VStack,
   Flex,
@@ -41,7 +22,6 @@ import {
   Center,
   Image,
   HStack,
-  border,
   Input,
   Drawer,
   DrawerBody,
@@ -52,8 +32,6 @@ import {
   DrawerCloseButton,
   useDisclosure,
   Select,
-  SimpleGrid,
-  Heading,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -63,15 +41,12 @@ import {
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import {Calendar} from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import {
   useCollectionData,
   useDocumentData,
 } from 'react-firebase-hooks/firestore';
 import {AiFillPrinter} from 'react-icons/ai';
-import {render} from '@testing-library/react';
-import {SelectedElement} from 'rsuite/esm/Picker';
 import {Link} from 'react-router-dom';
 
 type nutrition = {
@@ -449,7 +424,6 @@ const CalendarPage: React.FC = () => {
    */
   function ScheduleRecipe() {
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const btnRef = React.useRef();
 
     return (
       <>

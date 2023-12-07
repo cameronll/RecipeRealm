@@ -4,7 +4,6 @@ import {
   Input,
   Button,
   Stack,
-  ButtonGroup,
   Box,
   VStack,
   Text,
@@ -18,33 +17,21 @@ import {
 import {FormControl, FormLabel, FormHelperText} from '@chakra-ui/react';
 import {useFormik} from 'formik';
 import {auth} from '../../firebaseConfig';
-import {getAuth} from 'firebase/auth';
 import {db} from '../../firebaseConfig';
 import {doc, getDocs, setDoc} from 'firebase/firestore';
-import {collection, addDoc, DocumentReference} from 'firebase/firestore';
+import {collection} from 'firebase/firestore';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {Link, useNavigate} from 'react-router-dom';
 import {useToast} from '@chakra-ui/react';
-import Footer from '../../components/Footer';
 /**
  * check name value to see if name already exists in the database
- * @param value 
- * @returns 
+ * @param value
+ * @returns
  */
-function validateName(value: any) {
-  let error;
-  if (!value) {
-    error = 'username is required';
-  } else if (false) {
-    //check database to see if username is taken
-    error = 'username is taken';
-  }
-  return error;
-}
 /**
  * checks the username is not already taken
- * @param username 
- * @returns 
+ * @param username
+ * @returns
  */
 async function uniqueUsername(username: string): Promise<boolean> {
   const queryUsernames = await getDocs(collection(db, 'users'));
@@ -56,7 +43,7 @@ async function uniqueUsername(username: string): Promise<boolean> {
 }
 /**
  * method to sign up a new user including formik for handling the form data
- * @returns 
+ * @returns
  */
 const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
@@ -64,7 +51,7 @@ const SignUp = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   const following: string[] = [];
-  const liked: any[] = ["non-empty"];
+  const liked: any[] = ['non-empty'];
   const events: any[] = [];
   const profilePic =
     'https://firebasestorage.googleapis.com' +
@@ -93,7 +80,7 @@ const SignUp = () => {
               username: values.username,
               following: following,
               profilePic: profilePic,
-              liked: liked
+              liked: liked,
             });
           });
 
@@ -183,6 +170,7 @@ const SignUp = () => {
           borderRadius={15}
           bg="primary.50">
           <Center>
+            {/* //Display Logo */}
             <Image
               borderRadius="30px"
               src="newlogoteal.png"
@@ -193,6 +181,7 @@ const SignUp = () => {
           </Center>
           <form onSubmit={formik.handleSubmit}>
             <FormControl isRequired>
+              {/* //Handle Ematil Address */}
               <FormLabel>Email address</FormLabel>
               <Input
                 name="email"
@@ -202,7 +191,7 @@ const SignUp = () => {
                 value={formik.values.email}
               />
               <FormHelperText>We'll never share your email.</FormHelperText>
-
+              {/* //Handle First Name */}
               <FormLabel>First Name</FormLabel>
               <Input
                 name="firstname"
@@ -211,7 +200,7 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 value={formik.values.firstname}
               />
-
+              {/* //Hande Last Name */}
               <FormLabel>Last Name</FormLabel>
               <Input
                 name="lastname"
@@ -220,7 +209,7 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 value={formik.values.lastname}
               />
-
+              {/* //Hande UserName */}
               <FormLabel>Username</FormLabel>
               <Input
                 name="username"
@@ -229,7 +218,7 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 value={formik.values.username}
               />
-
+              {/* //Handle Password */}
               <FormLabel>Password</FormLabel>
               <InputGroup size="md">
                 <Input
@@ -238,8 +227,10 @@ const SignUp = () => {
                   placeholder="Password..."
                   onChange={formik.handleChange}
                   value={formik.values.password}
+                  type={show ? 'text' : 'password'}
                 />
                 <InputRightElement width="4.5rem">
+                  {/* //Handle Hiding Toggle */}
                   <Button h="1.75rem" size="sm" onClick={handleClick}>
                     {show ? 'Hide' : 'Show'}
                   </Button>
@@ -248,6 +239,7 @@ const SignUp = () => {
               <Flex>
                 <Box>
                   <Link to="/login">
+                    {/* //Back Button */}
                     <Button
                       mt={4}
                       colorScheme="red"
@@ -260,6 +252,7 @@ const SignUp = () => {
                 </Box>
                 <Spacer />
                 <Box>
+                  {/* //Handle Submit */}
                   <Button
                     mt={4}
                     variant="solid"

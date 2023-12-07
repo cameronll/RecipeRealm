@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {db, storage} from '../firebaseConfig';
+import React, {useState, useEffect} from 'react';
+import {db} from '../firebaseConfig';
 import {AiFillPrinter, AiOutlineHeart} from 'react-icons/ai';
 import {FiBookOpen} from 'react-icons/fi';
 import {CgBowl} from 'react-icons/cg';
@@ -14,28 +14,16 @@ import {RiPagesLine} from 'react-icons/ri';
 
 import {
   collection,
-  addDoc,
   doc,
-  setDoc,
-  getDoc,
   getDocs,
   where,
   query,
-  getCountFromServer,
-  onSnapshot,
   deleteDoc,
   orderBy,
 } from 'firebase/firestore';
-import {
-  browserLocalPersistence,
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-} from 'firebase/auth';
 import Navbar from '../components/Navbar';
 import {
   Box,
-  useColorModeValue,
   Stack,
   Avatar,
   Text,
@@ -45,20 +33,10 @@ import {
   Flex,
   SimpleGrid,
   HStack,
-  Input,
   Heading,
   Center,
-  Badge,
-  FormControl,
-  FormLabel,
-  Textarea,
-  FormHelperText,
-  AbsoluteCenter,
-  Select,
   useToast,
-  Icon,
   Image,
-  StackDivider,
   Accordion,
   AccordionButton,
   AccordionIcon,
@@ -74,11 +52,9 @@ import {
 } from '@chakra-ui/react';
 import {Link, useNavigate} from 'react-router-dom';
 import {
-  useCollection,
   useCollectionData,
   useDocumentData,
 } from 'react-firebase-hooks/firestore';
-import {getDownloadURL, ref} from 'firebase/storage';
 
 const Recipes: React.FC = () => {
   // toast for popups

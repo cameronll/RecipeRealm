@@ -1,8 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {db, storage} from '../firebaseConfig';
+import {db} from '../firebaseConfig';
 import {
-  useDocument,
-  useCollection,
   useCollectionData,
   useDocumentData,
 } from 'react-firebase-hooks/firestore';
@@ -21,14 +19,11 @@ import {
   orderBy,
   updateDoc,
   setDoc,
-  onSnapshot,
   increment,
   arrayRemove,
   arrayUnion,
   deleteDoc,
 } from 'firebase/firestore';
-import {getAuth, onAuthStateChanged} from 'firebase/auth';
-import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import {
   Box,
@@ -54,40 +49,19 @@ import {
   PopoverBody,
   PopoverCloseButton,
   PopoverFooter,
-  FormControl,
-  FormLabel,
   Heading,
-  Input,
-  useColorModeValue,
   HStack,
   Avatar,
-  AvatarBadge,
-  IconButton,
-  Badge,
   PopoverHeader,
   Spacer,
-  Drawer,
   useDisclosure,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerFooter,
   Divider,
   Textarea,
   PopoverArrow,
 } from '@chakra-ui/react';
 
-import {CopyIcon} from '@chakra-ui/icons';
-import {
-  collapseTextChangeRangesAcrossMultipleVersions,
-  forEachChild,
-} from 'typescript';
 import {AiFillHeart, AiOutlineHeart, AiOutlineSend} from 'react-icons/ai';
 import {Link, useNavigate} from 'react-router-dom';
-import {getDownloadURL, ref} from 'firebase/storage';
-//import { Divider } from 'rsuite';
 
 // type that holds nutrition facts
 type nutrition = {
@@ -134,10 +108,7 @@ const Explore: React.FC = () => {
   const toast = useToast();
   // create a listener to the user called: user
   const userQuery = doc(db, 'users/', email);
-  const [user, userLoading, userError] = useDocumentData(userQuery);
-
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const btnRef = React.useRef();
+  const [user] = useDocumentData(userQuery);
 
   // create a listener to the posts database called: allPosts
   // posts are sorted by time descending
@@ -145,20 +116,17 @@ const Explore: React.FC = () => {
     collection(db, 'posts'),
     orderBy('date_time', 'desc'),
   );
-  const [allPosts, allPostsLoading, allPostsError] =
-    useCollectionData(allPostsQuery);
+  const [allPosts] = useCollectionData(allPostsQuery);
 
   // create a listener to all the profiles called: profiles
   const profilesQuery = query(collection(db, 'users'));
-  const [profiles, profileLoading, profilesError] =
-    useCollectionData(profilesQuery);
+  const [profiles] = useCollectionData(profilesQuery);
 
   // create a listener for the user's saved recipes
   const savedRecipesQuery = query(
     collection(db, 'users/' + email + '/SavedRecipes'),
   );
-  const [savedRecipes, savedRecipesLoading, savedRecipesError] =
-    useCollectionData(savedRecipesQuery);
+  const [savedRecipes] = useCollectionData(savedRecipesQuery);
 
   const navigate = useNavigate();
   // useEffect, when user has loaded, set the following list and the liked list
@@ -334,11 +302,11 @@ const Explore: React.FC = () => {
 
   async function addComment(datetime: any) {
     const date = new Date();
-    const newComment:Comment = {
+    const newComment: Comment = {
       date_time: date,
       username: user?.username,
       pic: user?.profilePic,
-      comment: JSON.parse(window.localStorage.getItem('COMMENT') as string)
+      comment: JSON.parse(window.localStorage.getItem('COMMENT') as string),
     };
     // update the post
     const q = query(
@@ -350,10 +318,10 @@ const Explore: React.FC = () => {
     docs.forEach(doc => {
       console.log(doc.data());
       updateDoc(doc.ref, {
-        comments: arrayUnion(newComment)
+        comments: arrayUnion(newComment),
       });
     });
-    window.localStorage.setItem('COMMENT', "");
+    window.localStorage.setItem('COMMENT', '');
   }
 
   return (
@@ -474,91 +442,110 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              {// Comments button for each post.
+                              {
+                                // Comments button for each post.
                               }
-                              <Popover placement='right' initialFocusRef={initRef}>
+                              <Popover
+                                placement="right"
+                                initialFocusRef={initRef}>
                                 <PopoverTrigger>
                                   <Button variant="link" colorScheme="white">
-                                    <BsFillChatDotsFill style={{fontSize: '34px'}}/>
+                                    <BsFillChatDotsFill
+                                      style={{fontSize: '34px'}}
+                                    />
                                   </Button>
                                 </PopoverTrigger>
                                 <Portal>
-                                  <PopoverContent minW={'600px'} >
-                                    <PopoverArrow/>
-                                      <PopoverHeader
-                                        bg={'teal'}
-                                        paddingTop={'20px'}
-                                        paddingBottom={'20px'}
-                                        fontSize={'30px'}
-                                        textAlign={'center'}
-                                        color={'white'}
-                                      >
-                                        Comments on @{profiles[getIndex(profiles, post.email)]?.username}'s post
-                                      </PopoverHeader>
-                                      <PopoverCloseButton />
-                                      <PopoverBody
-                                        display={'flex'}
-                                        flexDir={'column'}
-                                        justifyContent={'space-between'}
-                                        height={'100%'}
-                                        minH={'645px'}
-                                        maxH={'645px'}
-                                        overflowY={"auto"}
-                                      >
-                                        <VStack >
-                                          {post?.comments.map((comment:Comment) => {
-                                          <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                                            <Avatar
-                                            size={'xl'}
-                                             src={
-                                               // the picture of the person who posted it, gotten with getIndex
-                                               comment.pic
-                                             }
-                                            />
-                                            <Divider orientation='vertical'/>
-                                            <Text paddingLeft={5}>{comment.username}</Text>
-                                            <Text paddingLeft={5}>{comment.comment}</Text>
-                                            <Text paddingLeft={5}>{comment.date_time}</Text>
-                                          </HStack>
-                                          })} 
-                                        </VStack>
-                                      </PopoverBody>
-                                      <Divider 
-                                        orientation='horizontal' 
-                                        color={'teal'}
-                                      />
-                                      <PopoverFooter blockSize={200}>
-                                        <HStack>
-                                          <Avatar />
-                                          <Container width={500}>
-                                            <Textarea
-                                            placeholder='Type a comment here...'
+                                  <PopoverContent minW={'600px'}>
+                                    <PopoverArrow />
+                                    <PopoverHeader
+                                      bg={'teal'}
+                                      paddingTop={'20px'}
+                                      paddingBottom={'20px'}
+                                      fontSize={'30px'}
+                                      textAlign={'center'}
+                                      color={'white'}>
+                                      Comments on @
+                                      {
+                                        profiles[getIndex(profiles, post.email)]
+                                          ?.username
+                                      }
+                                      's post
+                                    </PopoverHeader>
+                                    <PopoverCloseButton />
+                                    <PopoverBody
+                                      display={'flex'}
+                                      flexDir={'column'}
+                                      justifyContent={'space-between'}
+                                      height={'100%'}
+                                      minH={'645px'}
+                                      maxH={'645px'}
+                                      overflowY={'auto'}>
+                                      <VStack>
+                                        {post?.comments.map(
+                                          (comment: Comment) => {
+                                            <HStack
+                                              width={'103%'}
+                                              minH={'60px'}
+                                              bg={'teal'}
+                                              rounded={'md'}>
+                                              <Avatar
+                                                size={'xl'}
+                                                src={
+                                                  // the picture of the person who posted it, gotten with getIndex
+                                                  comment.pic
+                                                }
+                                              />
+                                              <Divider orientation="vertical" />
+                                              <Text paddingLeft={5}>
+                                                {comment.username}
+                                              </Text>
+                                              <Text paddingLeft={5}>
+                                                {comment.comment}
+                                              </Text>
+                                              <Text paddingLeft={5}>
+                                                {comment.date_time}
+                                              </Text>
+                                            </HStack>;
+                                          },
+                                        )}
+                                      </VStack>
+                                    </PopoverBody>
+                                    <Divider
+                                      orientation="horizontal"
+                                      color={'teal'}
+                                    />
+                                    <PopoverFooter blockSize={200}>
+                                      <HStack>
+                                        <Avatar />
+                                        <Container width={500}>
+                                          <Textarea
+                                            placeholder="Type a comment here..."
                                             size={'lg'}
                                             blockSize={150}
                                             resize={'none'}
-                                            width={"100%"}
+                                            width={'100%'}
                                             onChange={handleCommentChange}
                                           />
-                                          </Container>
-                                          <Button 
-                                            bg={"teal"} 
-                                            color={"white"} 
-                                            variant={'solid'}
-                                            fontSize={'x-large'}
-                                            height={160}
-                                            width={'70px'}
-                                            aria-label={'Send comment'}
-                                            onClick={() =>{
-                                              console.log(post);
-                                              addComment(post?.date_time)
-                                              // save comment to database and update comments with 
-                                              // latest post at top
-                                            }}
-                                          >
-                                            <AiOutlineSend />
-                                          </Button>
-                                        </HStack>
-                                      </PopoverFooter>
+                                        </Container>
+                                        <Button
+                                          bg={'teal'}
+                                          color={'white'}
+                                          variant={'solid'}
+                                          fontSize={'x-large'}
+                                          height={160}
+                                          width={'70px'}
+                                          aria-label={'Send comment'}
+                                          onClick={() => {
+                                            console.log(post);
+                                            addComment(post?.date_time);
+                                            // save comment to database and update comments with
+                                            // latest post at top
+                                          }}>
+                                          <AiOutlineSend />
+                                        </Button>
+                                      </HStack>
+                                    </PopoverFooter>
                                   </PopoverContent>
                                 </Portal>
                               </Popover>
@@ -994,92 +981,118 @@ const Explore: React.FC = () => {
                                   </Button>
                                 )
                               }
-                              {// Comments button for each post.
+                              {
+                                // Comments button for each post.
                               }
-                              <Popover placement='right' initialFocusRef={initRef}>
+                              <Popover
+                                placement="right"
+                                initialFocusRef={initRef}>
                                 <PopoverTrigger>
-                                  <Button variant="link" colorScheme="white" /*onClick={onOpen}*/>
-                                    <BsFillChatDotsFill style={{fontSize: '34px'}}/>
+                                  <Button
+                                    variant="link"
+                                    colorScheme="white" /*onClick={onOpen}*/
+                                  >
+                                    <BsFillChatDotsFill
+                                      style={{fontSize: '34px'}}
+                                    />
                                   </Button>
                                 </PopoverTrigger>
                                 <Portal>
                                   <PopoverContent minWidth={'825px'}>
-                                    <PopoverArrow/>
-                                      <PopoverHeader
-                                        bg={'teal'}
-                                        paddingTop={'20px'}
-                                        paddingBottom={'20px'}
-                                        fontSize={'30px'}
-                                        textAlign={'center'}
-                                        color={'white'}
-                                      >
-                                        Comments on @{profiles[getIndex(profiles, post.email)]?.username}'s post
-                                      </PopoverHeader>
-                                      <PopoverCloseButton />
-                                      <PopoverBody
-                                        display={'flex'}
-                                        flexDir={'column'}
-                                        justifyContent={'space-between'}
-                                        height={'100%'}
-                                        minH={'645px'}
-                                        maxH={'645px'}
-                                        overflowY={"auto"}
-                                      >
-                                        <VStack>
-                                        {post?.comments.map((comment:Comment) => {
-                                          <HStack width={'103%'} minH={'60px'} bg={'teal'} rounded={'md'}>
-                                            <Avatar
-                                            size={'xl'}
-                                            src={
-                                              // the picture of the person who posted it, gotten with getIndex
-                                              comment.pic
-                                            }
-                                            />
-                                            <Divider orientation='vertical'/>
-                                            <Text paddingLeft={5}>{comment.username}</Text>
-                                            <Text paddingLeft={5}>{comment.comment}</Text>
-                                            <Text paddingLeft={5}>{comment.date_time}</Text>
-                                          </HStack>
-                                          })}
-                                        </VStack>
-                                      </PopoverBody>
-                                      <Divider 
-                                        orientation='horizontal' 
-                                        color={'teal'}
-                                      />
-                                      <PopoverFooter blockSize={200}>
-                                        <HStack>
-                                          <Avatar />
-                                          <Container width={500}>
-                                            <Textarea
-                                            placeholder='Type a comment here...'
+                                    <PopoverArrow />
+                                    <PopoverHeader
+                                      bg={'teal'}
+                                      paddingTop={'20px'}
+                                      paddingBottom={'20px'}
+                                      fontSize={'30px'}
+                                      textAlign={'center'}
+                                      color={'white'}>
+                                      Comments on @
+                                      {
+                                        profiles[getIndex(profiles, post.email)]
+                                          ?.username
+                                      }
+                                      's post
+                                    </PopoverHeader>
+                                    <PopoverCloseButton />
+                                    <PopoverBody
+                                      display={'flex'}
+                                      flexDir={'column'}
+                                      justifyContent={'space-between'}
+                                      height={'100%'}
+                                      minH={'645px'}
+                                      maxH={'645px'}
+                                      overflowY={'auto'}>
+                                      <VStack>
+                                        {post?.comments.map(
+                                          (comment: Comment) => {
+                                            <HStack
+                                              width={'103%'}
+                                              minH={'60px'}
+                                              bg={'teal'}
+                                              rounded={'md'}>
+                                              <Avatar
+                                                size={'xl'}
+                                                src={
+                                                  // the picture of the person who posted it, gotten with getIndex
+                                                  comment.pic
+                                                }
+                                              />
+                                              <Divider orientation="vertical" />
+                                              <Text paddingLeft={5}>
+                                                {comment.username}
+                                              </Text>
+                                              <Text paddingLeft={5}>
+                                                {comment.comment}
+                                              </Text>
+                                              <Text paddingLeft={5}>
+                                                {comment.date_time}
+                                              </Text>
+                                            </HStack>;
+                                          },
+                                        )}
+                                      </VStack>
+                                    </PopoverBody>
+                                    <Divider
+                                      orientation="horizontal"
+                                      color={'teal'}
+                                    />
+                                    <PopoverFooter blockSize={200}>
+                                      <HStack>
+                                        <Avatar />
+                                        <Container width={500}>
+                                          <Textarea
+                                            placeholder="Type a comment here..."
                                             size={'lg'}
                                             blockSize={150}
                                             resize={'none'}
-                                            width={"100%"}
-                                            value={JSON.parse(window.localStorage.getItem('COMMENTS') as string)}
+                                            width={'100%'}
+                                            value={JSON.parse(
+                                              window.localStorage.getItem(
+                                                'COMMENTS',
+                                              ) as string,
+                                            )}
                                             onChange={handleCommentChange}
                                           />
-                                          </Container>
-                                          <Button 
-                                            bg={"teal"} 
-                                            color={"white"} 
-                                            variant={'solid'}
-                                            fontSize={'x-large'}
-                                            height={160}
-                                            width={'70px'}
-                                            aria-label={'Send comment'}
-                                            onClick={() =>{
-                                              console.log(post);
-                                              addComment(post?.date_time)
-                                              // save comment to database and update comments with 
-                                              // latest post at top
-                                            }}
-                                          >
-                                            <AiOutlineSend />
-                                          </Button>
-                                        </HStack>
-                                      </PopoverFooter>
+                                        </Container>
+                                        <Button
+                                          bg={'teal'}
+                                          color={'white'}
+                                          variant={'solid'}
+                                          fontSize={'x-large'}
+                                          height={160}
+                                          width={'70px'}
+                                          aria-label={'Send comment'}
+                                          onClick={() => {
+                                            console.log(post);
+                                            addComment(post?.date_time);
+                                            // save comment to database and update comments with
+                                            // latest post at top
+                                          }}>
+                                          <AiOutlineSend />
+                                        </Button>
+                                      </HStack>
+                                    </PopoverFooter>
                                   </PopoverContent>
                                 </Portal>
                               </Popover>

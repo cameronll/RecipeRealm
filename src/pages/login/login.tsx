@@ -8,49 +8,18 @@ import {
   Spacer,
   useColorModeValue,
   Stack,
-  Avatar,
   Text,
   Center,
   InputGroup,
   InputRightElement,
   useToast,
 } from '@chakra-ui/react';
-//import Calendar from '../calendar';
-//import Recipes from '../myrecipes';
-import Profile from '../profile';
-import {EmailAuthCredential, signInWithEmailAndPassword} from 'firebase/auth';
+import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../firebaseConfig';
 import {Link} from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import LoginNavbar from '../../components/LoginNav';
-import GoogleButton from 'react-google-button';
 
-import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
-
-const provider = new GoogleAuthProvider();
-
-const googleSignIn = async () => {
-  signInWithPopup(auth, provider)
-    .then(result => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      //const credential = GoogleAuthProvider.credentialFromResult(result);
-      //const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-    })
-    .catch(error => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-    });
-};
 /**
  * Function to login in to website
  * @returns
@@ -59,9 +28,12 @@ const Login = () => {
   useEffect(() => {
     localStorage.removeItem('EMAIL');
   }, []);
-  const [email, setEmail] = useState(''); //establishes email in the database
-  const [password, setPassword] = useState(''); //establishes the password in the database
-  const [show, setShow] = React.useState(false); //allows the option to view password
+  const [email, setEmail] = useState('');
+  //establishes email in the database
+  const [password, setPassword] = useState('');
+  //establishes the password in the database
+  const [show, setShow] = React.useState(false);
+  //allows the option to view password
   const handleClick = () => setShow(!show);
   const navigate = useNavigate();
   const toast = useToast();
@@ -71,7 +43,8 @@ const Login = () => {
    */
   const signIn = (e: React.FormEvent) => {
     e.preventDefault(); // doesnt reload page
-    signInWithEmailAndPassword(auth, email, password) //method that passes in established values to login to website
+    signInWithEmailAndPassword(auth, email, password)
+      //method that passes in established values to login to website
       .then(userCredential => {
         const user = userCredential.user;
 
@@ -135,22 +108,12 @@ const Login = () => {
               variant="filled"
               mb={4}
             />
-
-            {/* <Input
-              placeholder="Password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              variant="filled"
-              type="password"
-              mb={6}
-            /> */}
             <InputGroup size="md">
               <Input
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 variant="filled"
                 mb={6}
-                // pr="4.5rem"
                 type={show ? 'text' : 'password'}
                 placeholder="Enter password"
               />
