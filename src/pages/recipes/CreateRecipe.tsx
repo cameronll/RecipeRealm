@@ -285,8 +285,6 @@ const Form1 = () => {
   const handleNameChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('RECIPENAME', JSON.stringify(name));
-    // setTitleCheck(true);
-    console.log(window.localStorage.getItem('RECIPENAME'));
     setRecipeName(name);
   };
 

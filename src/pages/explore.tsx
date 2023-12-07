@@ -104,6 +104,7 @@ const Explore: React.FC = () => {
   // useState to create constants
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
+  const [comment, setComment] = useState("");
   // toast for popups
   const toast = useToast();
   // create a listener to the user called: user
@@ -298,6 +299,7 @@ const Explore: React.FC = () => {
 
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
+    setComment(e.target.value);
   };
 
   async function addComment(datetime: any) {
@@ -321,7 +323,15 @@ const Explore: React.FC = () => {
         comments: arrayUnion(newComment),
       });
     });
-    window.localStorage.setItem('COMMENT', '');
+    setComment("");
+    window.localStorage.removeItem('COMMENT');
+  }
+
+  function commentDisabled(){
+    if (comment.localeCompare("") === 0){
+    return true;
+  }
+  return false;
   }
 
   return (
@@ -551,6 +561,8 @@ const Explore: React.FC = () => {
                                           variant={'solid'}
                                           fontSize={'x-large'}
                                           height={160}
+                                          isDisabled={commentDisabled()}
+                                          value={comment}
                                           width={'70px'}
                                           aria-label={'Send comment'}
                                           onClick={() => {
@@ -1085,11 +1097,6 @@ const Explore: React.FC = () => {
                                             blockSize={150}
                                             resize={'none'}
                                             width={'100%'}
-                                            value={JSON.parse(
-                                              window.localStorage.getItem(
-                                                'COMMENTS',
-                                              ) as string,
-                                            )}
                                             onChange={handleCommentChange}
                                           />
                                         </Container>
@@ -1098,7 +1105,9 @@ const Explore: React.FC = () => {
                                           color={'white'}
                                           variant={'solid'}
                                           fontSize={'x-large'}
+                                          isDisabled={commentDisabled()}
                                           height={160}
+                                          value={comment}
                                           width={'70px'}
                                           aria-label={'Send comment'}
                                           onClick={() => {
