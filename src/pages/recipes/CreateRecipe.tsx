@@ -271,8 +271,12 @@ const Form1 = () => {
     const recipe_name_storage: any = window.localStorage.getItem('RECIPENAME');
     const cooking_time_storage: any =
       window.localStorage.getItem('COOKINGTIME');
+    if (window.localStorage.getItem('COOKINGTIME')) {
+      setRecipeName(JSON.parse(recipe_name_storage));
+    } else {
+      setRecipeName('Recipe Title');
+    }
 
-    setRecipeName(JSON.parse(recipe_name_storage));
     setCookingTime(JSON.parse(cooking_time_storage));
   }, []);
 
@@ -282,6 +286,7 @@ const Form1 = () => {
     const name = e.target.value;
     window.localStorage.setItem('RECIPENAME', JSON.stringify(name));
     // setTitleCheck(true);
+    console.log(window.localStorage.getItem('RECIPENAME'));
     setRecipeName(name);
   };
 
@@ -853,12 +858,9 @@ export default function Multistep() {
   const [progress, setProgress] = useState(33.33);
   // get ALL THE DATA from local storage
   const recipeFromStorage: any = window.localStorage.getItem('RECIPENAME');
-  // const recipeName = '';
-  // if (recipeFromStorage) {
+
   const recipeName = JSON.parse(recipeFromStorage);
-  // } else {
-  //   const recipeName = 'Recipe Title';
-  // }
+
   const cookingTimeStorage: any = window.localStorage.getItem('COOKINGTIME');
   const cookingTime = JSON.parse(cookingTimeStorage);
   const difficultyStorage: any = window.localStorage.getItem('DIFFICULTY');
@@ -947,7 +949,7 @@ export default function Multistep() {
                       w="7rem"
                       isDisabled={
                         step === 3 ||
-                        (step === 2 &&
+                        (step === 1 &&
                           window.localStorage.getItem('RECIPENAME') ===
                             (null || ''))
                       }
