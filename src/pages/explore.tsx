@@ -104,7 +104,7 @@ const Explore: React.FC = () => {
   // useState to create constants
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
-  const [comment, setComment] = useState("");
+  //const [comment, setComment] = useState("");
   // toast for popups
   const toast = useToast();
   // create a listener to the user called: user
@@ -299,7 +299,7 @@ const Explore: React.FC = () => {
 
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
-    setComment(e.target.value);
+    //setComment(e.target.value);
   };
 
   async function addComment(datetime: any) {
@@ -323,17 +323,18 @@ const Explore: React.FC = () => {
         comments: arrayUnion(newComment),
       });
     });
-    setComment("");
+    //setComment("");
     window.localStorage.removeItem('COMMENT');
   }
 
+  /**
   function commentDisabled(){
     if (comment.localeCompare("") === 0){
     return true;
   }
   return false;
   }
-
+  */
   return (
     <Box>
       <Navbar />
@@ -561,8 +562,8 @@ const Explore: React.FC = () => {
                                           variant={'solid'}
                                           fontSize={'x-large'}
                                           height={160}
-                                          isDisabled={commentDisabled()}
-                                          value={comment}
+                                          //isDisabled={commentDisabled()}
+                                          //value={comment}
                                           width={'70px'}
                                           aria-label={'Send comment'}
                                           onClick={() => {
@@ -1105,9 +1106,9 @@ const Explore: React.FC = () => {
                                           color={'white'}
                                           variant={'solid'}
                                           fontSize={'x-large'}
-                                          isDisabled={commentDisabled()}
+                                          //isDisabled={commentDisabled()}
+                                          //value={comment}
                                           height={160}
-                                          value={comment}
                                           width={'70px'}
                                           aria-label={'Send comment'}
                                           onClick={() => {
