@@ -251,6 +251,14 @@ async function toDB(
   console.log('Document written successfully');
 }
 
+function recipeHasName(){
+  if (JSON.parse(localStorage.getItem('RECIPENAME') as string) === null 
+  || (JSON.parse(localStorage.getItem('RECIPENAME') as string)).localeCompare("") === true){
+    return true;
+  }
+  return false;
+}
+
 const Form1 = () => {
   // useState to create variables
   const [titleCheck, setTitleCheck] = useState(false);
@@ -971,6 +979,7 @@ export default function Multistep() {
                     w="7rem"
                     colorScheme="green"
                     variant="solid"
+                    isDisabled={recipeHasName()}
                     onClick={() => {
                       const instructionsStorage: any =
                         window.localStorage.getItem('INSTRUCTIONS');

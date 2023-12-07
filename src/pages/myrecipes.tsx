@@ -535,7 +535,7 @@ const Recipes: React.FC = () => {
                                   </AccordionButton>
                                 </h2>
                                 <AccordionPanel pb={4}>
-                                  {recipe.data.ingredients.map(
+                                  {recipe?.data?.ingredients?.map(
                                     (ingredient: string, index: number) => (
                                       <Text
                                         key={index}
