@@ -69,6 +69,7 @@ const Login = () => {
 
   return (
     <>
+      {/* //Navbar */}
       <LoginNavbar />
       <Flex
         minH="100vh"
@@ -79,6 +80,7 @@ const Login = () => {
         backgroundImage={
           'url(https://hips.hearstapps.com/hmg-prod/images/wdy050113taco-01-1624540365.jpg)'
         }>
+          {/* //Logo this is the logo for the site */}
         <Box
           boxShadow="dark-lg"
           backgroundColor="white"
@@ -96,11 +98,13 @@ const Login = () => {
             />
           </Center>
           <Center>
+            {/* //Log in title */}
             <Text as="b" fontSize={30} marginBottom={4}>
               Login below to start your experience!
             </Text>
           </Center>
           <form onSubmit={signIn}>
+            {/* //Email input */}
             <Input
               placeholder="Email"
               value={email.toLowerCase()}
@@ -108,6 +112,7 @@ const Login = () => {
               variant="filled"
               mb={4}
             />
+            {/* //Password input */}
             <InputGroup size="md">
               <Input
                 value={password}
@@ -117,6 +122,7 @@ const Login = () => {
                 type={show ? 'text' : 'password'}
                 placeholder="Enter password"
               />
+              {/* //showing button */}
               <InputRightElement width="4.5rem">
                 <Button h="1.75rem" size="sm" onClick={handleClick}>
                   {show ? 'Hide' : 'Show'}

@@ -47,12 +47,13 @@ async function uniqueUsername(username: string): Promise<boolean> {
  */
 const SignUp = () => {
   const navigate = useNavigate(); //navigate to login
-  const toast = useToast();
-  const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
-  const following: string[] = [];
-  const liked: any[] = ['non-empty'];
-  const events: any[] = [];
+  const toast = useToast(); //USe toast to display messages
+  const [show, setShow] = React.useState(false); //Sets show state to help handle visibility of certain
+  const handleClick = () => setShow(!show);//Handle the show and toggle the state
+  const following: string[] = [];//set following string
+  const liked: any[] = ['non-empty'];//handling liked strings
+  const events: any[] = [];//events events strings
+  //Handdels the profile pic
   const profilePic =
     'https://firebasestorage.googleapis.com' +
     '/v0/b/reciperealm-cbc4f.appspot.com/o/default.jpeg?alt=media&token=e68e229a-2860-495a-8ced-8480f6c79b7f';
@@ -64,6 +65,7 @@ const SignUp = () => {
       lastname: '',
       password: '',
     },
+    //onSubmit button to handle the comunication between the data base
     onSubmit: async values => {
       if (await uniqueUsername(values.username)) {
         try {
