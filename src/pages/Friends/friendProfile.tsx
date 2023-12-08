@@ -44,35 +44,8 @@ import {Link} from 'react-router-dom';
 import {FiBookOpen} from 'react-icons/fi';
 import {useDocumentData} from 'react-firebase-hooks/firestore';
 
-// type that holds nutrition facts
-type nutrition = {
-  calories: number;
-  total_fat: number;
-  saturated_fat: number;
-  cholesterol: number;
-  sodium: number;
-  total_carbohydrate: number;
-  dietary_fiber: number;
-  sugars: number;
-  protein: number;
-};
-//Type that holds recipe data
-type Recipe = {
-  recipe_name: string;
-  servings: string;
-  allergens: string;
-  cooking_applications: string;
-  cooking_time: string;
-  cost_per_serving: string;
-  difficulty: string;
-  posted: boolean;
-  ingredients: string[];
-  instructions: string;
-  nutrients: nutrition;
-};
-
 //Holds Component
-const FriendProfile: React.FC = (friend: any) => {
+const FriendProfile: React.FC = () => {
   //Necessary Hooks
   const toast = useToast();
   const [following, setFollowing] = useState<any[]>([]);

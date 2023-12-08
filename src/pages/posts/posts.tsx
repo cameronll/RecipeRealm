@@ -45,34 +45,6 @@ function getRecipeIndex(recipes: any[], recipe_name: string): number {
   return -1;
 }
 
-// type that holds nutrition information
-type nutrition = {
-  calories: number;
-  total_fat: number;
-  saturated_fat: number;
-  cholesterol: number;
-  sodium: number;
-  total_carbohydrate: number;
-  dietary_fiber: number;
-  sugars: number;
-  protein: number;
-};
-
-// type that holds recipe information
-type recipe = {
-  recipe_name: string;
-  servings: string;
-  allergens: string;
-  cooking_applications: string;
-  cooking_time: string;
-  cost_per_serving: string;
-  difficulty: string;
-  posted: boolean;
-  ingredients: string[];
-  instructions: string;
-  nutrients: nutrition;
-};
-
 // function to send data to the database (db)
 async function toDB(
   // parameters that will be sent to db
