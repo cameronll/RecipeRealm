@@ -15,13 +15,14 @@ import Navbar from '../../components/Navbar';
 import {AiFillPrinter} from 'react-icons/ai';
 
 const RecipeDetail: React.FC = () => {
+  //Defines component Ref
   const componentRef = useRef<HTMLDivElement | null>(null);
-
+//Handle's Printing
   const handlePrint = useReactToPrint({
     content: () => componentRef.current!,
     documentTitle: 'emp-data',
   });
-
+//Adjust Recipe Size
   function recipeSize(ing: number) {
     return 17 - ing * 0.2 + 'px';
   }
@@ -44,6 +45,7 @@ const RecipeDetail: React.FC = () => {
           maxW="container.lg"
           onClick={handlePrint}>
           <AiFillPrinter />
+          {/* Print Recipe Button */}
           <Text marginLeft={2}>Print Recipe</Text>
         </Button>
       </Center>
@@ -76,6 +78,7 @@ const RecipeDetail: React.FC = () => {
                   }
                 </Heading>
                 <HStack alignItems={'start'} width="100%" paddingBottom={8}>
+                  {/* //Formats Boxes */}
                   <Box
                     w="60%"
                     padding="8"
@@ -92,6 +95,7 @@ const RecipeDetail: React.FC = () => {
                     {JSON.parse(
                       window.localStorage.getItem('VIEWRECIPE') as string,
                     ).ingredients.map((ingredient: string) => (
+                      //Displays individual ingredients 
                       <Text
                         noOfLines={2}
                         fontSize={recipeSize(
@@ -143,6 +147,7 @@ const RecipeDetail: React.FC = () => {
                       }
                     </Text>
                     <Text noOfLines={2} fontSize={17}>
+                      {/* //Display's Recipe Time*/}
                       Time:{' '}
                       {
                         JSON.parse(
@@ -151,6 +156,7 @@ const RecipeDetail: React.FC = () => {
                       }
                     </Text>
                     <Text noOfLines={2} fontSize={17}>
+                      {/* //Display's Recipe Servings*/}
                       Servings:{' '}
                       {
                         JSON.parse(
@@ -159,6 +165,7 @@ const RecipeDetail: React.FC = () => {
                       }
                     </Text>
                     <Text noOfLines={2} fontSize={17}>
+                      {/* //Display's Recipe Serving cost*/}
                       Cost Per Serving:{' '}
                       {
                         JSON.parse(
@@ -167,6 +174,7 @@ const RecipeDetail: React.FC = () => {
                       }
                     </Text>
                     <Text noOfLines={2} fontSize={17}>
+                      {/* //Display's Recipe Cooking Applications*/}
                       Cooking Applications:{' '}
                       {
                         JSON.parse(
@@ -175,6 +183,7 @@ const RecipeDetail: React.FC = () => {
                       }
                     </Text>
                     <Text noOfLines={2} fontSize={17}>
+                      {/* //Display's Recipe Allergens*/}
                       Allergens:{' '}
                       {
                         JSON.parse(
@@ -200,6 +209,7 @@ const RecipeDetail: React.FC = () => {
                     </Text>
                   </Box>
                 </VStack>
+                {/* //Box of Printer instructions */}
                 <Box
                   w="60%"
                   padding="8"

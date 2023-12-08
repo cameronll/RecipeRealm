@@ -61,6 +61,12 @@ import {Search2Icon, SmallCloseIcon} from '@chakra-ui/icons';
 import Posts from './posts/posts';
 import {AiFillPrinter} from 'react-icons/ai';
 
+/**
+ * call to database to to store and retrieve information
+ * @param newBiography //holds new biography information
+ * @param newUsername //stores new username
+ * @param newPassword stores new password
+ */
 async function toDB(
   newBiography: string,
   newUsername: string,
@@ -82,7 +88,10 @@ async function toDB(
     console.log('No user!');
   }
 }
-
+/**
+ * 
+ * @returns 
+ */
 const Friends: React.FC = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newBiography, setNewBiography] = useState('');
@@ -91,32 +100,44 @@ const Friends: React.FC = () => {
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
 
   useEffect(() => {
+    /**
+     * method created to retrieve current profile from the database
+     */
     async function getProfile() {
       const getUser = doc(db, 'users/', email);
       const getProfile = await getDoc(getUser);
       setProfile(getProfile.data());
     }
-    getProfile();
+    getProfile();//retieves current profile
     const username_from_storage: any =
-      window.localStorage.getItem('NEWUSERNAME');
-    const email_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
+      window.localStorage.getItem('NEWUSERNAME');//retrieves current username fron storage
+    const email_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');//retrieves email from local storage
 
-    setNewUsername(JSON.parse(username_from_storage));
-    setNewBiography(JSON.parse(email_from_storage));
+    setNewUsername(JSON.parse(username_from_storage));//changes username in database
+    setNewBiography(JSON.parse(email_from_storage));//changes biography in database
   }, []);
-
+/**
+ * method to change user name
+ * @param e 
+ */
   const handleUsernameChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('NEWUSERNAME', JSON.stringify(name));
     setNewUsername(name);
   };
-
+/**
+ * mthod to change biography
+ * @param e 
+ */
   const handleBiographyChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('NEWBIOGRAPHY', JSON.stringify(name));
     setNewBiography(name);
   };
-
+/**
+ * sets password 
+ * @param e 
+ */
   const handlePasswordChange = (e: any) => {
     const name = e.target.value;
     setNewPassword(name);
