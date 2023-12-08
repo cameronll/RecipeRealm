@@ -104,7 +104,7 @@ const Explore: React.FC = () => {
   // useState to create constants
   const [following, setFollowing] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[]>([]);
-  //const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   // toast for popups
   const toast = useToast();
   // create a listener to the user called: user
@@ -299,7 +299,7 @@ const Explore: React.FC = () => {
 
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
-    //setComment(e.target.value);
+    setComment(e.target.value);
   };
 
   async function addComment(datetime: any) {
@@ -323,7 +323,7 @@ const Explore: React.FC = () => {
         comments: arrayUnion(newComment),
       });
     });
-    //setComment("");
+    setComment('');
     window.localStorage.removeItem('COMMENT');
   }
 
@@ -553,6 +553,7 @@ const Explore: React.FC = () => {
                                             blockSize={150}
                                             resize={'none'}
                                             width={'100%'}
+                                            value={comment}
                                             onChange={handleCommentChange}
                                           />
                                         </Container>
