@@ -296,45 +296,41 @@ const Explore: React.FC = () => {
     }
     return -1;
   }
-
+  // function to handle comment text input changing
   const handleCommentChange = (e: any) => {
     window.localStorage.setItem('COMMENT', JSON.stringify(e.target.value));
     setComment(e.target.value);
   };
 
+  // function to add a comment to the db
   async function addComment(datetime: any) {
+    // get the current date
     const date = new Date();
+    // create a new comment
     const newComment: Comment = {
       date_time: date,
       username: user?.username,
       pic: user?.profilePic,
       comment: JSON.parse(window.localStorage.getItem('COMMENT') as string),
     };
-    // update the post
+    // get the right post
     const q = query(
       collection(db, 'posts/'),
       where('date_time', '==', datetime),
     );
     const docs = await getDocs(q);
-    // add a like to the post
+    // update the comments array in the DB
     docs.forEach(doc => {
       console.log(doc.data());
       updateDoc(doc.ref, {
         comments: arrayUnion(newComment),
       });
     });
+    // reset the comment
     setComment('');
     window.localStorage.removeItem('COMMENT');
   }
 
-  /**
-  function commentDisabled(){
-    if (comment.localeCompare("") === 0){
-    return true;
-  }
-  return false;
-  }
-  */
   return (
     <Box>
       <Navbar />
@@ -567,8 +563,8 @@ const Explore: React.FC = () => {
                                           //value={comment}
                                           width={'70px'}
                                           aria-label={'Send comment'}
+                                          // send the comment on click
                                           onClick={() => {
-                                            console.log(post);
                                             addComment(post?.date_time);
                                             // save comment to database and update comments with
                                             // the latest post at the top
@@ -1112,6 +1108,7 @@ const Explore: React.FC = () => {
                                           height={160}
                                           width={'70px'}
                                           aria-label={'Send comment'}
+                                          // add the comment to the db
                                           onClick={() => {
                                             console.log(post);
                                             addComment(post?.date_time);

@@ -62,18 +62,6 @@ const Recipes: React.FC = () => {
   const navigate = useNavigate();
   const email = JSON.parse(localStorage.getItem('EMAIL') as string);
   const [liked, setLiked] = useState<any[]>([]);
-  // email from local storage to get the current user
-  /*
-  console.log(email)
-  useEffect(() => {
-    console.log(email);
-    if (email === null){
-      console.clear();
-      console.log("navigate!")
-      navigate("/login");
-    }
-  }, [email])
-  */
 
   const [followingProfiles, setFollowingProfiles] = useState<any[]>([]);
 
@@ -105,21 +93,24 @@ const Recipes: React.FC = () => {
 
   // useEffect, when user has loaded, set the following list and the liked list
   useEffect(() => {
-    //setLiked(profile?.liked);
+    // function to get the liked posts
     async function getLikedPosts() {
+      // liked posts query, ordered by time
       const likedPostsQuery = query(
         collection(db, 'posts'),
         where('date_time', 'in', profile?.liked),
         orderBy('date_time', 'desc'),
       );
       const querySnapshot = await getDocs(likedPostsQuery);
+      // create a temp array and add the posts to it
       const tempArray: any[] = [];
       querySnapshot?.forEach(doc => {
         tempArray.push(doc.data());
       });
-      console.log(tempArray);
+      // set the liked variable to the temp array
       setLiked(tempArray);
     }
+    // if the profile is ready, call the function
     if (profile) {
       getLikedPosts();
     }
@@ -143,35 +134,20 @@ const Recipes: React.FC = () => {
     await deleteDoc(doc(db, 'users/', email, 'SavedRecipes/', recipeName));
   }
 
+  // function to delete a post
   async function deletePost(datetime: any) {
-    // update the post
+    // get the post with the datetime
     const q = query(
       collection(db, 'posts/'),
       where('date_time', '==', datetime),
     );
     const docs = await getDocs(q);
-    // add a like to the post
+    // delete the document
     docs.forEach(async doc => {
       await deleteDoc(doc.ref);
     });
   }
 
-  // useEffect(() => {
-  //   friends();
-  // }, []);
-
-  // //funciton to get friends data
-  // async function friends() {
-  //   const tempArray: any[] = [];
-  //   for (let i = 0; i < profile?.following.length; i++) {
-  //     console.log(profile?.following[i]);
-  //     const docRef = doc(db, 'users', profile?.following[i]);
-  //     const docSnap = await getDoc(docRef);
-  //     tempArray.push(docSnap?.data());
-  //     console.log(tempArray);
-  //   }
-  //   setFollowingProfiles(tempArray);
-  // }
 
   //Functions to adjust Title Size
   function titleSize(title: string) {
@@ -904,6 +880,7 @@ const Recipes: React.FC = () => {
                 You have 0 posts
               </Heading>
             ) : (
+              // map the posts
               posts?.map(post => (
                 <Container
                   // minH="100vh"
@@ -927,7 +904,8 @@ const Recipes: React.FC = () => {
                     flexDirection="column">
                     <HStack>
                       <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.recipe.data.recipe_name}
+                        {// display the recipe name
+                        post?.recipe.data.recipe_name}
                       </div>
                       <Button
                         marginLeft={130}
@@ -947,6 +925,7 @@ const Recipes: React.FC = () => {
                           // on click, popup saying recipe deleted
                           // remove recipe from DB
                           deletePost(post?.date_time);
+                          // popup showing the recipe was deleted
                           toast({
                             title: 'Post Deleted',
                             description:
@@ -995,7 +974,8 @@ const Recipes: React.FC = () => {
                       <Flex>
                         <Text fontSize={18}>Posted by: </Text>
                         <Text fontSize={18} marginLeft={2}>
-                          {profile?.username}
+                          {//display the username
+                          profile?.username}
                         </Text>
 
                         <Button
@@ -1003,6 +983,7 @@ const Recipes: React.FC = () => {
                           colorScheme="whiteAlpha"
                           variant="outline"
                           size="xs"
+                          // link to recipeDetail
                           onClick={() => {
                             window.localStorage.setItem(
                               'VIEWRECIPE',
@@ -1031,6 +1012,7 @@ const Recipes: React.FC = () => {
                   You have 0 liked posts
                 </Heading>
               ) : (
+                // map the liked posts
                 liked?.map(post => (
                   <Container
                     // minH="100vh"
@@ -1053,7 +1035,8 @@ const Recipes: React.FC = () => {
                       display="flex"
                       flexDirection="column">
                       <div style={{flex: 1, fontSize: '24px'}}>
-                        {post?.recipe.data.recipe_name}
+                        {// display the recipe name
+                        post?.recipe.data.recipe_name}
                       </div>
                       <Center>
                         <Image
@@ -1091,7 +1074,8 @@ const Recipes: React.FC = () => {
                         <Flex>
                           <Text fontSize={18}>Posted by: </Text>
                           <Text fontSize={18} marginLeft={2}>
-                            {profile?.username}
+                            {// display the post username
+                            post?.username}
                           </Text>
 
                           <Button
@@ -1099,6 +1083,7 @@ const Recipes: React.FC = () => {
                             colorScheme="whiteAlpha"
                             variant="outline"
                             size="xs"
+                            // link to recipeDetail
                             onClick={() => {
                               window.localStorage.setItem(
                                 'VIEWRECIPE',
@@ -1111,7 +1096,8 @@ const Recipes: React.FC = () => {
                         </Flex>
 
                         <Text fontSize={20}>Caption:</Text>
-                        <Text>{post.description}</Text>
+                        <Text>{// display the caption
+                        post.description}</Text>
                       </Box>
                     </Box>
                   </Container>
