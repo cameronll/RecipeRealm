@@ -188,7 +188,7 @@ const SignUp = () => {
                 id="email"
                 type="email"
                 onChange={formik.handleChange}
-                value={formik.values.email}
+                value={formik.values.email.toLowerCase()}
               />
               <FormHelperText>We'll never share your email.</FormHelperText>
               {/* //Handle First Name */}
