@@ -12,6 +12,7 @@ import {
 import {FaInstagram, FaTwitter, FaYoutube} from 'react-icons/fa';
 import {ReactNode} from 'react';
 
+//Social Button butotn 
 const SocialButton = ({
   children,
   label,
@@ -34,6 +35,7 @@ const SocialButton = ({
       alignItems={'center'}
       justifyContent={'center'}
       transition={'background 0.3s ease'}
+      // uses the Colormode value
       _hover={{
         bg: useColorModeValue('blackAlpha.200', 'whiteAlpha.200'),
       }}>

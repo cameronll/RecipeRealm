@@ -45,9 +45,12 @@ import {
 import {useDocumentData} from 'react-firebase-hooks/firestore';
 import {useNavigate} from 'react-router-dom';
 
+// function to check if a username is unique
 async function uniqueUsername(username: string): Promise<boolean> {
   const queryUsernames = await getDocs(collection(db, 'users'));
+  // get the usernames
   const usernames = queryUsernames.docs.map(doc => doc.data().username);
+  // if the username parameter is in the username array, return true
   if (usernames.includes(username)) {
     return false;
   }
@@ -64,15 +67,16 @@ const Profile: React.FC = () => {
   const [firstName, setFirstName] = useState(''); //assigns a new first name for user
   const [lastName, setLastName] = useState(''); //assigns a new lastname for users
   const [oldPassword, setOldPassword] = useState(''); //uses old password for authenticating changes in profile
-  const [deletePassword, setDeletePassword] = useState('');
-  const email = JSON.parse(localStorage.getItem('EMAIL') as string);
-  const toast = useToast();
-  const [profile] = useDocumentData(doc(db, 'users/', email));
-  const navigate = useNavigate();
+  const [deletePassword, setDeletePassword] = useState(''); // holds the password to validate delete
+  const email = JSON.parse(localStorage.getItem('EMAIL') as string); // get the current user's email from local storage
+  const toast = useToast(); // toast for popups
+  const [profile] = useDocumentData(doc(db, 'users/', email)); //listener to the user's profile
+  const navigate = useNavigate(); // navigate hook to switch between pages
 
   const [selectedFile, setSelectedFile] = useState<any>();
 
   useEffect(() => {
+    // get everything from local storage
     const username_from_storage: any =
       window.localStorage.getItem('NEWUSERNAME');
     const bio_from_storage: any = window.localStorage.getItem('NEWBIOGRAPHY');
@@ -81,6 +85,7 @@ const Profile: React.FC = () => {
     const lastName_from_storage: any =
       window.localStorage.getItem('NEWLASTNAME');
 
+    // set the useState variables with the approp
     setNewUsername(JSON.parse(username_from_storage));
     setNewBiography(JSON.parse(bio_from_storage));
     setFirstName(JSON.parse(firstName_from_storage));
@@ -94,13 +99,15 @@ const Profile: React.FC = () => {
     }
   }, [profile]);
 
+  // method to upload an image to firebase storage
   async function uploadImage(file: any) {
     const storageRef = ref(storage, email + 'Profile');
-    // 'file' comes from the Blob or File API
+    // upload the file to firebase storage
     uploadBytes(storageRef, file).then(async snapshot => {
       const userRef = doc(db, 'users/', email);
+      // get the download url of the uploaded file
       await getDownloadURL(snapshot.ref).then(async link => {
-        console.log(link);
+        // add the link to the user's profile
         await updateDoc(userRef, {
           profilePic: link,
         });
@@ -161,15 +168,17 @@ const Profile: React.FC = () => {
     setNewPassword(name);
   };
 
-  //Handle Delete
-
+  // method to delete the user's account
   const handleDelete = async (password: string) => {
+    // get the current user
     const auth = getAuth();
     const user = auth.currentUser;
     const credential = EmailAuthProvider.credential(email, password);
     if (user) {
+      // reauthenticate with the password
       const authenticated = reauthenticateWithCredential(user, credential)
         .then(async snap => {
+          // toast to show delete
           toast({
             //
             title: 'Account Deleted',
@@ -178,13 +187,15 @@ const Profile: React.FC = () => {
             duration: 3000,
             isClosable: true,
           });
+          // navigate back to log in
           navigate('/login');
 
-          //TODO: Delete User from database
+          // delete the user from the database
           await deleteDoc(doc(db, 'users', email));
+          // delete the user from authentication
           const deleted = user?.delete(); //should delete user
-          console.log(deleted);
 
+          // delete the user's posts
           const q = query(
             collection(db, 'posts/'),
             where('email', '==', email),
@@ -194,10 +205,10 @@ const Profile: React.FC = () => {
             deleteDoc(doc.ref);
           });
         })
+        // if the password is incorrect, catch the error
         .catch(error => {
-          console.log(error);
           toast({
-            //
+            // popup to show incorrect password
             title: 'Incorrect Password',
             description: 'This password is incorrect',
             status: 'error',
@@ -228,18 +239,24 @@ const Profile: React.FC = () => {
     newPassword: string,
     oldPassword: string,
   ) {
+    // get the current user's email
     const email = JSON.parse(localStorage.getItem('EMAIL') as string);
+    // get the current user from auth
     const auth = getAuth();
     const user = auth.currentUser;
+    // if newPassword and oldPassword have data...
     if (newPassword && oldPassword) {
       const credential = EmailAuthProvider.credential(email, oldPassword);
       if (user) {
+        // reauthenticate the user with the oldPassword
         const reauth = reauthenticateWithCredential(user, credential)
+          // update the password
           .then(async () => {
             updatePassword(user, newPassword);
-            console.log(reauth);
           })
+          // catch any error
           .catch(error => {
+            // toast that the password is incorrect
             toast({
               //
               title: 'Incorrect Password',
@@ -251,7 +268,7 @@ const Profile: React.FC = () => {
           });
       }
     }
-    //Check to see updating site
+    // if either vaiable is null, set them to the value stored in the db
     if (newBiography === null) {
       newBiography = profile?.biography;
     }
@@ -259,9 +276,11 @@ const Profile: React.FC = () => {
       newUsername = profile?.username;
     }
 
+    // check that the username is unique
     const unique = await uniqueUsername(newUsername);
     if (!unique) {
       newUsername = profile?.username;
+      // popup to show failure
       toast({
         title: 'Username Already Taken',
         description: 'Please choose a unique username',
@@ -270,13 +289,14 @@ const Profile: React.FC = () => {
         isClosable: true,
       });
     }
-
+    // load the newName variable
     var newName: string = '';
     if (newFirstName === null || newLastName === null) {
       newName = profile?.name;
     } else {
       newName = newFirstName + ' ' + newLastName;
     }
+    // update the user in the db with form data
     const docRef = doc(db, 'users/', email);
     await updateDoc(docRef, {
       username: newUsername,
@@ -285,6 +305,7 @@ const Profile: React.FC = () => {
     });
   }
 
+  // function to track the changes in the delete account: password text input
   function handleDeletePasswordChange(e: any) {
     const password = e.target.value;
     setDeletePassword(password);
@@ -331,9 +352,12 @@ const Profile: React.FC = () => {
             <Stack direction={['column', 'row']}>
               <VStack>
                 <Center>
-                  {selectedFile && (
+                  {// make sure the selectedFile variable has data
+                  selectedFile && (
                     <div>
-                      <img alt="No Image" width={'250px'} src={selectedFile} />
+                      <img alt="No Image" width={'250px'} 
+                      // the source of the image is the selectedFile variable
+                      src={selectedFile} />
                       <br />
                     </div>
                   )}
@@ -407,6 +431,7 @@ const Profile: React.FC = () => {
                             rounded="md"
                             //HandlePassword
                             value={deletePassword}
+                            // handle the delete password change
                             onChange={handleDeletePasswordChange}
                           />
                         </FormControl>
@@ -420,6 +445,7 @@ const Profile: React.FC = () => {
 
                         <Button
                           colorScheme="red"
+                          // when the button is clicked, delete the account
                           onClick={() => {
                             handleDelete(deletePassword);
                           }}>
@@ -524,6 +550,7 @@ const Profile: React.FC = () => {
                 bg: 'blue.500',
               }}
               onClick={() => {
+                // toast popup to show success
                 toast({
                   title: 'Success!',
                   description: 'Your profile data has been updated',
@@ -531,6 +558,7 @@ const Profile: React.FC = () => {
                   duration: 3000,
                   isClosable: true,
                 });
+                // reset the text inputs
                 {
                   setNewUsername('');
                   setOldPassword('');
@@ -538,11 +566,13 @@ const Profile: React.FC = () => {
                   setNewBiography('');
                   setFirstName('');
                   setLastName('');
+                  // clean local storage
                   localStorage.removeItem('FIRSTNAME');
                   localStorage.removeItem('LASTNAME');
                   localStorage.removeItem('NEWUSERNAME');
                   localStorage.removeItem('NEWBIOGRAPHY');
                 }
+                // send everything to the db
                 toDB(
                   newBiography,
                   newUsername,
