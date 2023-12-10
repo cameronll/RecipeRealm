@@ -287,7 +287,10 @@ const Form1 = () => {
     window.localStorage.setItem('RECIPENAME', JSON.stringify(name));
     setRecipeName(name);
   };
-
+/**
+ * 
+ * @param e 
+ */
   const handleTimeChange = (e: any) => {
     const name = e.target.value;
     window.localStorage.setItem('COOKINGTIME', JSON.stringify(name));

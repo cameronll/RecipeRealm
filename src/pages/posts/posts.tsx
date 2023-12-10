@@ -199,12 +199,19 @@ const Posts: React.FC = () => {
     window.localStorage.setItem('TITLE', JSON.stringify(targ));
     setTitle(targ);
   };
+  /**
+   * 
+   * @param e 
+   */
   const handleDescriptionChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('DESCRIPTION', JSON.stringify(targ));
     setDescription(targ);
   };
-
+/**
+ * 
+ * @param e 
+ */
   const handleRecipeChange = (e: any) => {
     const targ = e.target.value;
     window.localStorage.setItem('RECIPE', JSON.stringify(targ));
